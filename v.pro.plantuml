@@ -1,7 +1,7 @@
 @startuml SequenceDiagram
 ' Diagramme de séquence : Déroulement d'une partie
 
-title Déroulement d'une partie de Tour Maudite
+title Déroulement d'une partie de Tour Mauditepro
 
 participant "Joueur" as J
 participant "Main.py" as Main
