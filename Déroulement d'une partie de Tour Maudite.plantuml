@@ -1,7 +1,7 @@
 @startuml SequenceDiagram
 title Déroulement d'une partie - Version Simplifiée
 
-participant "Joueur" as J 
+actor "Utilisateur" as J
 participant "Game" as G
 participant "Menu" as M
 participant "Jeu" as JEU
