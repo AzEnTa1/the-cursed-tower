@@ -11,11 +11,11 @@ class MenuScene(BaseScene):
         
     def on_enter(self):
         """Initialisation du menu"""
-        self.font = pygame.font.Font(None, 48)
-        self.small_font = pygame.font.Font(None, 24)
+        self.font = pygame.font.Font(None, 48) # Police par défaut, taille 48
+        self.small_font = pygame.font.Font(None, 24) # ---, taille 24
         # Rectangle pour le bouton Jouer (x, y, width, height)
         self.play_button = pygame.Rect(SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2, 200, 50)
-        print("Menu scene entered - Click PLAY or press ENTER to start")
+        print("Menu Scene")
     
     def handle_event(self, event):
         """Gère les clics de souris et touches"""

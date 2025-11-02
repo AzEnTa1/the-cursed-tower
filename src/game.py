@@ -33,7 +33,7 @@ class Game:
         """Change la scène actuelle"""
         if scene_name in self.scenes:
             # Appel on_exit sur l'ancienne scène
-            if self.current_scene:
+            if self.current_scene: # Au cas ou c'est None
                 self.current_scene.on_exit()
             
             # Change de scène

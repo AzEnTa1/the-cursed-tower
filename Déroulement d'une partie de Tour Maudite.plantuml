@@ -1,0 +1,37 @@
+@startuml SequenceDiagram
+title Déroulement d'une partie - Version Simplifiée
+
+participant "Joueur" as J 
+participant "Game" as G
+participant "Menu" as M
+participant "Jeu" as JEU
+participant "Arme" as A
+participant "Ennemi" as E
+
+J -> G : Lance le jeu
+G -> M : Affiche menu principal
+
+loop Boucle de jeu
+    J -> M : Clic "Jouer"
+    M -> G : Passe à l'écran de jeu
+    G -> JEU : Initialise partie
+    
+    loop Pendant la partie
+        JEU -> E : Met à jour ennemis
+        E -> JEU : Tire projectiles
+        JEU -> A : Met à jour arme
+        A -> JEU : Tire automatiquement
+        JEU -> JEU : Gère collisions
+        
+        alt Appui sur ESC
+            J -> JEU : Pause/Quitte
+            JEU -> G : Retour au menu
+        end
+    end
+    
+    alt Fermeture fenêtre
+        J -> G : Quitte
+        G -> G : Arrêt jeu
+    end
+end
+@enduml
