@@ -4,7 +4,7 @@ from config.settings import *
 from .projectiles import Projectile
 
 class Weapon:
-    def __init__(self, fire_rate=0.5, damage=10, projectile_speed=10):
+    def __init__(self, fire_rate=0.5, damage=100000, projectile_speed=20):
         self.fire_rate = fire_rate  # tirs par seconde
         self.damage = damage
         self.projectile_speed = projectile_speed

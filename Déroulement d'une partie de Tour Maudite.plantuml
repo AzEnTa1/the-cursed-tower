@@ -1,10 +1,10 @@
 @startuml SequenceDiagram
-title Déroulement d'une partie - Version Simplifiée
+title Déroulement d'une partie
 
 actor "Utilisateur" as J
-participant "Game" as G
+participant "Jeu" as G
 participant "Menu" as M
-participant "Jeu" as JEU
+participant "Game" as JEU
 participant "Arme" as A
 participant "Ennemi" as E
 
@@ -26,6 +26,7 @@ loop Boucle de jeu
         alt Appui sur ESC
             J -> JEU : Pause/Quitte
             JEU -> G : Retour au menu
+            G -> M : Menu
         end
     end
     
