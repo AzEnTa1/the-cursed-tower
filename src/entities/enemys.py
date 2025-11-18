@@ -30,7 +30,17 @@ class Enemy:
             self.attack_range = 300  # Portée de tir
             self.shoot_cooldown = 0
             self.shoot_rate = 1  # Toutes les 1.5 secondes (à 60 FPS)
+
+        elif enemy_type == "suicide":  # Explose à proximité
+            self.speed = 4.5
+            self.health = 15
+            self.max_health = 15
+            self.damage = 30
+            self.color = (255, 150, 0)  # Orange
+            self.radius = 16
+            self.attack_range = 50  # Portée d'explosion
         
+
         else:  # Type basique (par défaut)
             self.speed = 2
             self.health = 30
@@ -46,6 +56,8 @@ class Enemy:
             self._update_charger(player)
         elif self.type == "shooter":
             self._update_shooter(player, projectiles)
+        elif self.type == "suicide":
+            self._update_suicide(player)
         else:
             self._update_basic(player)
     
@@ -72,6 +84,17 @@ class Enemy:
         self.x += dx * self.speed
         self.y += dy * self.speed
     
+    def _update_suicide(self, player):
+        dx = player.x - self.x
+        dy = player.y - self.y
+        distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
+        dx /= distance
+        dy /= distance
+        
+        # Charge plus vite que les autres
+        self.x += dx * self.speed
+        self.y += dy * self.speed
+
     def _update_shooter(self, player, projectiles):
         """Se déplace et tire des projectiles"""
         # Calcul de la distance au joueur
@@ -89,12 +112,16 @@ class Enemy:
             self.x += (dx / distance) * self.speed
             self.y += (dy / distance) * self.speed
         
-        # Gestion du tir
-        if self.shoot_cooldown <= 0 and distance <= self.attack_range:
-            self.shoot(dx, dy, projectiles)
-            self.shoot_cooldown = self.shoot_rate
+        # Gestion du tir, 
+        # comment coder un tir une balle par une balle avec 1 seconde d'ecart
+    
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1   
         else:
-            self.shoot_cooldown -= 1
+            # Tire un projectile vers le joueur
+            self.shoot(dx, dy, projectiles)
+            self.shoot_cooldown = int(self.shoot_rate * 60)  # Convertit en frames (à 60 FPS)
+        
     
     def shoot(self, dx, dy, projectiles):
         """Tire un projectile vers le joueur"""

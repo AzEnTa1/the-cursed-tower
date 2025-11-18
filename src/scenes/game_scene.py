@@ -92,6 +92,7 @@ class GameScene(BaseScene):
                 if distance < enemy.radius + projectile.radius:
                     if enemy.take_damage(projectile.damage):
                         self.enemies.remove(enemy)
+
                     if projectile in self.projectiles:
                         self.projectiles.remove(projectile)
                     break
@@ -108,6 +109,15 @@ class GameScene(BaseScene):
                     distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
                     enemy.x += (dx / distance) * 10
                     enemy.y += (dy / distance) * 10
+
+            if enemy.type == "suicide":
+                # Vérifie si l'ennemi est à portée d'explosion
+                distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
+                if distance < enemy.attack_range:
+                    if self.player.take_damage(enemy.damage):
+                        print("Game Over!")
+                    if enemy in self.enemies:
+                        self.enemies.remove(enemy)
     
     def spawn_enemy(self):
         """Fait apparaître un ennemi aléatoirement sur les bords de l'écran"""
@@ -126,7 +136,7 @@ class GameScene(BaseScene):
             y = random.randint(0, SCREEN_HEIGHT)
         
         # Choisit un type d'ennemi aléatoire
-        enemy_type = random.choice(["charger", "shooter", "basic"])
+        enemy_type = random.choice(["charger", "shooter", "basic", "suicide"])
         self.enemies.append(Enemy(x, y, enemy_type))
     
     def draw(self, screen):
