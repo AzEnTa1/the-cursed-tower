@@ -1,3 +1,5 @@
+# src/scene/base_scene.py
+
 class BaseScene:
     """Classe de base pour toutes les scènes du jeu""" # Game et Menu
     
