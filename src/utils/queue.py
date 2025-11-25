@@ -1,6 +1,4 @@
-
 from random import *
-
 
 class Queue:
     """ cree des wague de 10 ennemis de plus en plus fort a chaque vague, les normaux on un score de dureter de 1, les charger 2, les shooter 3 et les suicide 4"""
