@@ -5,7 +5,7 @@ from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GREEN, SCENE_MEN
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.entities.enemys import Enemy
-from .base_scene import BaseScene
+from .base_scene import BaseScene  # Import relatif
 
 class GameScene(BaseScene):
     def __init__(self, game):
