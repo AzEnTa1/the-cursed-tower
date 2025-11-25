@@ -1,6 +1,6 @@
 import pygame
 from src import Game
-    
+
 def main():
     pygame.init() # initialise tous les modules internes de Pygame
     game = Game()
