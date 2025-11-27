@@ -10,7 +10,7 @@ class Game:
         pygame.init()
         
         # Création de la fenêtre
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption(TITLE)
         
         # Horloge pour les FPS
@@ -52,6 +52,13 @@ class Game:
             # Passe les événements à la scène actuelle
             if self.current_scene:
                 self.current_scene.handle_event(event)
+
+            elif event.type == pygame.VIDEORESIZE:
+
+                SCREEN_WIDTH, SCREEN_HEIGHT = event.dict["h"]/4*3, event.dict["h"]
+
+                if SCREEN_WIDTH > event.dict["w"] :
+                    SCREEN_WIDTH, SCREEN_HEIGHT = event.dict["w"], event.dict["w"]/3*4
     
     def update(self):
         """Mise à jour de la logique du jeu"""

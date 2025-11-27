@@ -123,17 +123,17 @@ class GameScene(BaseScene):
         """Fait apparaître un ennemi aléatoirement sur les bords de l'écran"""
         side = random.randint(0, 3)
         if side == 0:  # Haut
-            x = random.randint(0, SCREEN_WIDTH)
-            y = -20
+            x = random.randint(0, round(SCREEN_WIDTH*0.8))
+            y = SCREEN_HEIGHT*0.1
         elif side == 1:  # Droite
-            x = SCREEN_WIDTH + 20
-            y = random.randint(0, SCREEN_HEIGHT)
+            x = SCREEN_WIDTH*0.9
+            y = random.randint(0, round(SCREEN_HEIGHT*0.8))
         elif side == 2:  # Bas
-            x = random.randint(0, SCREEN_WIDTH)
-            y = SCREEN_HEIGHT + 20
+            x = random.randint(0, round(SCREEN_WIDTH*0.8))
+            y = SCREEN_HEIGHT*0.9
         else:  # Gauche
-            x = -20
-            y = random.randint(0, SCREEN_HEIGHT)
+            x = SCREEN_WIDTH*0.1
+            y = random.randint(0, round(SCREEN_HEIGHT*0.8))
         
         # Choisit un type d'ennemi aléatoire
         enemy_type = random.choice(["charger", "shooter", "basic", "suicide"])
@@ -159,6 +159,14 @@ class GameScene(BaseScene):
         # Dessine le joueur
         self.player.draw(screen)
         
+        #dessine la bordure
+        border_size = SCREEN_HEIGHT*0.01
+        pygame.draw.rect(screen, (255, 255, 0), (0, 0, SCREEN_WIDTH, border_size))
+        pygame.draw.rect(screen, (255, 255, 0), (SCREEN_WIDTH - border_size, 0, border_size, SCREEN_HEIGHT))
+        pygame.draw.rect(screen, (255, 255, 0), (0, 0, border_size, SCREEN_HEIGHT))
+        pygame.draw.rect(screen, (255, 255, 0), (0, SCREEN_HEIGHT - border_size, SCREEN_WIDTH, border_size))
+        
+
         # Affiche les informations
         instr_text = self.font.render("ZQSD pour se déplacer", True, WHITE)
         screen.blit(instr_text, (10, 10))
