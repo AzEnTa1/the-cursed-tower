@@ -5,6 +5,7 @@ from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GREEN, SCENE_MEN
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.entities.enemys import Enemy
+from src.systems import WaveManager
 from .base_scene import BaseScene  # Import relatif
 
 class GameScene(BaseScene):
@@ -24,13 +25,16 @@ class GameScene(BaseScene):
         """Initialisation du jeu"""
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.weapon = Weapon(fire_rate=2)
+        self.wave = WaveManager(self.enemies)
         self.font = pygame.font.Font(None, 36)
         self.small_font = pygame.font.Font(None, 24)
         self.projectiles = []
         self.enemy_projectiles = []
         self.enemies = []
         self.spawn_timer = 0
+        self.wave_cooldown = 200
         print("Game scene entered - Stop moving to auto-aim and shoot")
+
     
     def handle_event(self, event):
         """Gère les événements du jeu"""
@@ -72,13 +76,23 @@ class GameScene(BaseScene):
                     # TODO: Implémenter l'écran Game Over
                 if projectile in self.enemy_projectiles:
                     self.enemy_projectiles.remove(projectile)
-        
+        """
         # Génération d'ennemis
         self.spawn_timer += 1
         if self.spawn_timer >= 120:  # Toutes les 2 secondes (à 60 FPS)
             self.spawn_enemy()
             self.spawn_timer = 0
-        
+        """
+        #génération des énemis / vagues
+        if self.wave.is_wave_cleared():
+            if self.wave_cooldown >= 300: #5 secondes entre les vagues
+                self.wave_cooldown = 0
+                for elem in self.wave.start_next_wave():
+                    self.enemies.append(elem)
+                print("1")
+            else:
+                self.wave_cooldown += 1
+
         # Met à jour les ennemis
         for enemy in self.enemies[:]:
             if enemy.type == "shooter":

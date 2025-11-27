@@ -19,7 +19,7 @@ class Queue:
         self.conteur_wave += 1
 
 import pygame
-from src import test # importer ce que vs avez besoin
+#from src import test # importer ce que vs avez besoin
 
 # src/utils/queue.py
 class Queue:
