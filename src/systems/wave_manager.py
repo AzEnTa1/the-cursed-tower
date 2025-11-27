@@ -8,22 +8,33 @@ class WaveManager:
         self.current_wave = None
         self.wave_number = 0
         self.enemies_remaining = 0
-    
+
     def setup_waves(self, floor_number):
         # Configurer 3 vagues d'ennemis selon l'étage
-        pass
-    
+        if floor_number == 1:
+            Queue.create_wave(self.waves_queue)
+            Queue.create_wave(self.waves_queue)
+            Queue.create_wave(self.waves_queue)
+        elif floor_number == 2:
+            Queue.conteur_wave = 4
+            Queue.create_wave(self.waves_queue)
+            Queue.create_wave(self.waves_queue)
+            Queue.create_wave(self.waves_queue)
+
     def start_next_wave(self):
         # Commencer la vague suivante
-        pass
+        if not self.waves_queue.is_empty():
+            self.current_wave = self.waves_queue.dequeue()
+            self.enemies_remaining = len(self.current_wave)
+            self.wave_number += 1
     
     def is_wave_cleared(self):
         # Vérifier si la vague est terminée
-        pass
+        return self.enemies_remaining == 0
     
     def are_all_waves_cleared(self):
         # Vérifier si toutes les vagues sont terminées
-        pass
+        return self.waves_queue.is_empty()
 
 class WaweManager:
     def __init__(self):
