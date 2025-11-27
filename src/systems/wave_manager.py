@@ -4,11 +4,11 @@ from src.utils import Queue # importer ce que vs avez besoin
 from src.entities.enemys import Enemy
 
 class WaveManager:
-    def __init__(self, enemies):
+    def __init__(self):
         self.waves_queue = Queue()
         self.current_wave = None
         self.wave_number = 0
-        self.enemies_remaining = enemies
+        self.enemies_remaining = 0
 
         self.lst = []# A SUPRIME !
 
@@ -50,8 +50,12 @@ class WaveManager:
     
     def is_wave_cleared(self):
         # Vérifier si la vague est terminée
-        #return self.enemies_remaining == 0
+
+        #merde temporaire pk flem III
         return True
+        
+        return self.enemies_remaining == 0
+        
     
     def are_all_waves_cleared(self):
         # Vérifier si toutes les vagues sont terminées

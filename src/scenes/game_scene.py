@@ -25,7 +25,7 @@ class GameScene(BaseScene):
         """Initialisation du jeu"""
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.weapon = Weapon(fire_rate=2)
-        self.wave = WaveManager(self.enemies)
+        self.wave = WaveManager()
         self.font = pygame.font.Font(None, 36)
         self.small_font = pygame.font.Font(None, 24)
         self.projectiles = []
