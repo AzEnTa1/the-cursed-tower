@@ -1,6 +1,6 @@
 # src/systems/wave_manager.pyw
 import pygame
-from src import Queue # importer ce que vs avez besoin
+from src.utils import Queue # importer ce que vs avez besoin
 
 class WaveManager:
     def __init__(self):

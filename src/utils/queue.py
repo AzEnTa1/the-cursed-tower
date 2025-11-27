@@ -11,7 +11,8 @@ class Queue:
     
     def create_wave(self):
         for i in range(10):
-            random = [[50, 25, 35, 10], [50, 50, 35, 10], [50, 50, 50, 30], [50, 50, 50, 30], [50, 50, 50, 50]][self.conteur_wave]
+            wheights = [[50, 25, 35, 10], [50, 50, 35, 10], [50, 50, 50, 30], [50, 50, 50, 30], [50, 50, 50, 50]][self.conteur_wave]
+            random = choices(population=[1, 2, 3, 4],weights=wheights,k=1)[0]
             self.enemies.append(['basic', 'charger', 'shooter', 'suicide'][random])
         self.waves.append(self.enemies)
         self.enemies = []
