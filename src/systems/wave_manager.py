@@ -25,7 +25,8 @@ class WaveManager:
             Queue.create_wave(self.waves_queue)
             Queue.create_wave(self.waves_queue)
             Queue.create_wave(self.waves_queue)"""
-        #merde temporaire pk flem 
+        
+        #merde temporaire pk flem I
         for i in range(3):
             self.lst.append("vague 1")
 
@@ -35,6 +36,7 @@ class WaveManager:
             self.current_wave = self.waves_queue.dequeue()
             self.enemies_remaining = len(self.current_wave)
             self.wave_number += 1"""
+        
         #merde temporaire pk flem II
         if len(self.lst) == 0:
             self.setup_waves(1)
