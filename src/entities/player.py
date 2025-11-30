@@ -13,6 +13,12 @@ class Player:
         self.health = 100
         self.max_health = 100
         
+        # Score
+        self.score = 0
+        
+        # Arme (sera liée plus tard)
+        self.weapon = None
+        
         # États des touches
         self.keys_pressed = {
             'left': False,
@@ -25,7 +31,7 @@ class Player:
         self.last_horizontal_key = None
         self.last_vertical_key = None
         
-        # Direction du mouvement pour les tirs - MAINTENANT TOUJOURS MIS À JOUR
+        # Direction du mouvement pour les tirs
         self.last_dx = 0
         self.last_dy = 0
     
@@ -79,7 +85,7 @@ class Player:
         elif self.last_vertical_key == 'down':
             dy = self.speed
         
-        # CORRECTION : Toujours mettre à jour last_dx et last_dy, même à zéro
+        # Met à jour la direction (même à zéro)
         self.last_dx = dx
         self.last_dy = dy
         
@@ -96,16 +102,20 @@ class Player:
         self.health -= amount
         return self.health <= 0
     
+    def add_score(self, points):
+        """Ajoute des points au score"""
+        self.score += points
+    
     def draw(self, screen):
         """Dessine le joueur avec sa barre de vie"""
         # Corps du joueur
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.size)
         
-        # Barre de vie
-        bar_width = 60
-        bar_height = 8
+        # Barre de vie au-dessus du joueur
+        bar_width = 40
+        bar_height = 6
         bar_x = self.x - bar_width // 2
-        bar_y = self.y - self.size - 15
+        bar_y = self.y - self.size - 10
         
         # Fond de la barre
         pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))

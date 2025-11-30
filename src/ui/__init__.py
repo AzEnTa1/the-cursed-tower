@@ -1,7 +1,7 @@
 # src/ui/__init__.py
 
 from .hud import HUD
-from .transition import TransitionEffect
+from .transition_effect import TransitionEffect
 
 
 __all__ = [
