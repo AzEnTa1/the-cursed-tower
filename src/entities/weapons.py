@@ -24,7 +24,7 @@ class Weapon:
             self.stationary_time = 0
         
         # DEBUG: Afficher l'état de la visée (à enlever après test)
-        print(f"Immobile: {is_stationary}, Time: {self.stationary_time}/{self.stationary_threshold}")
+        print(f"Stationary: {is_stationary}, Time: {self.stationary_time}/{self.stationary_threshold}")
         
         # Tire seulement si immobile depuis assez longtemps
         if (self.stationary_time >= self.stationary_threshold and 
