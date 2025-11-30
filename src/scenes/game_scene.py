@@ -233,7 +233,8 @@ class GameScene(BaseScene):
         # Légende
         legend_y = SCREEN_HEIGHT - 120
         screen.blit(self.small_font.render("Légende:", True, WHITE), (10, legend_y))
-        screen.blit(self.small_font.render("Rouge: Chargeur", True, (255, 100, 100)), (10, legend_y + 25))
-        screen.blit(self.small_font.render("Bleu: Tireur", True, (100, 100, 255)), (10, legend_y + 45))
-        screen.blit(self.small_font.render("Magenta: Suicide", True, (255, 0, 255)), (10, legend_y + 65))
-        screen.blit(self.small_font.render("Rouge foncé: Basic", True, (200, 0, 0)), (10, legend_y + 85))
+        screen.blit(self.small_font.render("Rouge: Chargeur", True, (255, 100, 100)), (10, legend_y + 5))
+        screen.blit(self.small_font.render("Bleu: Tireur", True, (100, 100, 255)), (10, legend_y + 25))
+        screen.blit(self.small_font.render("Magenta: Suicide", True, (255, 0, 255)), (10, legend_y + 45))
+        screen.blit(self.small_font.render("Rouge foncé: Basic", True, (200, 0, 0)), (10, legend_y + 65))
+        screen.blit(self.small_font.render("Dernière fois que vs voyez ca : trop encombrant pour le jeu", True, (200, 100, 20)), (10, legend_y + 85))
