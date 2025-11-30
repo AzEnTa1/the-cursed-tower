@@ -1,64 +1,120 @@
-# src/systems/wave_manager.pyw
 import pygame
-from src.utils import Queue # importer ce que vs avez besoin
+from src.utils.queue import WaveQueue
 from src.entities.enemys import Enemy
 
 class WaveManager:
-    def __init__(self):
-        self.waves_queue = Queue()
-        self.current_wave = None
-        self.wave_number = 0
-        self.enemies_remaining = 0
-
-        self.lst = []# A SUPRIME !
-
-    def setup_waves(self, floor_number):
-        # Configurer 3 vagues d'ennemis selon l'étage
-        
-        # ici faudrait ajouter a la queue(file) 3 vagues aléatoires
-        """if floor_number == 1:
-            Queue.create_wave(self.waves_queue)
-            Queue.create_wave(self.waves_queue)
-            Queue.create_wave(self.waves_queue)
-        elif floor_number == 2:
-            Queue.conteur_wave = 4
-            Queue.create_wave(self.waves_queue)
-            Queue.create_wave(self.waves_queue)
-            Queue.create_wave(self.waves_queue)"""
-        
-        #merde temporaire pk flem I
-        for i in range(3):
-            self.lst.append("vague 1")
-
-    def start_next_wave(self)->list:
-        # Commencer la vague suivante
-        """if not self.waves_queue.is_empty():
-            self.current_wave = self.waves_queue.dequeue()
-            self.enemies_remaining = len(self.current_wave)
-            self.wave_number += 1"""
-        
-        #merde temporaire pk flem II
-        if len(self.lst) == 0:
-            self.setup_waves(1)
-        liste_enemies_ajoutes = []
-        if self.lst.pop() == "vague 1":
-            for i in range(10):
-                liste_enemies_ajoutes.append(Enemy(10*i, 10*i))
-        else:
-            for i in range(10):
-                liste_enemies_ajoutes.append(Enemy(10*i, 10*i, "charger"))
-        return liste_enemies_ajoutes
-
+    """Gère le déroulement des vagues d'ennemis avec système de file personnalisé"""
     
-    def is_wave_cleared(self):
-        # Vérifier si la vague est terminée
-
-        #merde temporaire pk flem III
-        return True
+    def __init__(self):
+        self.wave_queue = WaveQueue()
+        self.current_wave_enemies = []
+        self.wave_number = 0
+        self.floor_number = 1
+        self.enemies_remaining = 0
+        self.state = "between_waves"  # between_waves, in_wave, all_cleared
         
-        return self.enemies_remaining == 0
+        # Timing des vagues
+        self.wave_start_time = 0
+        self.time_between_waves = 3000  # 3 secondes entre les vagues
+    
+    def setup_floor(self, floor_number):
+        """Configure les vagues pour un nouvel étage"""
+        self.floor_number = floor_number
+        self.wave_number = 0
+        self.wave_queue.setup_waves_for_floor(floor_number)
+        self.state = "between_waves"
+        self.wave_start_time = pygame.time.get_ticks()
+    
+    def update(self, current_time):
+        """Met à jour l'état du gestionnaire de vagues"""
+        if self.state == "between_waves" and self.wave_queue.has_more_waves():
+            # Vérifie si c'est le moment de lancer la prochaine vague
+            if current_time - self.wave_start_time >= self.time_between_waves:
+                self.start_next_wave()
+    
+    def start_next_wave(self):
+        """Démarre la vague suivante"""
+        if not self.wave_queue.has_more_waves():
+            return []
         
+        wave_data = self.wave_queue.get_next_wave()
+        if not wave_data:
+            return []
+        
+        self.wave_number += 1
+        self.current_wave_enemies = []
+        self.enemies_remaining = len(wave_data)
+        self.state = "in_wave"
+        
+        # Crée les instances d'ennemis
+        enemies = []
+        for enemy_type in wave_data:
+            enemy = self.create_enemy(enemy_type)
+            enemies.append(enemy)
+            self.current_wave_enemies.append(enemy)
+        
+        print(f"Vague {self.wave_number} lancée avec {len(enemies)} ennemis")
+        return enemies
+    
+    def create_enemy(self, enemy_type):
+        """Crée un ennemi avec une position de spawn aléatoire sur les bords"""
+        import random
+        from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT
+        
+        side = random.randint(0, 3)
+        if side == 0:  # Haut
+            x = random.randint(50, SCREEN_WIDTH - 50)
+            y = -30
+        elif side == 1:  # Droite
+            x = SCREEN_WIDTH + 30
+            y = random.randint(50, SCREEN_HEIGHT - 50)
+        elif side == 2:  # Bas
+            x = random.randint(50, SCREEN_WIDTH - 50)
+            y = SCREEN_HEIGHT + 30
+        else:  # Gauche
+            x = -30
+            y = random.randint(50, SCREEN_HEIGHT - 50)
+        
+        return Enemy(x, y, enemy_type)
+    
+    def on_enemy_died(self, enemy):
+        """Appelé quand un ennemi meurt"""
+        if enemy in self.current_wave_enemies:
+            self.current_wave_enemies.remove(enemy)
+            self.enemies_remaining -= 1
+            
+            # Vérifie si la vague est terminée
+            if self.enemies_remaining <= 0:
+                self.on_wave_cleared()
+    
+    def on_wave_cleared(self):
+        """Appelé quand une vague est terminée"""
+        print(f"Vague {self.wave_number} terminée!")
+        self.state = "between_waves"
+        self.wave_start_time = pygame.time.get_ticks()
+        
+        if not self.wave_queue.has_more_waves():
+            self.state = "all_cleared"
+            print("Toutes les vagues de l'étage sont terminées!")
+    
+    def is_wave_in_progress(self):
+        """Vérifie si une vague est en cours"""
+        return self.state == "in_wave"
+    
+    def is_between_waves(self):
+        """Vérifie si on est entre deux vagues"""
+        return self.state == "between_waves"
     
     def are_all_waves_cleared(self):
-        # Vérifier si toutes les vagues sont terminées
-        return self.waves_queue.is_empty()
+        """Vérifie si toutes les vagues sont terminées"""
+        return self.state == "all_cleared"
+    
+    def get_wave_info(self):
+        """Retourne les informations sur la vague actuelle"""
+        return {
+            'floor': self.floor_number,
+            'current_wave': self.wave_number,
+            'total_waves': self.wave_queue.wave_count,
+            'enemies_remaining': self.enemies_remaining,
+            'state': self.state
+        }
