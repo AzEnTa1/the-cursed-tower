@@ -19,11 +19,4 @@ PLAYER_SIZE = 20
 # SCÈNES
 SCENE_MENU = "menu"
 SCENE_GAME = "game"
-
-
-
-
-
-
-
 test = "exemple"
