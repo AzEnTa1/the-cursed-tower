@@ -33,7 +33,7 @@ class GameScene(BaseScene):
         self.enemies = []
         self.spawn_timer = 0
         self.wave_cooldown = 200
-        print("Game scene entered - Stop moving to auto-aim and shoot")
+        print("Game scene")
 
     
     def handle_event(self, event):
