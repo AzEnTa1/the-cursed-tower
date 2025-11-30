@@ -80,7 +80,7 @@ class Enemy:
         self.y += dy * self.speed
         
         # Vérifie s'il est assez proche pour exploser
-        if distance < 50:  # DISTANCE RÉDUITE pour l'explosion
+        if distance < 50:  # pour l'explosion
             self.is_exploding = True
             self.explosion_timer = 10
     
