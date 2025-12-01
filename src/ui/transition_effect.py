@@ -24,7 +24,7 @@ class TransitionEffect:
         self.current_time += dt
         progress = min(self.current_time / self.duration, 1.0)
         
-        # Fondu au noir puis retour
+        # Fondu au noir puis retour a la normale
         if progress < 0.5:
             self.alpha = int(255 * (progress * 2))
         else:
