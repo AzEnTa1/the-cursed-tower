@@ -1,13 +1,14 @@
 import pygame
-from config.settings import PLAYER_SPEED, PLAYER_SIZE, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT, RED
+#from config.settings import PLAYER_SPEED, PLAYER_SIZE, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT, RED
 
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y, settings):
+        self.settings = settings
         self.x = x
         self.y = y
-        self.speed = PLAYER_SPEED
-        self.size = PLAYER_SIZE
-        self.color = GREEN
+        self.speed = settings.player_speed
+        self.size = settings.player_size
+        self.color = (0, 255, 0)
         
         # Points de vie
         self.health = 100
@@ -91,8 +92,8 @@ class Player:
         self.y += dy
         
         # Garde le joueur dans l'écran
-        self.x = max(self.size, min(self.x, SCREEN_WIDTH - self.size))
-        self.y = max(self.size, min(self.y, SCREEN_HEIGHT - self.size))
+        self.x = max(self.size, min(self.x, self.settings.screen_width - self.size))
+        self.y = max(self.size, min(self.y, self.settings.screen_height - self.size))
     
     def take_damage(self, amount):
         """Inflige des dégâts au joueur"""
@@ -120,5 +121,5 @@ class Player:
         
         # Vie actuelle
         health_width = (self.health / self.max_health) * bar_width
-        health_color = GREEN if self.health > self.max_health * 0.3 else RED
+        health_color = (0, 255, 0) if self.health > self.max_health * 0.3 else (255, 0, 0)
         pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))

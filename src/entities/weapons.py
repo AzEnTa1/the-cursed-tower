@@ -1,10 +1,9 @@
 import pygame
 import math
-from config.settings import *
 from .projectiles import Projectile
 
 class Weapon:
-    def __init__(self, fire_rate=0.5, damage=100000, projectile_speed=20):
+    def __init__(self, settings, fire_rate=0.5, damage=100000, projectile_speed=20):
         self.fire_rate = fire_rate  # tirs par seconde
         self.damage = damage
         self.projectile_speed = projectile_speed
@@ -12,6 +11,7 @@ class Weapon:
         self.last_direction = (1, 0)  # direction par défaut (droite)
         self.stationary_time = 0
         self.stationary_threshold = 30  # 0.5 secondes à 60 FPS
+        self.settings = settings
     
     def update(self, player, current_time, projectiles, enemies):
         """Gère le tir automatique uniquement quand immobile"""
@@ -71,7 +71,8 @@ class Weapon:
             player.x, player.y,
             dx * self.projectile_speed,
             dy * self.projectile_speed,
-            self.damage
+            self.damage,
+            self.settings
         ))
     
     def shoot(self, player, projectiles):
@@ -80,7 +81,8 @@ class Weapon:
             player.x, player.y,
             self.last_direction[0] * self.projectile_speed,
             self.last_direction[1] * self.projectile_speed,
-            self.damage
+            self.damage,
+            self.settings
         ))
     
     def update_direction(self, dx, dy):

@@ -1,8 +1,7 @@
 import pygame
-from config.settings import *
 
 class Projectile:
-    def __init__(self, x, y, dx, dy, damage, color=YELLOW):
+    def __init__(self, x, y, dx, dy, damage, settings, color=(255, 255, 0)):
         self.x = x
         self.y = y
         self.dx = dx
@@ -11,6 +10,7 @@ class Projectile:
         self.radius = 5
         self.color = color
         self.lifetime = 60  # frames avant disparition
+        self.settings = settings
     
     def update(self):
         """Met à jour la position du projectile"""
@@ -19,8 +19,8 @@ class Projectile:
         self.lifetime -= 1
         
         # Vérifie les bords de l'écran
-        if (self.x < 0 or self.x > SCREEN_WIDTH or 
-            self.y < 0 or self.y > SCREEN_HEIGHT):
+        if (self.x < 0 or self.x > self.settings.screen_width or 
+            self.y < 0 or self.y > self.settings.screen_height):
             self.lifetime = 0
     
     def draw(self, screen):

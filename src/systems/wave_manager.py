@@ -5,13 +5,14 @@ from src.entities.enemys import Enemy
 class WaveManager:
     """Gère le déroulement des vagues d'ennemis avec système de file personnalisé"""
     
-    def __init__(self):
+    def __init__(self, settings):
         self.wave_queue = WaveQueue()
         self.current_wave_enemies = []
         self.wave_number = 0
         self.floor_number = 1
         self.enemies_remaining = 0
         self.state = "between_waves"  # between_waves, in_wave, all_cleared
+        self.settings = settings
         
         # Timing des vagues
         self.wave_start_time = 0
@@ -59,23 +60,22 @@ class WaveManager:
     def create_enemy(self, enemy_type):
         """Crée un ennemi avec une position de spawn aléatoire sur les bords"""
         import random
-        from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT
         
         side = random.randint(0, 3)
         if side == 0:  # Haut
-            x = random.randint(50, SCREEN_WIDTH - 50)
+            x = random.randint(50, round(self.settings.screen_width - 50))
             y = -30
         elif side == 1:  # Droite
-            x = SCREEN_WIDTH + 30
-            y = random.randint(50, SCREEN_HEIGHT - 50)
+            x = self.settings.screen_width + 30
+            y = random.randint(50, round(self.settings.screen_height - 50))
         elif side == 2:  # Bas
-            x = random.randint(50, SCREEN_WIDTH - 50)
-            y = SCREEN_HEIGHT + 30
+            x = random.randint(50, round(self.settings.screen_width - 50))
+            y = self.settings.screen_height + 30
         else:  # Gauche
             x = -30
-            y = random.randint(50, SCREEN_HEIGHT - 50)
+            y = random.randint(50, round(self.settings.screen_height - 50))
         
-        return Enemy(x, y, enemy_type)
+        return Enemy(x, y, self.settings, enemy_type)
     
     def on_enemy_died(self, enemy):
         """Appelé quand un ennemi meurt"""

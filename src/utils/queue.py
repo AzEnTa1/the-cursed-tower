@@ -36,7 +36,7 @@ class WaveQueue:
     
     # Configuration des vagues : [basic, charger, shooter, suicide]
     WAVE_CONFIGS = [
-        [70, 20, 10, 0],    # Vague 1 : 70% basic, 20% charger, 10% shooter
+        [70, 20, 10, 0],    # Vague 1 : 70% basic, 20% charger, 10% shooter, 0% suicide
         [50, 30, 15, 5],    # Vague 2
         [40, 25, 20, 15],   # Vague 3
         [30, 25, 25, 20],   # Vague 4

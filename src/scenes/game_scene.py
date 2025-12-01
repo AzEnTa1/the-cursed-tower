@@ -1,7 +1,6 @@
 import pygame
 import random
 import math
-from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GREEN, SCENE_MENU
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.entities.enemys import Enemy
@@ -11,8 +10,8 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 
 class GameScene(BaseScene):
-    def __init__(self, game):
-        super().__init__(game)
+    def __init__(self, game, settings):
+        super().__init__(game, settings)
         self.player = None
         self.weapon = None
         self.wave_manager = None
@@ -26,9 +25,9 @@ class GameScene(BaseScene):
         
     def on_enter(self):
         """Initialisation du jeu"""
-        self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.weapon = Weapon(fire_rate=2)
-        self.wave_manager = WaveManager()
+        self.player = Player(self.settings.screen_width // 2, self.settings.screen_height // 2, self.settings)
+        self.weapon = Weapon(self.settings, fire_rate=2)
+        self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         
         # HUD sans radar
@@ -45,7 +44,7 @@ class GameScene(BaseScene):
         """Gère les événements du jeu"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                self.game.change_scene(SCENE_MENU)
+                self.game.change_scene(self.settings.SCENE_MENU)
         
         self.player.handle_event(event)
     
@@ -163,12 +162,12 @@ class GameScene(BaseScene):
         self.enemy_projectiles.clear()
         
         # Réinitialisation complète du wave manager
-        self.wave_manager = WaveManager()
+        self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         
         # Replace le joueur au centre
-        self.player.x = SCREEN_WIDTH // 2
-        self.player.y = SCREEN_HEIGHT // 2
+        self.player.x = self.settings.screen_width // 2
+        self.player.y = self.settings.screen_height // 2
         
         # Petit heal entre les étages
         self.player.health = min(self.player.health + 20, self.player.max_health)

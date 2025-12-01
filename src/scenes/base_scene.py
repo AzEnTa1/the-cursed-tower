@@ -3,8 +3,9 @@
 class BaseScene:
     """Classe de base pour toutes les scènes du jeu""" # Game et Menu
     
-    def __init__(self, game):
+    def __init__(self, game, settings):
         self.game = game
+        self.settings = settings
     
     def on_enter(self):
         """Appelée quand la scène devient active"""
@@ -24,4 +25,4 @@ class BaseScene:
     
     def draw(self, screen):
         """Dessine la scène"""
-        pass
+        

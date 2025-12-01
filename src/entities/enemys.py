@@ -1,13 +1,13 @@
 import pygame
 import math
-from config.settings import *
 from .projectiles import Projectile
 
 class Enemy:
-    def __init__(self, x, y, enemy_type="basic"):
+    def __init__(self, x, y, settings, enemy_type="basic"):
         self.x = x
         self.y = y
         self.type = enemy_type
+        self.settings = settings
         
         # Stats de base selon le type
         if enemy_type == "charger":  # Cours sur le joueur
@@ -47,7 +47,7 @@ class Enemy:
             self.health = 30
             self.max_health = 30
             self.damage = 10
-            self.color = RED
+            self.color = (255, 0, 0)
             self.radius = 20
             self.attack_range = 0
     
@@ -145,6 +145,7 @@ class Enemy:
                 dx * 7,
                 dy * 7,
                 self.damage,
+                self.settings,
                 color=(100, 200, 255)
             ))
     
@@ -183,5 +184,5 @@ class Enemy:
         
         # Vie actuelle
         health_width = (self.health / self.max_health) * bar_width
-        health_color = GREEN if self.health > self.max_health * 0.3 else RED
+        health_color = (0, 255, 0) if self.health > self.max_health * 0.3 else (255, 0, 0)
         pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))

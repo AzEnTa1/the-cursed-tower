@@ -1,17 +1,21 @@
 import pygame
 import sys
 from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE, SCENE_MENU, SCENE_GAME
+from config.settings import Settings
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
 
 class Game:
     def __init__(self):
+        #Initialisation des Paramettres
+        self.settings = Settings() 
+
         # Initialisation de Pygame
         pygame.init()
         
         # Création de la fenêtre
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
-        pygame.display.set_caption(TITLE)
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height), pygame.RESIZABLE)
+        pygame.display.set_caption(self.settings.title)
         
         # Horloge pour les FPS
         self.clock = pygame.time.Clock()
@@ -22,8 +26,8 @@ class Game:
         
         # Initialisation des scènes
         self.scenes = {
-            SCENE_MENU: MenuScene(self),
-            SCENE_GAME: GameScene(self)
+            SCENE_MENU: MenuScene(self, self.settings),
+            SCENE_GAME: GameScene(self, self.settings)
         }
         
         # Commencer par le menu
@@ -49,16 +53,20 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             
+            elif event.type == pygame.VIDEORESIZE:
+                if event.dict["h"]/3*4 > event.dict["w"] : #si plus haut que large(format 4:3)
+                    self.settings.screen_width, self.settings.screen_height = event.dict["w"], event.dict["w"]/4*3
+                else:
+                    self.settings.screen_width, self.settings.screen_height = event.dict["h"]/3*4, event.dict["h"]
+                print(self.settings.screen_width, self.settings.screen_height)
+
             # Passe les événements à la scène actuelle
             if self.current_scene:
                 self.current_scene.handle_event(event)
 
-            elif event.type == pygame.VIDEORESIZE:
+            
 
-                SCREEN_WIDTH, SCREEN_HEIGHT = event.dict["h"]/4*3, event.dict["h"]
 
-                if SCREEN_WIDTH > event.dict["w"] :
-                    SCREEN_WIDTH, SCREEN_HEIGHT = event.dict["w"], event.dict["w"]/3*4
     
     def update(self):
         """Mise à jour de la logique du jeu"""
@@ -74,6 +82,13 @@ class Game:
         if self.current_scene:
             self.current_scene.draw(self.screen)
         
+        #dessine la bordure pour vérifier le format plein écran
+        border_size = self.settings.screen_height*0.01
+        pygame.draw.rect(self.screen, (255, 255, 0), (0, 0, self.settings.screen_width, border_size))
+        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.screen_width - border_size, 0, border_size, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (255, 255, 0), (0, 0, border_size, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (255, 255, 0), (0,  self.settings.screen_height - border_size, self.settings.screen_width, border_size))
+
         # Met à jour l'affichage
         pygame.display.flip()
     
@@ -90,7 +105,7 @@ class Game:
             self.draw()
             
             # Contrôle des FPS
-            self.clock.tick(FPS)
+            self.clock.tick(self.settings.fps)
         
         # Nettoyage
         pygame.quit()
