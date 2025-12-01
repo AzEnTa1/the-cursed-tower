@@ -1,6 +1,5 @@
 import pygame
 import math
-import random
 from config.settings import *
 from .projectiles import Projectile
 
@@ -27,7 +26,7 @@ class Enemy:
             self.damage = 8
             self.color = (100, 100, 255)  # Bleu
             self.radius = 18
-            self.attack_range = 200  
+            self.attack_range = 300  
             self.shoot_cooldown = 0
             self.shoot_rate = 60 
             
