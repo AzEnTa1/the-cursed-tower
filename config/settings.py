@@ -4,6 +4,8 @@ class Settings:
         # CONFIGURATION GÉNÉRALE
         self.screen_width = 800
         self.screen_height = 600
+        self.x0 = 0
+        self.y0 = 0
         self.fps = 60
         self.title = "Tour Maudite"
 

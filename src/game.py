@@ -1,6 +1,5 @@
 import pygame
 import sys
-from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE, SCENE_MENU, SCENE_GAME
 from config.settings import Settings
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
@@ -26,12 +25,12 @@ class Game:
         
         # Initialisation des scènes
         self.scenes = {
-            SCENE_MENU: MenuScene(self, self.settings),
-            SCENE_GAME: GameScene(self, self.settings)
+            self.settings.SCENE_MENU: MenuScene(self, self.settings),
+            self.settings.SCENE_GAME: GameScene(self, self.settings)
         }
         
         # Commencer par le menu
-        self.change_scene(SCENE_MENU)
+        self.change_scene(self.settings.SCENE_MENU)
     
     def change_scene(self, scene_name):
         """Change la scène actuelle"""
@@ -56,8 +55,17 @@ class Game:
             elif event.type == pygame.VIDEORESIZE:
                 if event.dict["h"]/3*4 > event.dict["w"] : #si plus haut que large(format 4:3)
                     self.settings.screen_width, self.settings.screen_height = event.dict["w"], event.dict["w"]/4*3
+                    self.settings.y0 = (event.dict["h"] - self.settings.screen_height)//2
+                    self.settings.x0 = 0
+                    
+                    print(1)
                 else:
                     self.settings.screen_width, self.settings.screen_height = event.dict["h"]/3*4, event.dict["h"]
+                    self.settings.y0 = 0
+                    self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
+                    
+                    print(2)
+                
                 print(self.settings.screen_width, self.settings.screen_height)
 
             # Passe les événements à la scène actuelle
@@ -80,10 +88,10 @@ class Game:
         
         #dessine la bordure pour vérifier le format plein écran
         border_size = self.settings.screen_height*0.01
-        pygame.draw.rect(self.screen, (255, 255, 0), (0, 0, self.settings.screen_width, border_size))
-        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.screen_width - border_size, 0, border_size, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (255, 255, 0), (0, 0, border_size, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (255, 255, 0), (0,  self.settings.screen_height - border_size, self.settings.screen_width, border_size))
+        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0, self.settings.y0, self.settings.screen_width, border_size))
+        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.screen_width - border_size + self.settings.x0, self.settings.y0, border_size, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0, self.settings.y0, border_size, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0,  self.settings.screen_height - border_size + self.settings.y0, self.settings.screen_width, border_size))
 
         # Met à jour l'affichage
         pygame.display.flip()
