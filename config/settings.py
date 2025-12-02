@@ -1,5 +1,4 @@
-
-
+# config/settings.py
 class Settings:
     def __init__(self):
         # CONFIGURATION GÉNÉRALE
@@ -23,6 +22,7 @@ class Settings:
         # SCÈNES
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
+
 # CONFIGURATION GÉNÉRALE
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

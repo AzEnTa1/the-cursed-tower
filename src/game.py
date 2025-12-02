@@ -63,10 +63,6 @@ class Game:
             # Passe les événements à la scène actuelle
             if self.current_scene:
                 self.current_scene.handle_event(event)
-
-            
-
-
     
     def update(self):
         """Mise à jour de la logique du jeu"""
