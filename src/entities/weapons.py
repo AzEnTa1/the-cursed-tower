@@ -10,7 +10,7 @@ class Weapon:
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)
         self.stationary_time = 0
-        self.stationary_threshold = 30  # 0.5 secondes à 60 FPS
+        self.stationary_threshold = 25  # 0.5 secondes à 60 FPS
         self.settings = settings
     
     def update(self, player, current_time, projectiles, enemies):
