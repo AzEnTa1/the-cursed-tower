@@ -1,11 +1,12 @@
 import pygame
-from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GREEN, RED, BLUE, YELLOW
+#from config.settings import WHITE, GREEN, RED, BLUE, YELLOW
 
 class HUD:
-    def __init__(self, player, wave_manager, weapon):
+    def __init__(self, player, wave_manager, weapon, settings):
         self.player = player
         self.wave_manager = wave_manager
         self.weapon = weapon
+        self.settings = settings
         
         # Polices
         self.title_font = pygame.font.Font(None, 36)
@@ -38,18 +39,18 @@ class HUD:
         
         # Couleur qui change selon la vie
         if health_percent > 0.6:
-            color = GREEN
+            color = self.settings.GREEN
         elif health_percent > 0.3:
-            color = YELLOW
+            color = self.settings.YELLOW
         else:
-            color = RED
+            color = self.settings.RED
             
         pygame.draw.rect(screen, color, (bar_x, bar_y, health_width, self.bar_height))
         
         # Texte
         health_text = self.normal_font.render(
             f"VIE: {self.player.health}/{self.player.max_health}", 
-            True, WHITE
+            True, self.settings.WHITE
         )
         screen.blit(health_text, (bar_x, bar_y + self.bar_height + 2))
         
@@ -60,32 +61,32 @@ class HUD:
         # Étage et vague
         floor_text = self.title_font.render(
             f"ÉTAGE {wave_info['floor']}", 
-            True, WHITE
+            True, self.settings.WHITE
         )
-        screen.blit(floor_text, (SCREEN_WIDTH - 150, self.margin))
+        screen.blit(floor_text, (self.settings.screen_width - 150, self.margin))
         
         wave_text = self.normal_font.render(
             f"VAGUE {wave_info['current_wave']}/3", 
-            True, WHITE
+            True, self.settings.WHITE
         )
-        screen.blit(wave_text, (SCREEN_WIDTH - 150, self.margin + 35))
+        screen.blit(wave_text, (self.settings.screen_height - 150, self.margin + 35))
         
         # État de la vague avec couleur
         state_text = ""
-        state_color = WHITE
+        state_color = self.settings.WHITE
         
         if wave_info['state'] == "between_waves" and self.wave_manager.wave_queue.has_more_waves():
             state_text = "PRÉPAREZ-VOUS"
-            state_color = YELLOW
+            state_color = self.settings.YELLOW
         elif wave_info['state'] == "in_wave":
             state_text = f"ENNEMIS: {wave_info['enemies_remaining']}"
-            state_color = RED
+            state_color = self.settings.RED
         elif wave_info['state'] == "all_cleared":
             state_text = "ÉTAGE TERMINÉ!"
-            state_color = GREEN
+            state_color = self.settings.GREEN
             
         state_display = self.normal_font.render(state_text, True, state_color)
-        screen.blit(state_display, (SCREEN_WIDTH - 150, self.margin + 60))
+        screen.blit(state_display, (self.settings.screen_width - 150, self.margin + 60))
         
     def draw_aim_indicator(self, screen):
         """Indicateur de visée avec barre de progression"""
@@ -100,39 +101,39 @@ class HUD:
         
         # Progression
         aim_width = int(self.bar_width * stationary_percent)
-        pygame.draw.rect(screen, BLUE, (aim_x, aim_y, aim_width, self.bar_height))
+        pygame.draw.rect(screen, self.settings.BLUE, (aim_x, aim_y, aim_width, self.bar_height))
         
         # Texte
         if stationary_percent >= 1.0:
-            aim_text = self.normal_font.render("PRÊT À TIRER!", True, GREEN)
+            aim_text = self.normal_font.render("PRÊT À TIRER!", True, self.settings.GREEN)
         else:
-            aim_text = self.normal_font.render(f"VISÉE: {int(stationary_percent * 100)}%", True, WHITE)
+            aim_text = self.normal_font.render(f"VISÉE: {int(stationary_percent * 100)}%", True, self.settings.WHITE)
             
         screen.blit(aim_text, (aim_x, aim_y + self.bar_height + 2))
         
     def draw_floor_info(self, screen):
         """Informations générales en bas"""
-        info_y = SCREEN_HEIGHT - 40
+        info_y = self.settings.screen_height - 40
         
         # Score
-        score_text = self.small_font.render(f"Score: {self.player.score}", True, WHITE)
+        score_text = self.small_font.render(f"Score: {self.player.score}", True, self.settings.WHITE)
         screen.blit(score_text, (self.margin, info_y))
         
         # Instructions
-        instructions = self.small_font.render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, WHITE)
-        screen.blit(instructions, (SCREEN_WIDTH // 2 - instructions.get_width() // 2, info_y))
+        instructions = self.small_font.render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, self.settings.WHITE)
+        screen.blit(instructions, (self.settings.screen_width // 2 - instructions.get_width() // 2, info_y))
         
     def draw_quick_stats(self, screen):
         """Statistiques rapides en haut à droite"""
-        stats_x = SCREEN_WIDTH - 200
+        stats_x = self.settings.screen_width - 200
         stats_y = 100
         
         # Score actuel
-        score_text = self.normal_font.render(f"SCORE: {self.player.score}", True, YELLOW)
+        score_text = self.normal_font.render(f"SCORE: {self.player.score}", True, self.settings.YELLOW)
         screen.blit(score_text, (stats_x, stats_y))
         
         # Ennemis tués dans cette vague (approximatif)
         enemies_killed = max(0, self.wave_manager.enemies_remaining - len(self.wave_manager.current_wave_enemies))
         if self.wave_manager.wave_number > 0:
-            kills_text = self.small_font.render(f"Tués cette vague: {enemies_killed}", True, WHITE)
+            kills_text = self.small_font.render(f"Tués cette vague: {enemies_killed}", True, self.settings.WHITE)
             screen.blit(kills_text, (stats_x, stats_y + 30))

@@ -31,7 +31,7 @@ class GameScene(BaseScene):
         self.wave_manager.setup_floor(self.current_floor)
         
         # HUD sans radar
-        self.hud = HUD(self.player, self.wave_manager, self.weapon)
+        self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
         self.transition = TransitionEffect()
         
         self.projectiles = []
