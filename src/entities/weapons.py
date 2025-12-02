@@ -15,7 +15,7 @@ class Weapon:
     
     def update(self, player, current_time, projectiles, enemies):
         """Gère le tir automatique uniquement quand immobile"""
-        # CORRECTION : Détection d'immobilité basée sur last_dx et last_dy
+       # Détection d'immobilité basée sur last_dx et last_dy
         is_stationary = (player.last_dx == 0 and player.last_dy == 0)
         
         if is_stationary:
