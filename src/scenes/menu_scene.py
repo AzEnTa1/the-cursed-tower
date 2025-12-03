@@ -13,7 +13,7 @@ class MenuScene(BaseScene):
         self.font = pygame.font.Font(None, 48) # Police par défaut, taille 48
         self.small_font = pygame.font.Font(None, 24) # ---, taille 24
         # Rectangle pour le bouton Jouer (x, y, width, height)
-        self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.play_button = pygame.Rect(self.settings.x0 + self.settings.screen_width//2 - 100, self.settings.y0 + self.settings.screen_height//2, 200, 50)
         print("Menu Scene")
     
     def handle_event(self, event):

@@ -63,17 +63,17 @@ class WaveManager:
         
         side = random.randint(0, 3)
         if side == 0:  # Haut
-            x = random.randint(50, round(self.settings.screen_width - 50))
-            y = -30
+            x = random.randint(50, round(self.settings.x0 + self.settings.screen_width - 50))
+            y = -30 + self.settings.y0
         elif side == 1:  # Droite
-            x = self.settings.screen_width + 30
-            y = random.randint(50, round(self.settings.screen_height - 50))
+            x = self.settings.screen_width + 30 + self.settings.x0
+            y = random.randint(50, round(self.settings.y0 + self.settings.screen_height - 50))
         elif side == 2:  # Bas
-            x = random.randint(50, round(self.settings.screen_width - 50))
-            y = self.settings.screen_height + 30
+            x = random.randint(50, round(self.settings.x0 + self.settings.screen_width - 50))
+            y = self.settings.screen_height + 30 + self.settings.y0
         else:  # Gauche
-            x = -30
-            y = random.randint(50, round(self.settings.screen_height - 50))
+            x = -30 + self.settings.x0
+            y = random.randint(50, round(self.settings.y0 + self.settings.screen_height - 50))
         
         return Enemy(x, y, self.settings, enemy_type)
     

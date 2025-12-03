@@ -3,7 +3,6 @@ import random
 import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
-from src.entities.enemys import Enemy
 from src.systems.wave_manager import WaveManager
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
@@ -25,7 +24,7 @@ class GameScene(BaseScene):
         
     def on_enter(self):
         """Initialisation du jeu"""
-        self.player = Player(self.settings.screen_width // 2, self.settings.screen_height // 2, self.settings)
+        self.player = Player(self.settings.x0 + self.settings.screen_width//2, self.settings.y0 + self.settings.screen_height//2, self.settings)
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
@@ -166,8 +165,8 @@ class GameScene(BaseScene):
         self.wave_manager.setup_floor(self.current_floor)
         
         # Replace le joueur au centre
-        self.player.x = self.settings.screen_width // 2
-        self.player.y = self.settings.screen_height // 2
+        self.player.x = self.settings.x0 + self.settings.screen_width // 2
+        self.player.y = self.settings.y0 + self.settings.screen_height // 2
         
         # Petit heal entre les étages
         self.player.health = min(self.player.health + 20, self.player.max_health)

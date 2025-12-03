@@ -92,8 +92,8 @@ class Player:
         self.y += dy
         
         # Garde le joueur dans l'écran
-        self.x = max(self.size, min(self.x, self.settings.screen_width - self.size))
-        self.y = max(self.size, min(self.y, self.settings.screen_height - self.size))
+        self.x = max(self.settings.x0 + self.size, min(self.x, self.settings.x0 + self.settings.screen_width - self.size))
+        self.y = max(self.settings.y0 + self.size, min(self.y, self.settings.y0 + self.settings.screen_height - self.size))
     
     def take_damage(self, amount):
         """Inflige des dégâts au joueur"""

@@ -86,12 +86,13 @@ class Game:
         if self.current_scene:
             self.current_scene.draw(self.screen)
         
+        
         #dessine la bordure pour vérifier le format plein écran
         border_size = self.settings.screen_height*0.01
-        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0, self.settings.y0, self.settings.screen_width, border_size))
-        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.screen_width - border_size + self.settings.x0, self.settings.y0, border_size, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0, self.settings.y0, border_size, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (255, 255, 0), (self.settings.x0,  self.settings.screen_height - border_size + self.settings.y0, self.settings.screen_width, border_size))
+        pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.x0, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.screen_width, self.settings.y0))
+        pygame.draw.rect(self.screen, (240, 230, 180), (self.settings.x0 + self.settings.screen_width, 0, self.settings.x0, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (240, 230, 180), (0, self.settings.y0 + self.settings.screen_height, self.settings.screen_width, self.settings.y0))
 
         # Met à jour l'affichage
         pygame.display.flip()

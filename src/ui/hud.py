@@ -29,8 +29,8 @@ class HUD:
     def draw_health_bar(self, screen):
         """Barre de vie avec pourcentage"""
         # Fond de la barre
-        bar_x = self.margin
-        bar_y = self.margin
+        bar_x = self.margin + self.settings.x0
+        bar_y = self.margin + self.settings.y0
         pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, self.bar_width, self.bar_height))
         
         # Vie actuelle
@@ -63,13 +63,13 @@ class HUD:
             f"ÉTAGE {wave_info['floor']}", 
             True, self.settings.WHITE
         )
-        screen.blit(floor_text, (self.settings.screen_width - 150, self.margin))
+        screen.blit(floor_text, (self.settings.screen_width - 150 + self.settings.x0, self.margin))
         
         wave_text = self.normal_font.render(
             f"VAGUE {wave_info['current_wave']}/3", 
             True, self.settings.WHITE
         )
-        screen.blit(wave_text, (self.settings.screen_height - 150, self.margin + 35))
+        screen.blit(wave_text, (self.settings.screen_height - 150 + self.settings.y0, self.margin + 35))
         
         # État de la vague avec couleur
         state_text = ""
@@ -86,15 +86,15 @@ class HUD:
             state_color = self.settings.GREEN
             
         state_display = self.normal_font.render(state_text, True, state_color)
-        screen.blit(state_display, (self.settings.screen_width - 150, self.margin + 60))
+        screen.blit(state_display, (self.settings.screen_width - 150 + self.settings.x0, self.margin + 60))
         
     def draw_aim_indicator(self, screen):
         """Indicateur de visée avec barre de progression"""
         stationary_percent = min(self.weapon.stationary_time / self.weapon.stationary_threshold, 1.0)
         
         # Barre de progression de visée
-        aim_x = self.margin
-        aim_y = 80  # Sous la barre de vie
+        aim_x = self.margin + self.settings.x0
+        aim_y = 80 + self.settings.y0 # Sous la barre de vie
         
         # Fond
         pygame.draw.rect(screen, (50, 50, 50), (aim_x, aim_y, self.bar_width, self.bar_height))
@@ -113,20 +113,20 @@ class HUD:
         
     def draw_floor_info(self, screen):
         """Informations générales en bas"""
-        info_y = self.settings.screen_height - 40
+        info_y = self.settings.screen_height - 40 + self.settings.y0
         
         # Score
         score_text = self.small_font.render(f"Score: {self.player.score}", True, self.settings.WHITE)
-        screen.blit(score_text, (self.margin, info_y))
+        screen.blit(score_text, (self.margin + self.settings.x0, info_y))
         
         # Instructions
         instructions = self.small_font.render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, self.settings.WHITE)
-        screen.blit(instructions, (self.settings.screen_width // 2 - instructions.get_width() // 2, info_y))
+        screen.blit(instructions, (self.settings.screen_width // 2 - instructions.get_width() // 2 + self.settings.x0, info_y))
         
     def draw_quick_stats(self, screen):
         """Statistiques rapides en haut à droite"""
-        stats_x = self.settings.screen_width - 200
-        stats_y = 100
+        stats_x = self.settings.screen_width - 200 + self.settings.x0
+        stats_y = 100 + self.settings.y0
         
         # Score actuel
         score_text = self.normal_font.render(f"SCORE: {self.player.score}", True, self.settings.YELLOW)
