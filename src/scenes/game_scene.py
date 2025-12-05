@@ -1,12 +1,13 @@
 import pygame
-import random
 import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.systems.wave_manager import WaveManager
+from src.perks.perks_manager import PerkManager
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
+from .gameover_scene import GameOver_Scene
 
 class GameScene(BaseScene):
     def __init__(self, game, settings):
@@ -28,7 +29,8 @@ class GameScene(BaseScene):
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
-        
+        self.perks_manager = PerkManager(self.settings)
+
         # HUD sans radar
         self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
         self.transition = TransitionEffect()
