@@ -31,6 +31,7 @@ class GameScene(BaseScene):
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         self.perks_manager = PerkManager(self.settings)
+        self.game_paused = False
 
         # HUD sans radar
         self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
@@ -46,18 +47,28 @@ class GameScene(BaseScene):
         """Gère les événements du jeu"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                self.game.change_scene(self.settings.SCENE_MENU)
+                self.game_paused = not self.game_paused
+            elif event.key == pygame.K_p:
+                self.game_paused = not self.game_paused
                 #faire un menu pause -> inspiré de perk
         if self.game_paused:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.game.change_scene(self.settings.SCENE_MENU)
+                #if self.play_button.collidepoint(event.pos):
             #faire les actions associé
             #a éparer en 2 si pas de solutuion:
             #-pause     -perk
             pass
         else:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pass
             self.player.handle_event(event)
     
     def update(self):
         """Met à jour le jeu"""
+        if self.game_paused:
+            return#le jeu est en pause
         self.current_time = pygame.time.get_ticks()
         
         # Met à jour l'effet de transition
@@ -205,3 +216,11 @@ class GameScene(BaseScene):
         
         # Dessine l'effet de transition
         self.transition.draw(screen)
+        
+        # Dessine le menu de pause
+        if self.game_paused:
+            menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+            pygame.draw.rect(screen, (255, 255, 0, 0), menu_rect)
+            txt = pygame.font.Font(None, 24).render("cliquer pour quiter echap pour retourner au jeu", True, (0, 0, 0))
+            rnd_rect = txt.get_rect(center=menu_rect.center)
+            screen.blit(txt, rnd_rect)
