@@ -1,5 +1,4 @@
 import pygame
-#from config.settings import WHITE, GREEN, RED, BLUE, YELLOW
 
 class HUD:
     def __init__(self, player, wave_manager, weapon, settings):

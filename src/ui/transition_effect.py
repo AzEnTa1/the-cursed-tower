@@ -1,13 +1,14 @@
 import pygame
-from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
+#from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
 
 class TransitionEffect:
-    def __init__(self):
+    def __init__(self, settings):
         self.alpha = 0
         self.duration = 1000  # 1 seconde
         self.current_time = 0
         self.active = False
         self.callback = None
+        self.settings = settings
         
     def start(self, callback=None):
         """Démarre l'effet de transition"""
@@ -39,7 +40,7 @@ class TransitionEffect:
     def draw(self, screen):
         """Dessine l'effet de superposition"""
         if self.active and self.alpha > 0:
-            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay = pygame.Surface((self.settings.screen_width + self.settings.x0, self.settings.screen_height + self.settings.y0), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, self.alpha))
             screen.blit(overlay, (0, 0))
             

@@ -22,6 +22,7 @@ class GameScene(BaseScene):
         self.enemies = []
         self.current_time = 0
         self.current_floor = 1
+        self.game_paused = False
         
     def on_enter(self):
         """Initialisation du jeu"""
@@ -33,7 +34,7 @@ class GameScene(BaseScene):
 
         # HUD sans radar
         self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
-        self.transition = TransitionEffect()
+        self.transition = TransitionEffect(self.settings)
         
         self.projectiles = []
         self.enemy_projectiles = []
@@ -46,8 +47,14 @@ class GameScene(BaseScene):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.game.change_scene(self.settings.SCENE_MENU)
-        
-        self.player.handle_event(event)
+                #faire un menu pause -> inspiré de perk
+        if self.game_paused:
+            #faire les actions associé
+            #a éparer en 2 si pas de solutuion:
+            #-pause     -perk
+            pass
+        else:
+            self.player.handle_event(event)
     
     def update(self):
         """Met à jour le jeu"""
