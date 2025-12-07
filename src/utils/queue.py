@@ -34,24 +34,24 @@ class Queue:
 class WaveQueue:
     """Génère des vagues d'ennemis de plus en plus difficiles"""
     
-    # Configuration des vagues : [basic, charger, shooter, suicide]
+    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide]
     WAVE_CONFIGS = [
-        [70, 20, 10, 0],    # Vague 1 : 70% basic, 20% charger, 10% shooter, 0% suicide
-        [50, 30, 15, 5],    # Vague 2
-        [40, 25, 20, 15],   # Vague 3
-        [30, 25, 25, 20],   # Vague 4
-        [20, 25, 30, 25],   # Vague 5
-    ]
+    [40, 20, 20, 5, 15],     # Vague 1 
+    [30, 25, 20, 10, 15],    # Vague 2 
+    [20, 25, 25, 15, 15],    # Vague 3 
+]
     
-    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'suicide']
+    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide']
     
-    def __init__(self):
+    def __init__(self, settings=None):
         self.waves = Queue()
         self.wave_count = 0
         self.enemies_per_wave = 8  # Commence avec 8 ennemis par vague
+        self.settings = settings
     
     def generate_wave(self, floor_number):
         """Génère une vague d'ennemis basée sur l'étage actuel"""
+        # S'assurer qu'on ne dépasse pas le nombre de configurations
         wave_config_index = min(floor_number - 1, len(self.WAVE_CONFIGS) - 1)
         weights = self.WAVE_CONFIGS[wave_config_index]
         
@@ -60,8 +60,9 @@ class WaveQueue:
         
         enemies = []
         for _ in range(enemy_count):
+            # CORRECTION : population doit avoir 5 éléments pour 5 types d'ennemis
             enemy_type_index = choices(
-                population=[0, 1, 2, 3],
+                population=[0, 1, 2, 3, 4],  # ✅ CORRIGÉ : 0-4 pour 5 types
                 weights=weights,
                 k=1
             )[0]
