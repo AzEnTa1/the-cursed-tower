@@ -1,7 +1,7 @@
 import pygame
 from .base_scene import BaseScene # Importation de la classe de base des scènes (jsp si on a le droit car on a théoriquement pas vu en cour)
 
-class GameOver_Scene(BaseScene):
+class GameOverScene(BaseScene):
     def __init__(self, game, settings):
         super().__init__(game, settings)
         self.font = None
