@@ -28,9 +28,8 @@ class BaseScene:
 
     def resize(self, height, width):
         """appelé lorsque la fenêtre change de taille"""
-        #height et width sont les vraie dimension de la fenetre
-        #!= self.settings.screen_height/width qui sont les dimension de la fenetre interne 4:3
+        #height et width sont les vraie dimension de la fenetre != self.settings.screen_height/width
+        #qui sont les dimension de la fenetre interne 4:3
         #permet de diminué les calcules fait en permanance pour dessiner les élements
-        #|-> surement inutils
         pass
         
