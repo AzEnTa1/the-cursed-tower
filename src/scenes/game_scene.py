@@ -1,4 +1,3 @@
-# src/scenes/game_scene.py 
 import pygame
 import math
 from src.entities.player import Player
@@ -127,16 +126,10 @@ class GameScene(BaseScene):
             self.transition.start(self.next_floor)
 
         # Met à jour les ennemis
-        # Met à jour les ennemis
         for enemy in self.enemies[:]:
-            # DEBUG: affiche le type exact
-            print(f"DEBUG GAME_SCENE: enemy.type = '{enemy.type}'")
-            
-            if enemy.type in ["shooter", "destructeur"]: 
-                print(f"DEBUG GAME_SCENE: {enemy.type} reçoit projectiles")
+            if enemy.type == "shooter":
                 enemy.update(self.player, self.enemy_projectiles)
             else:
-                print(f"DEBUG GAME_SCENE: {enemy.type} reçoit None")
                 enemy.update(self.player, None)
             
             # Collisions projectiles joueur → ennemis
@@ -146,11 +139,7 @@ class GameScene(BaseScene):
                     if enemy.take_damage(projectile.damage):
                         self.enemies.remove(enemy)
                         self.wave_manager.on_enemy_died(enemy)
-                        # Score différent selon le type d'ennemi
-                        if enemy.type == "destructeur":
-                            self.player.add_score(50)  # Gros score pour destructeur
-                        else:
-                            self.player.add_score(10)  # Score normal
+                        self.player.add_score(10)  # Score pour ennemi tué
                     if projectile in self.projectiles:
                         self.projectiles.remove(projectile)
                     break

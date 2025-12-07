@@ -1,4 +1,3 @@
-# src/game.py 
 import pygame
 import sys
 from config.settings import Settings
