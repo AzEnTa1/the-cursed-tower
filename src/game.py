@@ -58,13 +58,12 @@ class Game:
                     self.settings.y0 = (event.dict["h"] - self.settings.screen_height)//2
                     self.settings.x0 = 0
                     
-                    print(1)
                 else:
                     self.settings.screen_width, self.settings.screen_height = event.dict["h"]/3*4, event.dict["h"]
                     self.settings.y0 = 0
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
                     
-                    print(2)
+
                 self.current_scene.resize(event.dict["w"], event.dict["h"])
                 print(self.settings.screen_width, self.settings.screen_height)
 
@@ -87,8 +86,7 @@ class Game:
             self.current_scene.draw(self.screen)
         
         
-        #dessine la bordure pour vérifier le format plein écran
-        border_size = self.settings.screen_height*0.01
+        #dessine la bordure pour limiter l'écran en 4:3
         pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.x0, self.settings.screen_height))
         pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.screen_width, self.settings.y0))
         pygame.draw.rect(self.screen, (240, 230, 180), (self.settings.x0 + self.settings.screen_width, 0, self.settings.x0, self.settings.screen_height))

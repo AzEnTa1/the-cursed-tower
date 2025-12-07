@@ -3,11 +3,12 @@ import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.systems.wave_manager import WaveManager
-from src.perks.perks_manager import PerkManager
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
-from .gameover_scene import GameOver_Scene
+from .sub_scenes.perks_sub_scene import PerksSubScene
+from .sub_scenes.pause_sub_scene import PauseSubScene
+
 
 class GameScene(BaseScene):
     def __init__(self, game, settings):
@@ -22,7 +23,6 @@ class GameScene(BaseScene):
         self.enemies = []
         self.current_time = 0
         self.current_floor = 1
-        self.game_paused = False
         
     def on_enter(self):
         """Initialisation du jeu"""
@@ -30,8 +30,10 @@ class GameScene(BaseScene):
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
-        self.perks_manager = PerkManager(self.settings)
+        self.perks_sub_scene = PerksSubScene(self.game, self.settings)
+        self.pause_sub_scene = PauseSubScene(self.game, self.settings)
         self.game_paused = False
+        self.current_sub_scene = None
 
         # HUD sans radar
         self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
@@ -47,18 +49,20 @@ class GameScene(BaseScene):
         """Gère les événements du jeu"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                #met le jeu en pause
                 self.game_paused = not self.game_paused
+                self.current_sub_scene = self.pause_sub_scene
+                self.current_sub_scene.on_enter()
+                
             elif event.key == pygame.K_p:
+                #temp affiche les perks a déplacer quand fuat mettre les perks
+                self.current_sub_scene = self.perks_sub_scene
                 self.game_paused = not self.game_paused
-                #faire un menu pause -> inspiré de perk
+                self.current_sub_scene.on_enter()
+
+
         if self.game_paused:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.game.change_scene(self.settings.SCENE_MENU)
-                #if self.play_button.collidepoint(event.pos):
-            #faire les actions associé
-            #a éparer en 2 si pas de solutuion:
-            #-pause     -perk
-            pass
+            self.current_sub_scene.handle_event(event)
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -68,6 +72,7 @@ class GameScene(BaseScene):
     def update(self):
         """Met à jour le jeu"""
         if self.game_paused:
+            self.current_sub_scene.update()
             return#le jeu est en pause
         self.current_time = pygame.time.get_ticks()
         
@@ -219,8 +224,5 @@ class GameScene(BaseScene):
         
         # Dessine le menu de pause
         if self.game_paused:
-            menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
-            pygame.draw.rect(screen, (255, 255, 0, 0), menu_rect)
-            txt = pygame.font.Font(None, 24).render("cliquer pour quiter echap pour retourner au jeu", True, (0, 0, 0))
-            rnd_rect = txt.get_rect(center=menu_rect.center)
-            screen.blit(txt, rnd_rect)
+            self.current_sub_scene.draw(screen)
+            

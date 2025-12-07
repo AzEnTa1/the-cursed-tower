@@ -1,7 +1,7 @@
 import random
 from .perks import Perks
 
-class PerkManager:
+class PerksManager:
     def __init__(self, settings):
         self.settings = settings
         self.perks = Perks(settings)

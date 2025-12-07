@@ -1,10 +1,12 @@
-class PerksSubScene:
-    """Classe de base pour toutes les sub-scènes du jeu""" # Perks et Pause
+import pygame
+from .base_sub_scene import BaseSubScene
+from src.perks.perks_manager import PerksManager
+
+class PerksSubScene(BaseSubScene):
+    """gere le menu de selection d'améliorations""" # Perks et Pause
     
     def __init__(self, game, settings):
-        self.game = game
-        self.settings = settings
-    
+        super().__init__(game, settings)
     def on_enter(self):
         """Appelée quand la scène devient active"""
         pass
@@ -23,6 +25,11 @@ class PerksSubScene:
     
     def draw(self, screen):
         """Dessine la scène"""
+        menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        pygame.draw.rect(screen, (0, 255, 0, 0), menu_rect)
+        txt = pygame.font.Font(None, 24).render("affichage perks", True, (0, 0, 0))
+        rnd_rect = txt.get_rect(center=menu_rect.center)
+        screen.blit(txt, rnd_rect)
 
     def resize(self, height, width):
         """appelé lorsque la fenêtre change de taille"""
