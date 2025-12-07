@@ -1,15 +1,16 @@
 import pygame
 from .base_sub_scene import BaseSubScene
+from src.ui.pause_ui import PauseUI
 
 class PauseSubScene(BaseSubScene):
     """gere le menu pause""" # Perks et Pause
     
-    def __init__(self, game, settings):
-        super().__init__(game, settings)
+    def __init__(self, game_scene, settings):
+        super().__init__(game_scene, settings)
     
     def on_enter(self):
         """Appelée quand la scène devient active"""
-        pass
+        self.ui = PauseUI(self.settings)
     
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -18,8 +19,9 @@ class PauseSubScene(BaseSubScene):
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-                self.game.change_scene(self.settings.SCENE_MENU)
                 #if self.play_button.collidepoint(event.pos):
+                self.game.change_scene(self.settings.SCENE_MENU)
+                
     
     def update(self):
         """Met à jour la logique de la scène"""
@@ -27,11 +29,7 @@ class PauseSubScene(BaseSubScene):
     
     def draw(self, screen):
         """Dessine la scène"""
-        menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
-        pygame.draw.rect(screen, (255, 255, 0, 0), menu_rect)
-        txt = pygame.font.Font(None, 24).render("cliquer pour quiter echap pour retourner au jeu", True, (0, 0, 0))
-        rnd_rect = txt.get_rect(center=menu_rect.center)
-        screen.blit(txt, rnd_rect)
+        self.ui.draw(screen)
 
     def resize(self, height, width):
         """appelé lorsque la fenêtre change de taille"""

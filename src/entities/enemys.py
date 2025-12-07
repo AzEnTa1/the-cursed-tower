@@ -157,7 +157,7 @@ class Enemy:
         dy = player.y - self.y
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
         
-        print(f"DEBUG: destructeur distance={distance:.1f}, attack_range={self.attack_range}, cooldown={self.shoot_cooldown}")
+        #print(f"DEBUG: destructeur distance={distance:.1f}, attack_range={self.attack_range}, cooldown={self.shoot_cooldown}")
         
         if self.shoot_cooldown <= 0 and distance <= self.attack_range:
             print("DEBUG: destructeur tire!")

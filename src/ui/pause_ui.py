@@ -1,8 +1,14 @@
 import pygame
 
-class pause_ui:
-    def __init__(self, player, wave_manager, weapon, settings):
-        self.player = player
-        self.wave_manager = wave_manager
-        self.weapon = weapon
+class PauseUI:
+    def __init__(self, settings):
+
         self.settings = settings
+
+    def draw(self, screen):
+        """dessine l'interface complète"""
+        menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        pygame.draw.rect(screen, (100, 100, 100, 0), menu_rect)
+        txt = pygame.font.Font(None, 24).render("cliquer pour quiter echap pour retourner au jeu", True, (0, 0, 0))
+        rnd_rect = txt.get_rect(center=menu_rect.center)
+        screen.blit(txt, rnd_rect)

@@ -31,8 +31,8 @@ class GameScene(BaseScene):
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
-        self.perks_sub_scene = PerksSubScene(self.game, self.settings)
-        self.pause_sub_scene = PauseSubScene(self.game, self.settings)
+        self.perks_sub_scene = PerksSubScene(self, self.settings, self.player)
+        self.pause_sub_scene = PauseSubScene(self, self.settings)
         self.game_paused = False
         self.current_sub_scene = None
 
@@ -135,13 +135,13 @@ class GameScene(BaseScene):
         # Met à jour les ennemis
         for enemy in self.enemies[:]:
             # DEBUG: affiche le type exact
-            print(f"DEBUG GAME_SCENE: enemy.type = '{enemy.type}'")
+            #print(f"DEBUG GAME_SCENE: enemy.type = '{enemy.type}'")
             
             if enemy.type in ["shooter", "destructeur"]: 
-                print(f"DEBUG GAME_SCENE: {enemy.type} reçoit projectiles")
+                #print(f"DEBUG GAME_SCENE: {enemy.type} reçoit projectiles")
                 enemy.update(self.player, self.enemy_projectiles)
             else:
-                print(f"DEBUG GAME_SCENE: {enemy.type} reçoit None")
+                #print(f"DEBUG GAME_SCENE: {enemy.type} reçoit None")
                 enemy.update(self.player, None)
             
             # Collisions projectiles joueur → ennemis
@@ -236,4 +236,8 @@ class GameScene(BaseScene):
         # Dessine le menu de pause
         if self.game_paused:
             self.current_sub_scene.draw(screen)
+
+    def resize(self, height, width):
+        if self.game_paused:
+            self.current_sub_scene.resize(height, width)
             
