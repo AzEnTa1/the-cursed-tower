@@ -8,9 +8,9 @@ class PerksUI:
 
     def draw(self, screen):
         """dessine l'interface complète"""
-        self.draw_background(screen)
+        self._draw_background(screen)
 
-    def draw_background(self, screen):
+    def _draw_background(self, screen):
         """dessine le background"""
         pygame.draw.rect(screen, (255, 255, 0, 0), self.menu_rect)
         txt = pygame.font.Font(None, 24).render("affichage perks", True, (0, 0, 0))

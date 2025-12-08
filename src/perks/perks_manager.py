@@ -2,16 +2,17 @@ import random
 from .perks import Perks
 
 class PerksManager:
-    def __init__(self, settings):
+    def __init__(self, settings, player, weapon):
         self.settings = settings
-        self.perks = Perks(settings)
+        self.perks = Perks(settings, player, weapon)
         
         self.perks_dict = {"player_speed":self.perks.player_speed,
                            "player_attack_speed":self.perks.player_attack_speed,
                            "player_attack_damage":self.perks.player_attack_damage,
-                           "player_health":self.perks.player_health,
+                           "player_max_health":self.perks.player_max_health,
                            "player_size_up":self.perks.player_size_up,
-                           "player_size_down":self.perks.player_size_down
+                           "player_size_down":self.perks.player_size_down,
+                           "player_regen":self.perks.player_regen
                            }
 
     def get_perks(self)->list:
@@ -21,5 +22,5 @@ class PerksManager:
             perks.append(random.choice(list(self.perks_dict.keys())))
         return perks
     
-    def choose_perk(self, perk, player):
-        self.perks_dict[perk](player)
+    def choose_perk(self, perk):
+        self.perks_dict[perk]()

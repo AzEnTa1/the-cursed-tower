@@ -215,7 +215,7 @@ class Enemy:
                 self.damage,  # Dégâts individuels
                 self.settings,
                 color=(255, 150, 150),  # Rose clair
-                radius=7
+                #radius=7       #n'existe pas
             ))
     
     def take_damage(self, amount):

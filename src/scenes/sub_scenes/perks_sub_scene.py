@@ -7,14 +7,15 @@ from src.ui.perks_ui import PerksUI
 class PerksSubScene(BaseSubScene):
     """gere le menu de selection d'améliorations""" # Perks et Pause
     
-    def __init__(self, game_scene, settings, player):
+    def __init__(self, game_scene, settings, player, weapon):
         super().__init__(game_scene, settings)
         self.player = player
+        self.weapon = weapon
 
     def on_enter(self):
         """Appelée quand la scène devient active"""
         self.ui = PerksUI(self.settings)
-        self.perks_manager = PerksManager(self.settings)
+        self.perks_manager = PerksManager(self.settings, self.player, self.weapon)
         self.perks_rect = (
             pygame.Rect(self.settings.x0, self.settings.y0 + self.settings.screen_height//2 - 25, self.settings.screen_width//3, 50),
             pygame.Rect(self.settings.x0 + self.settings.screen_width//3, self.settings.y0 + self.settings.screen_height//2 - 25, self.settings.screen_width//3, 50),
@@ -30,13 +31,13 @@ class PerksSubScene(BaseSubScene):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.perks_rect[0].collidepoint(event.pos):
-                self.perks_manager.choose_perk(self.perks_list[0], self.player)
+                self.perks_manager.choose_perk(self.perks_list[0])
                 self.on_exit()
             elif self.perks_rect[1].collidepoint(event.pos):
-                self.perks_manager.choose_perk(self.perks_list[1], self.player)
+                self.perks_manager.choose_perk(self.perks_list[1])
                 self.on_exit()
             elif self.perks_rect[2].collidepoint(event.pos):
-                self.perks_manager.choose_perk(self.perks_list[2], self.player)
+                self.perks_manager.choose_perk(self.perks_list[2])
                 self.on_exit()
     
     def update(self):
