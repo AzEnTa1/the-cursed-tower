@@ -12,7 +12,8 @@ class PerksManager:
                            "player_max_health":self.perks.player_max_health,
                            "player_size_up":self.perks.player_size_up,
                            "player_size_down":self.perks.player_size_down,
-                           "player_regen":self.perks.player_regen
+                           "player_regen":self.perks.player_regen,
+                           "projectil_speed":self.perks.projectile_speed
                            }
 
     def get_perks(self)->list:
