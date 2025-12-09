@@ -95,7 +95,7 @@ class WaveManager:
         
         if not self.wave_queue.has_more_waves():
             self.state = "all_cleared"
-            print("Toutes les vagues de l'étage sont terminées!")
+            print("les vague sont terminées")
     
     def is_wave_in_progress(self):
         """Vérifie si une vague est en cours"""

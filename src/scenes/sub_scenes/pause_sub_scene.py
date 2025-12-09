@@ -1,15 +1,16 @@
-# src/scene/base_scene.py
+import pygame
+from .base_sub_scene import BaseSubScene
+from src.ui.pause_ui import PauseUI
 
-class BaseScene:
-    """Classe de base pour toutes les scènes du jeu""" # Game et Menu
+class PauseSubScene(BaseSubScene):
+    """gere le menu pause""" # Perks et Pause
     
-    def __init__(self, game, settings):
-        self.game = game
-        self.settings = settings
+    def __init__(self, game_scene, settings):
+        super().__init__(game_scene, settings)
     
     def on_enter(self):
         """Appelée quand la scène devient active"""
-        pass
+        self.ui = PauseUI(self.settings)
     
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -17,7 +18,10 @@ class BaseScene:
     
     def handle_event(self, event):
         """Gère les événements pygame"""
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+                #if self.play_button.collidepoint(event.pos):
+                self.game.change_scene(self.settings.SCENE_MENU)
+                
     
     def update(self):
         """Met à jour la logique de la scène"""
@@ -25,6 +29,7 @@ class BaseScene:
     
     def draw(self, screen):
         """Dessine la scène"""
+        self.ui.draw(screen)
 
     def resize(self, height, width):
         """appelé lorsque la fenêtre change de taille"""

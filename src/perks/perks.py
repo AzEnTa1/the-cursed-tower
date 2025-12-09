@@ -1,5 +1,4 @@
 class Perks:
-
     def __init__(self, settings, player, weapon):
         self.settings = settings
         self.player = player

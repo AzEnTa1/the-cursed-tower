@@ -1,10 +1,8 @@
-# src/scene/base_scene.py
-
-class BaseScene:
-    """Classe de base pour toutes les scènes du jeu""" # Game et Menu
+class BaseSubScene:
+    """Classe de base pour toutes les sub-scènes du jeu""" # Perks et Pause
     
-    def __init__(self, game, settings):
-        self.game = game
+    def __init__(self, game_scene, settings):
+        self.game_scene = game_scene
         self.settings = settings
     
     def on_enter(self):

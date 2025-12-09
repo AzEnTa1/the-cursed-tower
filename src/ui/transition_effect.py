@@ -40,9 +40,9 @@ class TransitionEffect:
     def draw(self, screen):
         """Dessine l'effet de superposition"""
         if self.active and self.alpha > 0:
-            overlay = pygame.Surface((self.settings.screen_width + self.settings.x0, self.settings.screen_height + self.settings.y0), pygame.SRCALPHA)
+            overlay = pygame.Surface((self.settings.screen_width, self.settings.screen_height), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, self.alpha))
-            screen.blit(overlay, (0, 0))
+            screen.blit(overlay, (self.settings.x0, self.settings.y0))
             
     def is_active(self):
         return self.active
