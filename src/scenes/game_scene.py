@@ -56,7 +56,7 @@ class GameScene(BaseScene):
                 self.current_sub_scene.on_enter()
                 
             elif event.key == pygame.K_p:
-                #temp affiche les perks a déplacer quand fuat mettre les perks
+                #temp affiche les perks a déplacer quand faut mettre les perks
                 self.current_sub_scene = self.perks_sub_scene
                 self.game_paused = not self.game_paused
                 self.current_sub_scene.on_enter()
@@ -74,7 +74,11 @@ class GameScene(BaseScene):
         """Met à jour le jeu"""
         if self.game_paused:
             self.current_sub_scene.update()
-            return#le jeu est en pause
+            return #le jeu est en pause
+        
+        
+
+        
         self.current_time = pygame.time.get_ticks()
         
         # Met à jour l'effet de transition
@@ -156,6 +160,12 @@ class GameScene(BaseScene):
                             self.player.add_score(50)  # Gros score pour destructeur
                         else:
                             self.player.add_score(10)  # Score normal
+
+                        #met les perks si le score et divisible par 200
+                        if self.player.score % 200 == 0:
+                            self.game_paused = True
+                            self.current_sub_scene = self.perks_sub_scene
+                            self.current_sub_scene.on_enter()
                     if projectile in self.projectiles:
                         self.projectiles.remove(projectile)
                     break
@@ -185,6 +195,12 @@ class GameScene(BaseScene):
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
                     self.player.add_score(15)  # Score bonus pour suicide
+
+                    #met les perks si le score et divisible par 200
+                    if self.player.score % 200 == 0:
+                        self.game_paused = True
+                        self.current_sub_scene = self.perks_sub_scene
+                        self.current_sub_scene.on_enter()
                 elif distance_to_player < 50 and not enemy.is_exploding:
                     enemy.is_exploding = True
                     enemy.explosion_timer = 15

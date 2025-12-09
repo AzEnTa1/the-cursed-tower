@@ -41,12 +41,21 @@ class MenuScene(BaseScene):
 
         
         # Titre
-        title_text = self.font.render("TOUR MAUDITE", True, (0, 0, 0))
-        title_rect = title_text.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//3))
-        screen.blit(title_text, title_rect)
+        rect = pygame.Rect(self.settings.screen_width*0.1 + self.settings.x0, self.settings.screen_height*0.2 + self.settings.y0, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
+        pygame.draw.rect(screen, (255, 255, 0), rect)
         
+        title_text = self.font.render("TOUR MAUDITE", True, (0, 0, 0))
+        title_rect = title_text.get_rect(center=rect.center)
+        screen.blit(title_text, title_rect)
+
         # Bouton Jouer
         pygame.draw.rect(screen, (0, 255, 0), self.play_button)
         play_text = self.small_font.render("JOUER (ou ENTER)", True, (0, 0, 0))
         play_rect = play_text.get_rect(center=self.play_button.center)
         screen.blit(play_text, play_rect)
+
+    def resize(self, height, width):
+        """appelé lorsque la fenêtre change de taille"""
+        self.play_button = pygame.Rect(self.settings.x0 + self.settings.screen_width//2 - 100, self.settings.y0 + self.settings.screen_height//2, 200, 50)
+        
+        
