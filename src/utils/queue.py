@@ -1,3 +1,4 @@
+# src/utils/queue.py
 from random import choices
 
 class Queue:
