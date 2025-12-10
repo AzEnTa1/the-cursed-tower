@@ -7,8 +7,8 @@ from src.ui.perks_ui import PerksUI
 class PerksSubScene(BaseSubScene):
     """gere le menu de selection d'améliorations""" # Perks et Pause
     
-    def __init__(self, game_scene, settings, player, weapon):
-        super().__init__(game_scene, settings)
+    def __init__(self, game, game_scene, settings, player, weapon):
+        super().__init__(game, game_scene, settings)
         self.player = player
         self.weapon = weapon
 

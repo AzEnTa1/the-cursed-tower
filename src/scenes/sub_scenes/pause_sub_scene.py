@@ -5,8 +5,8 @@ from src.ui.pause_ui import PauseUI
 class PauseSubScene(BaseSubScene):
     """gere le menu pause""" # Perks et Pause
     
-    def __init__(self, game_scene, settings):
-        super().__init__(game_scene, settings)
+    def __init__(self, game, game_scene, settings):
+        super().__init__(game, game_scene, settings)
     
     def on_enter(self):
         """Appelée quand la scène devient active"""

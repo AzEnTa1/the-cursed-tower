@@ -33,8 +33,8 @@ class GameScene(BaseScene):
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
-        self.perks_sub_scene = PerksSubScene(self, self.settings, self.player, self.weapon)
-        self.pause_sub_scene = PauseSubScene(self, self.settings)
+        self.perks_sub_scene = PerksSubScene(self.game, self, self.settings, self.player, self.weapon)
+        self.pause_sub_scene = PauseSubScene(self.game, self, self.settings)
         self.game_paused = False
         self.current_sub_scene = None
 
