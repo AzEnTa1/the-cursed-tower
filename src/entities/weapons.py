@@ -1,3 +1,4 @@
+# src/entities/weapons.py
 import pygame
 import math
 from .projectiles import Projectile

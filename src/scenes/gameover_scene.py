@@ -1,3 +1,4 @@
+# src/scenes/gameover_scene.py 
 import pygame
 from .base_scene import BaseScene # Importation de la classe de base des scènes (jsp si on a le droit car on a théoriquement pas vu en cour)
 

@@ -1,3 +1,4 @@
+# src/perks/perks_manager.py
 import random
 from .perks import Perks
 

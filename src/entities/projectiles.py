@@ -1,3 +1,4 @@
+# src/entities/projectiles.py
 import pygame
 
 class Projectile:
