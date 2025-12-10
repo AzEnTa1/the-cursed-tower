@@ -5,6 +5,7 @@ from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.entities.spawn_effect import SpawnEffect
 from src.systems.wave_manager import WaveManager
+from src.systems.game_stats import GameStats
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
@@ -17,6 +18,7 @@ class GameScene(BaseScene):
         self.player = None
         self.weapon = None
         self.wave_manager = None
+        self.game_stats = None
         self.hud = None
         self.transition = None
         self.projectiles = []
@@ -25,6 +27,7 @@ class GameScene(BaseScene):
         self.current_time = 0
         self.current_floor = 1
         self.spawn_effects = []
+        
         
     def on_enter(self):
         """Initialisation du jeu"""
@@ -36,6 +39,7 @@ class GameScene(BaseScene):
         self.weapon = Weapon(self.settings, fire_rate=2, damage=15, projectile_speed=20) 
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
+        self.game_stats = GameStats(self.game, self.settings)
         
         # sous scènes
         self.perks_sub_scene = PerksSubScene(self.game, self, self.settings, self.player, self.weapon)
@@ -142,7 +146,9 @@ class GameScene(BaseScene):
             # Collisions projectiles ennemis → joueur
             distance = ((projectile.x - self.player.x)**2 + (projectile.y - self.player.y)**2)**0.5
             if distance < self.player.size + projectile.radius:
-                self.player.take_damage(projectile.damage)
+                if self.player.take_damage(projectile.damage):
+                    self.game_stats.on_death(self.player)
+                    self.game.change_scene(self.settings.SCENE_GAME_OVER)
                 self.enemy_projectiles.remove(projectile)
 
         # maj des ennemis
@@ -182,7 +188,9 @@ class GameScene(BaseScene):
             if enemy.type != "shooter" and enemy.type != "destructeur":
                 distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
                 if distance < enemy.radius + self.player.size:
-                    self.player.take_damage(enemy.damage)
+                    if self.player.take_damage(enemy.damage):
+                        self.game_stats.on_death(self.player)
+                        self.game.change_scene(self.settings.SCENE_GAME_OVER)
                 
                     # Recul
                     dx = enemy.x - self.player.x
@@ -197,7 +205,9 @@ class GameScene(BaseScene):
                 
                 if enemy.is_exploding and enemy.explosion_timer <= 0:
                     if distance_to_player < enemy.explosion_radius:
-                        self.player.take_damage(enemy.damage)
+                        if self.player.take_damage(enemy.damage):
+                            self.game_stats.on_death(self.player)
+                            self.game.change_scene(self.settings.SCENE_GAME_OVER)
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
                     self.player.add_score(15)

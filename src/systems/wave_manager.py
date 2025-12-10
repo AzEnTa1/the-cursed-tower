@@ -61,10 +61,10 @@ class WaveManager:
         margin = 100
         center_margin = 200
         
-        left = self.settings.x0 + margin
-        right = self.settings.x0 + self.settings.screen_width - margin
-        top = self.settings.y0 + margin
-        bottom = self.settings.y0 + self.settings.screen_height - margin
+        left = round(self.settings.x0 + margin)
+        right = round(self.settings.x0 + self.settings.screen_width - margin)
+        top = round(self.settings.y0 + margin)
+        bottom = round(self.settings.y0 + self.settings.screen_height - margin)
         
         center_x = self.settings.x0 + self.settings.screen_width // 2
         center_y = self.settings.y0 + self.settings.screen_height // 2

@@ -31,8 +31,9 @@ class Game:
             self.settings.SCENE_GAME: GameScene(self, self.settings),
             self.settings.SCENE_GAME_OVER: GameOverScene(self, self.settings)
         }
-        #données contenu dans les scènes différentes (si nécessaire)
-        self.previous_scene_data = None # tuple or None
+        #données contenu dans GameOver pour GameOverScene
+        self.game_stats = None
+
         # Commencer par le menu
         self.change_scene(self.settings.SCENE_MENU)
     
@@ -47,7 +48,11 @@ class Game:
             self.current_scene = self.scenes[scene_name]
             
             # Appel on_enter sur la nouvelle scène
-            self.current_scene.on_enter()
+            if scene_name == self.settings.SCENE_GAME_OVER:
+                self.current_scene.on_enter(self.game_stats)
+            else:
+                self.current_scene.on_enter()
+            
     
     def handle_events(self):
         """Gestion des événements"""
@@ -58,11 +63,11 @@ class Game:
             
             elif event.type == pygame.VIDEORESIZE:
                 if event.dict["h"]/3*4 > event.dict["w"] : #si plus haut que large(format 4:3)
-                    self.settings.screen_width, self.settings.screen_height = event.dict["w"], event.dict["w"]/4*3
+                    self.settings.screen_width, self.settings.screen_height = event.dict["w"], round(event.dict["w"]/4*3)
                     self.settings.y0 = (event.dict["h"] - self.settings.screen_height)//2
                     self.settings.x0 = 0
                 else:
-                    self.settings.screen_width, self.settings.screen_height = event.dict["h"]/3*4, event.dict["h"]
+                    self.settings.screen_width, self.settings.screen_height = round(event.dict["h"]/3*4), event.dict["h"]
                     self.settings.y0 = 0
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
                 self.current_scene.resize(event.dict["w"], event.dict["h"])
@@ -87,10 +92,10 @@ class Game:
             self.current_scene.draw(self.screen)
     
         #dessine la bordure pour limiter l'écran en 4:3
-        pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.x0, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (240, 230, 180), (0, 0, self.settings.screen_width, self.settings.y0))
-        pygame.draw.rect(self.screen, (240, 230, 180), (self.settings.x0 + self.settings.screen_width, 0, self.settings.x0, self.settings.screen_height))
-        pygame.draw.rect(self.screen, (240, 230, 180), (0, self.settings.y0 + self.settings.screen_height, self.settings.screen_width, self.settings.y0))
+        pygame.draw.rect(self.screen, (50, 50, 50), (0, 0, self.settings.x0, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (50, 50, 50), (0, 0, self.settings.screen_width, self.settings.y0))
+        pygame.draw.rect(self.screen, (50, 50, 50), (self.settings.x0 + self.settings.screen_width, 0, self.settings.x0, self.settings.screen_height))
+        pygame.draw.rect(self.screen, (50, 50, 50), (0, self.settings.y0 + self.settings.screen_height, self.settings.screen_width, self.settings.y0))
 
         # Met à jour l'affichage
         pygame.display.flip()
