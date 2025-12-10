@@ -1,3 +1,4 @@
+# src/scenes/game_scene.py
 import pygame
 import math
 from src.entities.player import Player

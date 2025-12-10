@@ -1,3 +1,4 @@
+# src/perks/perks.py
 class Perks:
     def __init__(self, settings, player, weapon):
         self.settings = settings
@@ -37,3 +38,5 @@ class Perks:
     def projectile_speed(self):
         self.weapon.projectile_speed = round(self.weapon.projectile_speed * 1.1)
         print("projectile speed")
+
+    

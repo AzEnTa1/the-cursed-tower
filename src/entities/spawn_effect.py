@@ -1,4 +1,4 @@
-# spawn_effect.py
+# src/entities/spawn_effect.py
 import pygame
 import math
 
@@ -29,13 +29,13 @@ class SpawnEffect:
         
         # Rayon qui grandit puis rétrécit à la fin
         if self.timer < self.duration * 0.8:
-            self.current_radius = (self.max_radius * self.timer / (self.duration * 0.8))
+            self.current_radius = (self.max_radius * self.timer / (self.duration * 0.8)) # grandit
         else:
             # Rétrécit à la fin
             remaining = self.duration - self.timer
             self.current_radius = self.max_radius * (remaining / (self.duration * 0.2))
         
-        # Effet de pulsation
+        # Effet de pulsation, comme ds enemy "destructeur"
         pulse = math.sin(self.pulse_phase) * 3
         self.current_radius = max(5, self.current_radius + pulse)
         
@@ -73,26 +73,21 @@ class SpawnEffect:
         # Code couleur selon le type
         if self.enemy_type == "charger":
             color = (255, 255, 0)  # Jaune
-            symbol = "⚡"
         elif self.enemy_type == "shooter":
             color = (100, 150, 255)  # Bleu
-            symbol = "🎯"
         elif self.enemy_type == "suicide":
             color = (255, 0, 255)  # Magenta
-            symbol = "💥"
         elif self.enemy_type == "destructeur":
             color = (255, 200, 200)  # Rose
-            symbol = "☄️"
         else:
             color = (255, 100, 100)  # Rouge
-            symbol = "⚔️"
         
         # Texte avec ombre pour meilleure lisibilité
-        text_surface = font.render(symbol, True, color)
+        text_surface = font.render("", True, color)
         text_rect = text_surface.get_rect(center=(int(self.x), int(self.y)))
         
         # Ombre du texte
-        shadow_surface = font.render(symbol, True, (0, 0, 0))
+        shadow_surface = font.render("", True, (0, 0, 0))
         screen.blit(shadow_surface, (text_rect.x + 1, text_rect.y + 1))
         screen.blit(text_surface, text_rect)
     

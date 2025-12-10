@@ -1,3 +1,4 @@
+# Main.py
 import pygame
 from src import Game
 
