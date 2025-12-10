@@ -99,7 +99,6 @@ class WaveManager:
         if enemy in self.current_wave_enemies:
             self.current_wave_enemies.remove(enemy)
             self.enemies_remaining -= 1
-            
             if self.enemies_remaining <= 0:
                 self.on_wave_cleared()
     

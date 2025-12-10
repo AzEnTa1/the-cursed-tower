@@ -4,6 +4,7 @@ import sys
 from config.settings import Settings
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
+from src.scenes.gameover_scene import GameOverScene
 
 class Game:
     def __init__(self):
@@ -27,9 +28,11 @@ class Game:
         # Initialisation des scènes
         self.scenes = {
             self.settings.SCENE_MENU: MenuScene(self, self.settings),
-            self.settings.SCENE_GAME: GameScene(self, self.settings)
+            self.settings.SCENE_GAME: GameScene(self, self.settings),
+            self.settings.SCENE_GAME_OVER: GameOverScene(self, self.settings)
         }
-        
+        #données contenu dans les scènes différentes (si nécessaire)
+        self.previous_scene_data = None # tuple or None
         # Commencer par le menu
         self.change_scene(self.settings.SCENE_MENU)
     
