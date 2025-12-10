@@ -1,15 +1,14 @@
-# src/scenes/game_scene.py 
 import pygame
 import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
+from src.entities.spawn_effect import SpawnEffect
 from src.systems.wave_manager import WaveManager
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
-
 
 class GameScene(BaseScene):
     def __init__(self, game, settings):
@@ -24,10 +23,13 @@ class GameScene(BaseScene):
         self.enemies = []
         self.current_time = 0
         self.current_floor = 1
+        self.spawn_effects = []  # NOUVEAU : effets d'apparition
         
     def on_enter(self):
         """Initialisation du jeu"""
-        self.player = Player(self.settings.x0 + self.settings.screen_width//2, self.settings.y0 + self.settings.screen_height//2, self.settings)
+        self.player = Player(self.settings.x0 + self.settings.screen_width//2, 
+                           self.settings.y0 + self.settings.screen_height//2, 
+                           self.settings)
         self.weapon = Weapon(self.settings, fire_rate=2)
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
@@ -43,6 +45,7 @@ class GameScene(BaseScene):
         self.projectiles = []
         self.enemy_projectiles = []
         self.enemies = []
+        self.spawn_effects = []
         
         print(f"Début de l'étage {self.current_floor}")
 
@@ -50,17 +53,22 @@ class GameScene(BaseScene):
         """Gère les événements du jeu"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                #met le jeu en pause
+                # Met le jeu en pause
                 self.game_paused = not self.game_paused
-                self.current_sub_scene = self.pause_sub_scene
-                self.current_sub_scene.on_enter()
+                if self.game_paused:
+                    self.current_sub_scene = self.pause_sub_scene
+                    self.current_sub_scene.on_enter()
+                else:
+                    self.current_sub_scene = None
                 
             elif event.key == pygame.K_p:
-                #temp affiche les perks a déplacer quand faut mettre les perks
-                self.current_sub_scene = self.perks_sub_scene
+                # Affiche les perks (temporaire)
                 self.game_paused = not self.game_paused
-                self.current_sub_scene.on_enter()
-
+                if self.game_paused:
+                    self.current_sub_scene = self.perks_sub_scene
+                    self.current_sub_scene.on_enter()
+                else:
+                    self.current_sub_scene = None
 
         if self.game_paused:
             self.current_sub_scene.handle_event(event)
@@ -74,33 +82,53 @@ class GameScene(BaseScene):
         """Met à jour le jeu"""
         if self.game_paused:
             self.current_sub_scene.update()
-            return #le jeu est en pause
-        
-        
-
+            return
         
         self.current_time = pygame.time.get_ticks()
+        dt = self.game.clock.get_time()
         
         # Met à jour l'effet de transition
-        dt = self.game.clock.get_time()
         self.transition.update(dt)
         if self.transition.is_active():
-            return  # Pause le jeu pendant la transition
+            return
         
-        # Met à jour le joueur
+        # 1. METTRE À JOUR LES EFFETS D'APPARITION
+        for effect in self.spawn_effects[:]:
+            effect.update(dt)
+            if effect.is_complete():
+                # Crée l'ennemi après l'effet
+                enemy = self.wave_manager.create_enemy_from_effect(effect)
+                self.enemies.append(enemy)
+                self.spawn_effects.remove(effect)
+                print(f"✓ Ennemi {enemy.type} apparu")
+        
+        # 2. DÉMARRER UNE NOUVELLE VAGUE SI NÉCESSAIRE
+        if (self.wave_manager.is_between_waves() and 
+            self.wave_manager.wave_queue.has_more_waves() and
+            len(self.enemies) == 0 and 
+            len(self.spawn_effects) == 0):
+            
+            spawn_positions = self.wave_manager.start_next_wave()
+            if spawn_positions:
+                for x, y, enemy_type in spawn_positions:
+                    effect = SpawnEffect(x, y, self.settings, enemy_type)
+                    self.spawn_effects.append(effect)
+                print(f"🔄 Vague {self.wave_manager.wave_number} en approche...")
+
+        # 3. METTRE À JOUR LE JOUEUR
         self.player.update()
         
-        # Met à jour l'arme et les tirs
+        # 4. METTRE À JOUR L'ARME ET LES TIRS
         self.weapon.update_direction(self.player.last_dx, self.player.last_dy)
         self.weapon.update(self.player, self.current_time, self.projectiles, self.enemies)
         
-        # Met à jour les projectiles du joueur
+        # 5. METTRE À JOUR LES PROJECTILES DU JOUEUR
         for projectile in self.projectiles[:]:
             projectile.update()
             if not projectile.is_alive():
                 self.projectiles.remove(projectile)
         
-        # Met à jour les projectiles ennemis
+        # 6. METTRE À JOUR LES PROJECTILES ENNEMIS
         for projectile in self.enemy_projectiles[:]:
             projectile.update()
             if not projectile.is_alive():
@@ -110,42 +138,19 @@ class GameScene(BaseScene):
             distance = ((projectile.x - self.player.x)**2 + (projectile.y - self.player.y)**2)**0.5
             if distance < self.player.size + projectile.radius:
                 if self.player.take_damage(projectile.damage):
-                    print("Game Over!")
+                    print("💀 Game Over!")
                 if projectile in self.enemy_projectiles:
                     self.enemy_projectiles.remove(projectile)
 
-        # Met à jour le wave manager
+        # 7. METTRE À JOUR LE WAVE MANAGER
         self.wave_manager.update(self.current_time)
         
-        # Gestion des nouvelles vagues
-        if (self.wave_manager.is_between_waves() and 
-            self.wave_manager.wave_queue.has_more_waves() and
-            len(self.enemies) == 0):
-            
-            new_enemies = self.wave_manager.start_next_wave()
-            if new_enemies:
-                self.enemies.extend(new_enemies)
-                print(f"Vague {self.wave_manager.wave_number} commencée avec {len(new_enemies)} ennemis!")
-
-        # Vérifie si l'étage est terminé
-        if (self.wave_manager.are_all_waves_cleared() and 
-            len(self.enemies) == 0 and 
-            len(self.enemy_projectiles) == 0):
-            
-            print(f"Étage {self.current_floor} terminé! Passage à l'étage suivant...")
-            self.transition.start(self.next_floor)
-
-        # Met à jour les ennemis
-        # Met à jour les ennemis
+        # 8. METTRE À JOUR LES ENNEMIS
         for enemy in self.enemies[:]:
-            # DEBUG: affiche le type exact
-            #print(f"DEBUG GAME_SCENE: enemy.type = '{enemy.type}'")
-            
-            if enemy.type in ["shooter", "destructeur"]: 
-                #print(f"DEBUG GAME_SCENE: {enemy.type} reçoit projectiles")
+            # Passe la bonne liste de projectiles selon le type
+            if enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
             else:
-                #print(f"DEBUG GAME_SCENE: {enemy.type} reçoit None")
                 enemy.update(self.player, None)
             
             # Collisions projectiles joueur → ennemis
@@ -157,25 +162,26 @@ class GameScene(BaseScene):
                         self.wave_manager.on_enemy_died(enemy)
                         # Score différent selon le type d'ennemi
                         if enemy.type == "destructeur":
-                            self.player.add_score(50)  # Gros score pour destructeur
+                            self.player.add_score(50)
                         else:
-                            self.player.add_score(10)  # Score normal
+                            self.player.add_score(10)
 
-                        #met les perks si le score et divisible par 200
+                        # Affiche les perks si le score est divisible par 200
                         if self.player.score % 200 == 0:
                             self.game_paused = True
                             self.current_sub_scene = self.perks_sub_scene
                             self.current_sub_scene.on_enter()
+                    
                     if projectile in self.projectiles:
                         self.projectiles.remove(projectile)
                     break
             
             # Collisions ennemis mêlée → joueur
-            if enemy.type != "shooter":
+            if enemy.type != "shooter" and enemy.type != "destructeur":
                 distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
                 if distance < enemy.radius + self.player.size:
                     if self.player.take_damage(enemy.damage):
-                        print("Game Over!")
+                        print("💀 Game Over!")
                     
                     # Recul
                     dx = enemy.x - self.player.x
@@ -191,12 +197,12 @@ class GameScene(BaseScene):
                 if enemy.is_exploding and enemy.explosion_timer <= 0:
                     if distance_to_player < enemy.explosion_radius:
                         if self.player.take_damage(enemy.damage):
-                            print("Game Over! (Explosion suicide)")
+                            print("💥 Game Over! (Explosion suicide)")
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
-                    self.player.add_score(15)  # Score bonus pour suicide
+                    self.player.add_score(15)
 
-                    #met les perks si le score et divisible par 200
+                    # Affiche les perks si le score est divisible par 200
                     if self.player.score % 200 == 0:
                         self.game_paused = True
                         self.current_sub_scene = self.perks_sub_scene
@@ -204,6 +210,15 @@ class GameScene(BaseScene):
                 elif distance_to_player < 50 and not enemy.is_exploding:
                     enemy.is_exploding = True
                     enemy.explosion_timer = 15
+        
+        # 9. VÉRIFIER SI L'ÉTAGE EST TERMINÉ
+        if (self.wave_manager.are_all_waves_cleared() and 
+            len(self.enemies) == 0 and 
+            len(self.enemy_projectiles) == 0 and
+            len(self.spawn_effects) == 0):
+            
+            print(f"🏁 Étage {self.current_floor} terminé! Passage à l'étage suivant...")
+            self.transition.start(self.next_floor)
     
     def next_floor(self):
         """Passe à l'étage suivant (appelé après la transition)"""
@@ -211,6 +226,7 @@ class GameScene(BaseScene):
         self.enemies.clear()
         self.projectiles.clear()
         self.enemy_projectiles.clear()
+        self.spawn_effects.clear()
         
         # Réinitialisation complète du wave manager
         self.wave_manager = WaveManager(self.settings)
@@ -223,12 +239,16 @@ class GameScene(BaseScene):
         # Petit heal entre les étages
         self.player.health = min(self.player.health + 20, self.player.max_health)
         
-        print(f"Nouvel étage: {self.current_floor}")
+        print(f"🆕 Nouvel étage: {self.current_floor}")
     
     def draw(self, screen):
         """Dessine le jeu"""
         # Fond noir
         screen.fill((0, 0, 0))
+        
+        # Dessine les effets d'apparition EN PREMIER (au fond)
+        for effect in self.spawn_effects:
+            effect.draw(screen)
         
         # Dessine les projectiles
         for projectile in self.projectiles:
@@ -256,4 +276,3 @@ class GameScene(BaseScene):
     def resize(self, height, width):
         if self.game_paused:
             self.current_sub_scene.resize(height, width)
-            

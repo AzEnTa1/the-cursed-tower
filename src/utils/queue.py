@@ -61,12 +61,11 @@ class WaveQueue:
         
         enemies = []
         for _ in range(enemy_count):
-            # CORRECTION : population doit avoir 5 éléments pour 5 types d'ennemis
             enemy_type_index = choices(
-                population=[0, 1, 2, 3, 4],  # ✅ CORRIGÉ : 0-4 pour 5 types
+                population=range(len(self.ENEMY_TYPES)), 
                 weights=weights,
                 k=1
-            )[0]
+                )[0]
             enemies.append(self.ENEMY_TYPES[enemy_type_index])
         
         return enemies
