@@ -72,7 +72,7 @@ class Enemy:
     
     def update(self, player, projectiles=None):
         """Met à jour l'ennemi selon son type"""
-        print(self.type)
+        #print(self.type)
         if self.type == "charger":
             self._update_charger(player) 
         elif self.type == "shooter":
@@ -186,7 +186,7 @@ class Enemy:
             self.is_in_salve = True
             self.salve_count = 0
             self.salve_timer = 0
-            print("DEBUG: Destructeur commence une salve!")
+            #print("DEBUG: Destructeur commence une salve!")
         
         # Si en train de tirer une salve
         if self.is_in_salve:
@@ -197,13 +197,13 @@ class Enemy:
                 self.shoot_destructeur_salve(dx, dy, projectiles)
                 self.salve_count += 1
                 self.salve_timer = 0
-                print(f"DEBUG: Destructeur tire projectile {self.salve_count}/{self.max_salve_shots}")
+                #print(f"DEBUG: Destructeur tire projectile {self.salve_count}/{self.max_salve_shots}")
             
             # Fin de la salve
             if self.salve_count >= self.max_salve_shots:
                 self.is_in_salve = False
                 self.shoot_cooldown = self.shoot_rate
-                print("DEBUG: Destructeur fin de salve, rechargement...")
+                #print("DEBUG: Destructeur fin de salve, rechargement...")
     
     def shoot(self, dx, dy, projectiles):
         """Tire un projectile vers le joueur"""

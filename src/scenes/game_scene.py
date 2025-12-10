@@ -139,6 +139,7 @@ class GameScene(BaseScene):
             if distance < self.player.size + projectile.radius:
                 if self.player.take_damage(projectile.damage):
                     print("💀 Game Over!")
+                    self.game.change_scene(self.settings.SCENE_GAME_OVER)
                 if projectile in self.enemy_projectiles:
                     self.enemy_projectiles.remove(projectile)
 
@@ -182,6 +183,7 @@ class GameScene(BaseScene):
                 if distance < enemy.radius + self.player.size:
                     if self.player.take_damage(enemy.damage):
                         print("💀 Game Over!")
+                        self.game.change_scene(self.settings.SCENE_GAME_OVER)
                     
                     # Recul
                     dx = enemy.x - self.player.x
@@ -198,6 +200,7 @@ class GameScene(BaseScene):
                     if distance_to_player < enemy.explosion_radius:
                         if self.player.take_damage(enemy.damage):
                             print("💥 Game Over! (Explosion suicide)")
+                            self.game.change_scene(self.settings.SCENE_GAME_OVER)
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
                     self.player.add_score(15)

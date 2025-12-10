@@ -14,7 +14,7 @@ class Settings:
         self.WHITE = (255, 255, 255)
         self.RED = (255, 0, 0)
         self.GREEN = (0, 255, 0)
-        self.BLUE =  (255, 0, 0)
+        self.BLUE =  (0, 0, 255)
         self.YELLOW = (255, 255, 0)
 
         # JOUEUR
@@ -24,6 +24,7 @@ class Settings:
         # SCÈNES
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
+        self.SCENE_GAME_OVER = "game_over"
 
 # CONFIGURATION GÉNÉRALE
 SCREEN_WIDTH = 800

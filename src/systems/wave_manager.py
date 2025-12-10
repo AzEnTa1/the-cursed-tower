@@ -142,7 +142,7 @@ class WaveManager:
             self.enemies_remaining -= 1
             
             # Vérifie si la vague est terminée
-            if self.enemies_remaining <= 0 and len(self.spawn_effects) == 0:
+            if self.enemies_remaining <= 0: #and len(self.spawn_effects) == 0:
                 self.on_wave_cleared()
     
     def on_wave_cleared(self):
