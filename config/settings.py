@@ -24,3 +24,4 @@ class Settings:
         # SCÈNES
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
+        self.SCENE_GAME_OVER = "game_over"
