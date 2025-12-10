@@ -3,14 +3,14 @@ import math
 from .projectiles import Projectile
 
 class Weapon:
-    def __init__(self, settings, fire_rate=0.5, damage=100000, projectile_speed=20):
+    def __init__(self, settings, fire_rate=0.5, damage=15, projectile_speed=20):
         self.fire_rate = fire_rate  # tirs par seconde
         self.damage = damage
         self.projectile_speed = projectile_speed
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)
         self.stationary_time = 0
-        self.stationary_threshold = 25  # 0.5 secondes à 60 FPS
+        self.stationary_threshold = 25  # Pas 0.5 secondes mais j'ai la flemme de calculer, ca fait 25*30/0.5 
         self.settings = settings
     
     def update(self, player, current_time, projectiles, enemies):

@@ -108,18 +108,3 @@ class Player:
         """Dessine le joueur avec sa barre de vie"""
         # Corps du joueur
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.size)
-        
-        # Barre de vie (maintenant gérée par le HUD)
-        # On garde une petite barre au-dessus du joueur pour référence rapide
-        bar_width = 40
-        bar_height = 4
-        bar_x = self.x - bar_width // 2
-        bar_y = self.y - self.size - 8
-        
-        # Fond de la barre
-        pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
-        
-        # Vie actuelle
-        health_width = (self.health / self.max_health) * bar_width
-        health_color = (0, 255, 0) if self.health > self.max_health * 0.3 else (255, 0, 0)
-        pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))
