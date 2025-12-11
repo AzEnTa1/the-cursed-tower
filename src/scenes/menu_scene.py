@@ -33,7 +33,7 @@ class MenuScene(BaseScene):
         self.game.change_scene(self.settings.SCENE_GAME)
     
     def update(self):
-        """Pas de logique particulière pour le menu simple"""
+        """Pas de logique particulière pour le menu simple (pr l'instant)"""
         pass
     
     def draw(self, screen):
@@ -44,7 +44,7 @@ class MenuScene(BaseScene):
         
         # Titre
         pygame.draw.rect(screen, (255, 255, 0), self.bg_title_rect)
-        title_text = self.font.render("TOUR MAUDITE", True, (0, 0, 0))
+        title_text = self.font.render("Tour Maudite", True, (0, 0, 0))
         title_rect = title_text.get_rect(center=self.bg_title_rect.center)
         screen.blit(title_text, title_rect)
 

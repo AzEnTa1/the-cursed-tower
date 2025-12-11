@@ -1,18 +1,19 @@
 # src/entities/weapons.py
-import pygame
+import random
 import math
 from .projectiles import Projectile
 
 class Weapon:
     def __init__(self, settings, fire_rate=0.5, damage=15, projectile_speed=20):
         self.fire_rate = fire_rate  # tirs par seconde
-        self.damage = damage
+        self.damage = random.randint(damage - 5, damage + 5)
         self.projectile_speed = projectile_speed
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)
         self.stationary_time = 0
         self.stationary_threshold = 25  # Pas 0.5 secondes mais j'ai la flemme de calculer, ca fait 25*30/0.5 
         self.settings = settings
+        print(self.damage)
     
     def update(self, player, current_time, projectiles, enemies):
         """Gère le tir automatique uniquement quand immobile"""
