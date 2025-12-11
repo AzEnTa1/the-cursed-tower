@@ -3,6 +3,7 @@ import pygame
 import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
+from src.entities.enemys import Enemy
 from src.entities.spawn_effect import SpawnEffect
 from src.systems.wave_manager import WaveManager
 from src.systems.game_stats import GameStats
@@ -11,7 +12,6 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
-from src.entities.enemys import Enemy
 
 
 class GameScene(BaseScene):

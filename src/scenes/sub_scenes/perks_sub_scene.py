@@ -22,6 +22,17 @@ class PerksSubScene(BaseSubScene):
             pygame.Rect(self.settings.x0 + self.settings.screen_width//3*2, self.settings.y0 + self.settings.screen_height//2 - 25, self.settings.screen_width//3, 50)
         )
         self.perks_list = self.perks_manager.get_perks()
+        
+        self.perks_imgs = {
+                           "player_speed":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_attack_speed":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_attack_damage":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_max_health":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_size_up":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_size_down":pygame.image.load(r"assets/images/Speed_icon"),
+                           "player_regen":pygame.image.load(r"assets/images/Speed_icon"),
+                           "projectil_speed":pygame.image.load(r"assets/images/Speed_icon")
+        }
 
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
