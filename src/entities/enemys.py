@@ -49,8 +49,8 @@ class Enemy:
         elif enemy_type == "destructeur":
             # Mini-boss : Tire une salve circulaire
             self.speed = 1.2  
-            self.health = 200
-            self.max_health = 200
+            self.health = 150
+            self.max_health = 150
             self.damage = 15
             self.color = (255, 100, 100)  # Rouge clair
             self.radius = 35  # Plus gros que les autres

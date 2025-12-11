@@ -38,7 +38,7 @@ class GameScene(BaseScene):
             self.settings.y0 + self.settings.screen_height//2, 
             self.settings
         )
-        self.weapon = Weapon(self.settings, fire_rate=2, damage=25, projectile_speed=20) 
+        self.weapon = Weapon(self.settings, damage=30, fire_rate=2, projectile_speed=20) 
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)

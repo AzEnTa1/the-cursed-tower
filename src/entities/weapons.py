@@ -4,7 +4,7 @@ import math
 from .projectiles import Projectile
 
 class Weapon:
-    def __init__(self, settings, fire_rate=0.5, damage=25, projectile_speed=20):
+    def __init__(self, settings, damage, fire_rate=0.5, projectile_speed=20):
         self.fire_rate = fire_rate  # tirs par seconde
         self.damage = random.randint(damage - 5, damage + 5)
         self.projectile_speed = projectile_speed
