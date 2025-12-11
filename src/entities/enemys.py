@@ -58,7 +58,7 @@ class Enemy:
             
             # Système de tir circulaire # avec la méthode shooot_circle
             self.shoot_cooldown = 0
-            self.shoot_rate = 180  # 3 secondes entre les tirs
+            self.shoot_rate = 120  # 3 secondes entre les tirs
             self.projectile_speed = 5
             self.projectile_count = 12  # Nombre de projectiles dans le cercle
             self.last_shot_time = 0

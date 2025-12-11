@@ -11,6 +11,8 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
+from src.entities.enemys import Enemy
+
 
 class GameScene(BaseScene):
     def __init__(self, game, settings):
@@ -36,7 +38,7 @@ class GameScene(BaseScene):
             self.settings.y0 + self.settings.screen_height//2, 
             self.settings
         )
-        self.weapon = Weapon(self.settings, fire_rate=2, damage=15, projectile_speed=20) 
+        self.weapon = Weapon(self.settings, fire_rate=2, damage=25, projectile_speed=20) 
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)
@@ -231,7 +233,6 @@ class GameScene(BaseScene):
     
     def create_enemy_from_effect(self, effect):
         """Crée un ennemi après la fin de l'effet"""
-        from src.entities.enemys import Enemy
         return Enemy(effect.x, effect.y, self.settings, effect.enemy_type)
     
     def next_floor(self):
