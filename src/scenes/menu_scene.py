@@ -54,7 +54,7 @@ class MenuScene(BaseScene):
         play_rect = play_text.get_rect(center=self.play_button.center)
         screen.blit(play_text, play_rect)
 
-    def resize(self, height, width):
+    def resize(self):
         """appelé lorsque la fenêtre change de taille"""
         self.play_button = pygame.Rect(self.settings.x0 + self.settings.screen_width//2 - 100, self.settings.y0 + self.settings.screen_height//2, 200, 50)
         self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1 + self.settings.x0, self.settings.screen_height*0.2 + self.settings.y0, self.settings.screen_width*0.8, self.settings.screen_height*0.2)

@@ -288,6 +288,6 @@ class GameScene(BaseScene):
         if self.game_paused:
             self.current_sub_scene.draw(screen)
 
-    def resize(self, height, width):
+    def resize(self):
         if self.game_paused:
-            self.current_sub_scene.resize(height, width)
+            self.current_sub_scene.resize()

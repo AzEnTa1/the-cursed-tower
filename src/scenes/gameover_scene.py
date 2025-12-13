@@ -47,7 +47,7 @@ class GameOverScene(BaseScene):
         pygame.draw.rect(screen, (255, 0, 0), self.quit_button)
         screen.blit(self.quit_text, self.quit_rect)
 
-    def resize(self, width, height):
+    def resize(self):
         self.quit_button = pygame.Rect(self.settings.screen_width*0.4 + self.settings.x0, self.settings.screen_height*0.8 + self.settings.y0, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
         self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
         self.stats_rect = pygame.Rect(self.settings.screen_width*0.1 + self.settings.x0, self.settings.screen_height*0.1 + self.settings.y0, self.settings.screen_width*0.8, self.settings.screen_height*0.8)

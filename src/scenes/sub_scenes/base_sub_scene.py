@@ -25,7 +25,7 @@ class BaseSubScene:
     def draw(self, screen):
         """Dessine la scène"""
 
-    def resize(self, height, width):
+    def resize(sel):
         """appelé lorsque la fenêtre change de taille"""
         #height et width sont les vraie dimension de la fenetre
         #!= self.settings.screen_height/width qui sont les dimension de la fenetre interne 4:3

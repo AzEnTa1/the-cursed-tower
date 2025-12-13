@@ -70,7 +70,7 @@ class Game:
                     self.settings.screen_width, self.settings.screen_height = round(event.dict["h"]/3*4), event.dict["h"]
                     self.settings.y0 = 0
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
-                self.current_scene.resize(event.dict["w"], event.dict["h"])
+                self.current_scene.resize()
                 print(self.settings.screen_width, self.settings.screen_height)
 
             # Passe les événements à la scène actuelle
