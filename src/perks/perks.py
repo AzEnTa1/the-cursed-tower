@@ -51,4 +51,8 @@ class Perks:
         
         print(f"Multishot: {self.weapon.multishot_count} projectiles")
 
+    def infinite_life(self):
+        self.player.infinite_life = True
+        print("infinite life activated")
+
     

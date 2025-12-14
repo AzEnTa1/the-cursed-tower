@@ -16,7 +16,8 @@ class PerksManager:
             "player_size_down": self.perks.player_size_down,
             "player_regen": self.perks.player_regen,
             "projectil_speed": self.perks.projectile_speed,
-            "multishot": self.perks.multishot  
+            "multishot": self.perks.multishot,
+            "infinite life": self.perks.infinite_life
         }
 
     def get_perks(self) -> list:
@@ -31,7 +32,8 @@ class PerksManager:
             "player_size_down": 2,
             "player_regen": 8,
             "projectil_speed": 10,
-            "multishot": variable_debug  # (Plus rare)
+            "multishot": variable_debug,  # (Plus rare)
+            "infinite life": variable_debug  # (Très rare)
         }
         
         perks_list = list(self.perks_dict.keys())

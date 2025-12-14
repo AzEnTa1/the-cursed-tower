@@ -9,7 +9,8 @@ class Player:
         self.speed = settings.player_speed
         self.size = settings.player_size
         self.color = (0, 255, 0)
-        
+        self.infinite_life = False
+
         # Points de vie
         self.health = 100
         self.max_health = 100
@@ -24,6 +25,8 @@ class Player:
             'up': False,
             'down': False
         }
+
+        
         
         # Dernière touche pressée pour chaque axe
         self.last_horizontal_key = None
@@ -69,6 +72,12 @@ class Player:
     
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
+        
+        
+        # ================================================== le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk)
+        if self.infinite_life:
+            self.health = self.max_health
+
         # Mouvement horizontal - dernière touche prime
         dx = 0
         if self.last_horizontal_key == 'left':

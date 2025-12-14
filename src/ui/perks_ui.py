@@ -1,21 +1,27 @@
 import pygame
+import random
 
 class PerksUI:
     def __init__(self, settings):
         self.settings = settings
         
-        
         self.perks_imgs = {
-                           "player_speed":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_attack_speed":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_attack_damage":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_max_health":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_size_up":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_size_down":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "player_regen":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "projectil_speed":pygame.image.load(r"assets\images\Speed_icon.png"), 
-                           "multishot":pygame.image.load(r"assets\images\Speed_icon.png")
+                           "player_speed":pygame.image.load(r"assets\images\Speed_Icon.png"),
+                           "player_attack_speed":None,
+                           "player_attack_damage":None,
+                           "player_max_health":pygame.image.load(r"assets\images\Heal_Icon.png"),
+                           "player_size_up":None,
+                           "player_size_down":None,
+                           "player_regen":pygame.image.load(r"assets\images\Heal_Icon.png"),
+                           "projectil_speed":None, 
+                           "multishot":None,
+                           "infinite life":None
         }
+
+        # si une image n'est pas trouvée, on remplace par une image aléatoire parmi celle disponibles
+        for perks in self.perks_imgs:
+            if self.perks_imgs[perks] is None:
+                self.perks_imgs[perks] = random.choice([img for img in self.perks_imgs.values() if img is not None])
 
     def draw(self, screen, perks_rect, perks_list):
         """dessine l'interface complète"""
