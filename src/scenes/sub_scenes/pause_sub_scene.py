@@ -3,7 +3,7 @@ from .base_sub_scene import BaseSubScene
 from src.ui.pause_ui import PauseUI
 
 class PauseSubScene(BaseSubScene):
-    """gere le menu pause""" # Perks et Pause
+    """Gère le Menu Pause""" # Perks et Pause
     
     def __init__(self, game, game_scene, settings):
         super().__init__(game, game_scene, settings)
@@ -20,7 +20,10 @@ class PauseSubScene(BaseSubScene):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
                 #if self.play_button.collidepoint(event.pos):
-                self.game.change_scene(self.settings.SCENE_MENU)
+                self.game.change_scene(self.settings.SCENE_GAME)
+        #elif event.type == pygame.KEYDOWN:
+            #if event.key == pygame.K_ESCAPE:
+                #self.game.change_scene(self.settings.SCENE_GAME)
                 
     
     def update(self):

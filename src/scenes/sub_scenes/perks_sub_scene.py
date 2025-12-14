@@ -20,9 +20,6 @@ class PerksSubScene(BaseSubScene):
         self.perks_rect = ()
         self.resize()
         
-        
-        
-
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
         self.game_scene.game_paused = False
@@ -47,8 +44,6 @@ class PerksSubScene(BaseSubScene):
     def draw(self, screen):
         """Dessine la scène"""
         self.ui.draw(screen, self.perks_rect, self.perks_list)
-        
-        
 
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
