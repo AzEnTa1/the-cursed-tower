@@ -13,7 +13,8 @@ class PerksUI:
                            "player_size_up":pygame.image.load(r"assets\images\Speed_icon.png"),
                            "player_size_down":pygame.image.load(r"assets\images\Speed_icon.png"),
                            "player_regen":pygame.image.load(r"assets\images\Speed_icon.png"),
-                           "projectil_speed":pygame.image.load(r"assets\images\Speed_icon.png")
+                           "projectil_speed":pygame.image.load(r"assets\images\Speed_icon.png"), 
+                           "multishot":pygame.image.load(r"assets\images\Speed_icon.png")
         }
 
     def draw(self, screen, perks_rect, perks_list):

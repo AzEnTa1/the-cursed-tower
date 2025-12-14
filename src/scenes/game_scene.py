@@ -1,4 +1,3 @@
-# src/scenes/game_scene.py
 import pygame
 import math
 from src.entities.player import Player
@@ -38,7 +37,7 @@ class GameScene(BaseScene):
             self.settings.y0 + self.settings.screen_height//2, 
             self.settings
         )
-        self.weapon = Weapon(self.settings, damage=30, fire_rate=2, projectile_speed=20) 
+        self.weapon = Weapon(self.settings, damage=30, fire_rate=2, projectile_speed=10) 
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)
@@ -97,7 +96,7 @@ class GameScene(BaseScene):
             return
         
         self.current_time = pygame.time.get_ticks()
-        dt = self.game.clock.get_time()
+        dt = self.game.clock.get_time()  # Récupère le delta time
         
         # Met à jour l'effet de transition
         self.transition.update(dt)
@@ -129,9 +128,9 @@ class GameScene(BaseScene):
         # maj joueur
         self.player.update()
         
-        # maj arme + tir
+        # maj arme + tir de projectiles
         self.weapon.update_direction(self.player.last_dx, self.player.last_dy)
-        self.weapon.update(self.player, self.current_time, self.projectiles, self.enemies)
+        self.weapon.update(self.player, self.current_time, self.projectiles, self.enemies, dt) 
         
         # maj projectiles joueurs
         for projectile in self.projectiles[:]:

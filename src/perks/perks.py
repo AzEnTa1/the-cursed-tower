@@ -39,4 +39,16 @@ class Perks:
         self.weapon.projectile_speed = round(self.weapon.projectile_speed * 1.1)
         print("projectile speed")
 
+    def multishot(self):
+        """Ajoute un projectile supplémentaire avec intervalle"""
+        if hasattr(self.weapon, 'multishot_count'):
+            self.weapon.multishot_count += 1
+        else:
+            self.weapon.multishot_count = 1
+            self.weapon.shot_interval = 50  # ms entre chaque projectile
+            self.weapon.multishot_timer = 0
+            self.weapon.multishot_queue = []
+        
+        print(f"Multishot: {self.weapon.multishot_count} projectiles")
+
     
