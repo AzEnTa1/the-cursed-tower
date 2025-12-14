@@ -5,16 +5,16 @@ class PerksUI:
         self.settings = settings
         
         
-        self.perks_imgs = {
-                           "player_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_attack_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_attack_damage":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_max_health":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_size_up":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_size_down":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "player_regen":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
-                           "projectil_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png")
-        }
+        #self.perks_imgs = {
+        #                   "player_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_attack_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_attack_damage":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_max_health":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_size_up":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_size_down":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "player_regen":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png"),
+        #                   "projectil_speed":pygame.image.load(r"C:\Users\Julien\Documents\GitHub\Archero\assets\images\Speed_icon.png")
+        #}
 
     def draw(self, screen, perks_rect, perks_list):
         """dessine l'interface complète"""
@@ -25,7 +25,7 @@ class PerksUI:
             pygame.draw.rect(screen, (255, 255, 255, 0), rect[2].inflate(-5, -5))
             screen.blit(txt, txt.get_rect(center=rect[1].center))
             #affichage image
-            screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
+            #screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
 
 
     def _draw_background(self, screen):
