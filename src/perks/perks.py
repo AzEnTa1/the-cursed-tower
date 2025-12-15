@@ -1,4 +1,6 @@
 # src/perks/perks.py
+import math 
+
 class Perks:
     def __init__(self, settings, player, weapon):
         self.settings = settings
@@ -14,7 +16,7 @@ class Perks:
         print("player attack speed")
 
     def player_attack_damage(self):
-        self.weapon.damage = round( self.weapon.damage * 1.1)
+        self.weapon.damage = round(self.weapon.damage * 1.1)
         print("player attack damage")
 
     def player_max_health(self):
@@ -55,4 +57,8 @@ class Perks:
         self.player.infinite_life = True
         print("infinite life activated")
 
-    
+    def arc_shot(self):
+        """Active le tir en arc (3 projectiles en éventail)"""
+        self.weapon.arc_shot = True
+        self.weapon.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
+        print("Arc shot activated")

@@ -20,6 +20,10 @@ class Weapon:
         self.multishot_queue = []  # Queue pour les tirs multishot
         self.is_shooting_multishot = False
         
+        # Arc shot system (NOUVEAU)
+        self.arc_shot = False  # True si le perk est activé
+        self.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
+        
         self.settings = settings
         print(f"Weapon created: {self.damage} damage")
     
@@ -34,7 +38,7 @@ class Weapon:
                    self.multishot_timer >= self.shot_interval):
                 # Tire le prochain projectile de la queue
                 projectile_data = self.multishot_queue.pop(0)
-                self._create_projectile(projectile_data, projectiles)
+                self._create_shot(projectile_data, projectiles)  # Changé pour _create_shot
                 self.multishot_timer = 0
             
             if not self.multishot_queue:
@@ -48,7 +52,7 @@ class Weapon:
         else:
             self.stationary_time = 0
         
-        # 3. Tir normal (si pas déjà en train de tirer un multishot)
+        # Tir normal (si pas déjà en train de tirer un multishot)
         if (not self.is_shooting_multishot and
             self.stationary_time >= self.stationary_threshold and 
             current_time - self.last_shot_time > 1000 / self.fire_rate):
@@ -103,8 +107,8 @@ class Weapon:
             # Prépare le multishot
             self._prepare_multishot(x, y, dx, dy, projectiles)
         else:
-            # Tir normal
-            self._create_projectile({
+            # Tir normal ou en arc
+            self._create_shot({
                 'x': x, 'y': y,
                 'dx': dx * self.projectile_speed,
                 'dy': dy * self.projectile_speed,
@@ -115,8 +119,7 @@ class Weapon:
         """Prépare les projectiles pour le multishot"""
         total_shots = self.multishot_count + 1  # +1 pour le tir principal
         
-        # Effet sonore spécial pour multishot
-        print(f"debug multishot (et aussi d'autre truc futurement) nombre de tir : {total_shots} ")
+        print(f"DEBUG: Multishot - {total_shots} tirs")
         
         # Crée la queue de tirs et tire immédiatement le premier
         self.multishot_queue = []
@@ -136,13 +139,45 @@ class Weapon:
         # Tire le premier projectile immédiatement
         if self.multishot_queue:
             projectile_data = self.multishot_queue.pop(0)
-            self._create_projectile(projectile_data, projectiles)
+            self._create_shot(projectile_data, projectiles)  # Changé pour _create_shot
     
-    def _create_projectile(self, data, projectiles):
-        """Crée un projectile avec des effets spéciaux pour multishot"""
-        # Effets visuels spéciaux pour les projectiles multishots
+    def _create_shot(self, data, projectiles):
+        """Crée un tir (simple ou en arc selon le perk)"""
+        if self.arc_shot:
+            self._create_arc_shot(data, projectiles)
+        else:
+            self._create_single_projectile(data, projectiles)
+    
+    def _create_arc_shot(self, data, projectiles):
+        """Crée trois projectiles en arc"""
+        base_angle = math.atan2(data['dy'], data['dx'])
+        speed = math.sqrt(data['dx']**2 + data['dy']**2)
+        
+        # Les trois angles : centre, gauche, droite
+        angles = [
+            base_angle,  # Centre (vers l'ennemi)
+            base_angle - self.arc_angle,  # Gauche
+            base_angle + self.arc_angle   # Droite
+        ]
+        
+        for i, angle in enumerate(angles):
+            # Calcule les nouvelles directions
+            new_dx = math.cos(angle) * speed
+            new_dy = math.sin(angle) * speed
+            
+            # Crée les données pour chaque projectile
+            projectile_data = data.copy()
+            projectile_data['dx'] = new_dx
+            projectile_data['dy'] = new_dy
+            projectile_data['arc_index'] = i  # 0=centre, 1=gauche, 2=droite
+            
+            # Crée le projectile
+            self._create_single_projectile(projectile_data, projectiles)
+    
+    def _create_single_projectile(self, data, projectiles):
+        """Crée un projectile unique"""
+        # Couleurs pour multishot
         if 'index' in data:
-            # Couleurs différentes selon l'index
             colors = [
                 (255, 100, 100),  # Rouge
                 (100, 255, 100),  # Vert
@@ -153,16 +188,22 @@ class Weapon:
             ]
             color_idx = data['index'] % len(colors)
             color = colors[color_idx]
-            
-            # Taille légèrement réduite pour les projectiles supplémentaires
             radius = 4 if data['index'] == 0 else 3
-            
-            # Effet de traînée spécial 
-            trail_color = (color[0], color[1], color[2], 150)
+            is_multishot = True
+        elif 'arc_index' in data:  # NOUVEAU : pour les projectiles en arc
+            # Couleurs spéciales pour l'arc
+            arc_colors = [
+                (255, 255, 0),    # Jaune pour le centre
+                (255, 150, 0),    # Orange pour la gauche
+                (255, 200, 0)     # Jaune-orange pour la droite
+            ]
+            color = arc_colors[data['arc_index'] % len(arc_colors)]
+            radius = 4
+            is_multishot = False
         else:
             color = (255, 255, 0)  # Jaune pour les tirs normaux
             radius = 5
-            trail_color = (255, 255, 0, 150)
+            is_multishot = False
         
         projectiles.append(Projectile(
             data['x'], data['y'],
@@ -171,7 +212,7 @@ class Weapon:
             self.settings,
             color=color,
             radius=radius,
-            is_multishot=('index' in data)
+            is_multishot=is_multishot
         ))
     
     def update_direction(self, dx, dy):

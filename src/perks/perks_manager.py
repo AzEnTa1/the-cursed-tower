@@ -1,5 +1,5 @@
-# src/perks/perks_manager.py
 import random
+import math
 from .perks import Perks
 
 class PerksManager:
@@ -17,14 +17,15 @@ class PerksManager:
             "player_regen": self.perks.player_regen,
             "projectil_speed": self.perks.projectile_speed,
             "multishot": self.perks.multishot,
-            "infinite life": self.perks.infinite_life
+            "infinite life": self.perks.infinite_life,
+            "arc_shot": self.perks.arc_shot  # NOUVEAU
         }
 
     def get_perks(self) -> list:
         # Ajouter des poids pour
-        variable_debug = 1000 # si vs voulez tester l'apparition de certaines perks 
+        variable_debug = 1000  # si vous voulez tester l'apparition de certaines perks 
         weights = {
-            "player_speed": 10, # COmmun
+            "player_speed": 10,  # Commun
             "player_attack_speed": 10,
             "player_attack_damage": 10,
             "player_max_health": 10,
@@ -33,7 +34,8 @@ class PerksManager:
             "player_regen": 8,
             "projectil_speed": 10,
             "multishot": variable_debug,  # (Plus rare)
-            "infinite life": variable_debug  # (Très rare)
+            "infinite life": variable_debug,  # (Très rare)
+            "arc_shot": variable_debug  # (Très rare)
         }
         
         perks_list = list(self.perks_dict.keys())

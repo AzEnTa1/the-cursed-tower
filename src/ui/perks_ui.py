@@ -15,7 +15,8 @@ class PerksUI:
                            "player_regen":pygame.image.load(r"assets\images\Heal_Icon.png"),
                            "projectil_speed":None, 
                            "multishot":None,
-                           "infinite life":None
+                           "infinite life":None,
+                           "arc_shot":None
         }
 
         # si une image n'est pas trouvée, on remplace par une image aléatoire parmi celle disponibles
