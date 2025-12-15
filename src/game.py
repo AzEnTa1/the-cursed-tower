@@ -16,6 +16,7 @@ class Game:
         
         # Création de la fenêtre
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height), pygame.RESIZABLE)
+        self.full_screen = False
         pygame.display.set_caption(self.settings.title)
         
         # Horloge pour les FPS
@@ -72,6 +73,19 @@ class Game:
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
                 self.current_scene.resize()
                 print(self.settings.screen_width, self.settings.screen_height)
+            
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_f:
+                    if not self.full_screen:
+                        self.full_screen = True
+                        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+                        self.settings.screen_width, self.settings.screen_height = self.screen.get_size()
+                    else:
+                        self.full_screen = False
+                        self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+                        self.settings.screen_width, self.settings.screen_height = self.screen.get_size()
+                    self.current_scene.resize()
+
 
             # Passe les événements à la scène actuelle
             if self.current_scene:

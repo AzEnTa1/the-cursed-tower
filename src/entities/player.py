@@ -74,7 +74,7 @@ class Player:
         """Met à jour la position du joueur avec priorité à la dernière touche"""
         
         
-        # ================================================== le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk)
+        # le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk)
         if self.infinite_life:
             self.health = self.max_health
 

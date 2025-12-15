@@ -33,9 +33,9 @@ class PerksManager:
             "player_size_down": 2,
             "player_regen": 8,
             "projectil_speed": 10,
-            "multishot": variable_debug,  # (Plus rare)
+            "multishot": 3,  # (Plus rare)
             "infinite life": variable_debug,  # (Très rare)
-            "arc_shot": variable_debug  # (Très rare)
+            "arc_shot": 5  # (Très rare)
         }
         
         perks_list = list(self.perks_dict.keys())
