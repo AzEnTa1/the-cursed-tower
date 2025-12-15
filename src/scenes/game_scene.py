@@ -150,7 +150,7 @@ class GameScene(BaseScene):
                 if self.player.take_damage(projectile.damage):
                     self.game_stats.on_death(self.player)
                     self.game.change_scene(self.settings.SCENE_GAME_OVER)
-                if self.enemy_projectiles:
+                if projectile in self.enemy_projectiles:
                     self.enemy_projectiles.remove(projectile)
 
         # maj des ennemis
