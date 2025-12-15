@@ -11,6 +11,7 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
+from src.entities.projectiles import FireZone
 
 
 class GameScene(BaseScene):
@@ -28,7 +29,8 @@ class GameScene(BaseScene):
         self.current_time = 0
         self.current_floor = 1
         self.spawn_effects = []
-        
+        self.fire_zones = []  # zones de feu actives
+        self.pending_fire_zones = []  # Zones en prévisualisation
         
     def on_enter(self):
         """Initialisation du jeu"""
@@ -57,6 +59,8 @@ class GameScene(BaseScene):
         self.enemy_projectiles = []
         self.enemies = []
         self.spawn_effects = [] 
+        self.fire_zones = []
+        self.pending_fire_zones = []
         
         print(f"Début de l'étage {self.current_floor}")
 
@@ -103,7 +107,7 @@ class GameScene(BaseScene):
         if self.transition.is_active():
             return
         
-        # mahj des effets d'apparition
+        # maj des effets d'apparition
         for effect in self.spawn_effects[:]:
             effect.update(dt)
             if effect.is_complete():
@@ -155,12 +159,14 @@ class GameScene(BaseScene):
 
         # maj des ennemis
         for enemy in self.enemies[:]:
-            # Passe la bonne liste de projectiles selon le type
-            if enemy.type in ["shooter", "destructeur"]:
+            # Passe les zones de feu et pending_zones au Pyromante
+            if enemy.type == "pyromante":
+                enemy.update(self.player, self.fire_zones, self.pending_fire_zones)
+            elif enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
-            else:
+            else:   
                 enemy.update(self.player, None)
-            
+                        
             # Collisions projectiles joueur → ennemis
             for projectile in self.projectiles[:]:
                 distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
@@ -223,6 +229,23 @@ class GameScene(BaseScene):
                     enemy.is_exploding = True
                     enemy.explosion_timer = 15
         
+        # METTRE À JOUR LES PRÉVISUALISATIONS DE FLAMMES
+        for pending in self.pending_fire_zones[:]:
+            pending['timer'] -= 1
+            
+            if pending['timer'] <= 0:
+                # Créer la flaque de feu
+                self.fire_zones.append(FireZone(pending['x'], pending['y'], self.settings))
+                self.pending_fire_zones.remove(pending)
+        
+        # Maj des zones de feu et dégâts au joueur
+        for fire_zone in self.fire_zones[:]:
+            if not fire_zone.update():
+                self.fire_zones.remove(fire_zone)
+            else:
+                # Vérifie les dégâts au joueur
+                fire_zone.check_damage(self.player)
+        
         # vérifier si l'étage est fini
         if (self.wave_manager.are_all_waves_cleared() and 
             len(self.enemies) == 0 and 
@@ -242,6 +265,8 @@ class GameScene(BaseScene):
         self.projectiles.clear()
         self.enemy_projectiles.clear()
         self.spawn_effects.clear()
+        self.fire_zones.clear()  # Vide les zones de feu
+        self.pending_fire_zones.clear()  # Vide les prévisualisations
         
         # Réinitialisation complète du wave manager
         self.wave_manager = WaveManager(self.settings)
@@ -265,11 +290,53 @@ class GameScene(BaseScene):
         for effect in self.spawn_effects:
             effect.draw(screen)
         
+        # Dessine les prévisualisations de flammes (sous les projectiles)
+        for pending in self.pending_fire_zones:
+            preview_surface = pygame.Surface((100, 100), pygame.SRCALPHA)
+            preview_radius = 40
+            
+            # Cercle extérieur pulsant
+            pulse = 5 * math.sin(pygame.time.get_ticks() * 0.005)
+            outer_radius = preview_radius + pulse
+            
+            # Alpha basé sur le temps restant (max 45 frames)
+            progress = min(pending['timer'], 45) / 45.0
+            alpha = int(180 * progress)
+            
+            # Cercle extérieur (orange transparent)
+            pygame.draw.circle(preview_surface, (255, 150, 0, alpha), 
+                              (50, 50), outer_radius, 3)
+            
+            # Cercle intérieur (rouge plus transparent)
+            inner_alpha = max(0, alpha - 60)
+            pygame.draw.circle(preview_surface, (255, 50, 0, inner_alpha), 
+                              (50, 50), preview_radius // 2)
+            
+            # Effet "onde concentrique"
+            wave_progress = 1.0 - (min(pending['timer'], 45) / 45)
+            wave_radius = int(preview_radius * wave_progress)
+            pygame.draw.circle(preview_surface, (255, 200, 100, int(alpha * 0.3)), 
+                              (50, 50), wave_radius, 2)
+            
+            # Appliquer la surface
+            screen.blit(preview_surface, (pending['x'] - 50, pending['y'] - 50))
+            
+            # Texte de compte à rebours
+            if pending['timer'] > 0:
+                font = pygame.font.Font(None, 24)
+                time_left = pending['timer'] / 60  # Convertir en secondes
+                countdown_text = font.render(f"{time_left:.1f}s", True, (255, 255, 255))
+                screen.blit(countdown_text, (pending['x'] - 15, pending['y'] - 60))
+        
         # Dessine les projectiles
         for projectile in self.projectiles:
             projectile.draw(screen)
         for projectile in self.enemy_projectiles:
             projectile.draw(screen)
+
+        # Dessine les zones de feu
+        for fire_zone in self.fire_zones:
+            fire_zone.draw(screen)
         
         # Dessine les ennemis
         for enemy in self.enemies:

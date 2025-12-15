@@ -36,13 +36,14 @@ class WaveQueue:
     """Génère des vagues d'ennemis de plus en plus difficiles"""
     
     # Configuration des vagues : [basic, charger, shooter, destructeur, suicide]
+    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromante']
+
+    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide, pyromante]
     WAVE_CONFIGS = [
-    [40, 20, 20, 5, 15],     # Vague 1 
-    [30, 25, 20, 10, 15],    # Vague 2 
-    [20, 25, 25, 15, 15],    # Vague 3 
+        [35, 15, 15, 5, 10, 20],     # Vague 1
+        [25, 20, 15, 10, 10, 20],    # Vague 2
+        [15, 20, 20, 15, 10, 20],    # Vague 3
 ]
-    
-    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide']
     
     def __init__(self, settings=None):
         self.waves = Queue()

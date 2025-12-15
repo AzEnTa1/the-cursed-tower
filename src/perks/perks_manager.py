@@ -18,10 +18,16 @@ class PerksManager:
             "projectil_speed": self.perks.projectile_speed,
             "multishot": self.perks.multishot,
             "infinite life": self.perks.infinite_life,
-            "arc_shot": self.perks.arc_shot  # NOUVEAU
+            "arc_shot": self.perks.arc_shot
         }
 
     def get_perks(self) -> list:
+        # d'ailleurs 
+        # 10 => commun
+        # 8 => rare
+        # 6 => Epique
+        # 4 => mythic
+        # 2 => Legendaire
         # Ajouter des poids pour
         variable_debug = 1000  # si vous voulez tester l'apparition de certaines perks 
         weights = {
@@ -29,13 +35,13 @@ class PerksManager:
             "player_attack_speed": 10,
             "player_attack_damage": 10,
             "player_max_health": 10,
-            "player_size_up": 5,
-            "player_size_down": 2,
+            "player_size_up": 10,
+            "player_size_down": variable_debug,
             "player_regen": 8,
-            "projectil_speed": 10,
-            "multishot": 3,  # (Plus rare)
+            "projectil_speed": 8,
+            "multishot": 6,  # (Plus rare)
             "infinite life": variable_debug,  # (Très rare)
-            "arc_shot": 5  # (Très rare)
+            "arc_shot": 4  # (Très rare)
         }
         
         perks_list = list(self.perks_dict.keys())

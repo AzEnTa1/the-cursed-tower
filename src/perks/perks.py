@@ -24,12 +24,12 @@ class Perks:
         print("player max health")
 
     def player_size_up(self):
-        self.player.size = round(self.player.size * 1.1)
-        print("player size up")
+        self.player.size = round(self.player.size * 5)
+        print("player size up; qui clique sur ce genre de perks ? ")
 
     def player_size_down(self):
-        self.player.size = round(self.player.size * 0.9)
-        print("player size down")
+        self.player.size = round(self.player.size * 0.11)
+        print("player size down, qui clique sur ce genre de perks ? ")
 
     def player_regen(self):
         self.player.health = round(self.player.health * 1.5)

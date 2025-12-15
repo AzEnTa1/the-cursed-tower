@@ -2,6 +2,8 @@
 import pygame
 import math
 from .projectiles import Projectile
+import random
+from .projectiles import FireZone
 
 class Enemy:
     def __init__(self, x, y, settings, enemy_type="basic"):
@@ -56,12 +58,41 @@ class Enemy:
             self.radius = 35  # Plus gros que les autres
             self.attack_range = 400  # Portée augmentée
             
-            # Système de tir circulaire # avec la méthode shooot_circle
+            # Système de tir circulaire
             self.shoot_cooldown = 0
-            self.shoot_rate = 120  # 3 secondes entre les tirs
+            self.shoot_rate = 120  # 2 secondes entre les tirs
             self.projectile_speed = 5
             self.projectile_count = 12  # Nombre de projectiles dans le cercle
             self.last_shot_time = 0
+        
+        elif enemy_type == "pyromante":
+            # Support/Zone : Pose des zones de feu AVEC PRÉVISUALISATION
+            self.speed = 1.2
+            self.health = 35
+            self.max_health = 35
+            self.damage = 0
+            self.color = (255, 100, 0)
+            self.radius = 20
+            self.attack_range = 250
+            
+            # Système de zones de feu amélioré
+            self.fire_zone_cooldown = 0
+            self.fire_zone_rate = 210  # 3.5 secondes entre les attaques
+            self.fire_zones_placed = 0
+            self.max_fire_zones = 2  # 2 flaques par attaque
+            
+            # Mouvement circulaire
+            self.circle_angle = random.random() * 2 * math.pi
+            self.circle_radius = 180
+            self.circle_speed = 0.015
+            
+            # Gestion des flaques en attente
+            self.pending_fire_zones = []  # Liste des flaques à créer avec leur timing
+            
+            # Prévisualisation
+            self.preview_cooldown = 0
+            self.preview_duration = 45  # 0.75s à 60 FPS (45 frames)
+            self.active_previews = []  # Prévisualisations actives [(x, y, timer)]
             
         else:  # Type basique (par défaut)
             self.speed = 2
@@ -72,7 +103,7 @@ class Enemy:
             self.radius = 20
             self.attack_range = 0
     
-    def update(self, player, projectiles=None):
+    def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
         if self.type == "charger":
             self._update_charger(player) 
@@ -82,6 +113,8 @@ class Enemy:
             self._update_suicide(player)
         elif self.type == "destructeur": 
             self._update_destructeur(player, projectiles)
+        elif self.type == "pyromante":
+            self._update_pyromante(player, projectiles, pending_zones)
         else:  # basic
             self._update_basic(player)
     
@@ -155,12 +188,15 @@ class Enemy:
     
     def _update_destructeur(self, player, projectiles):
         """Mini-boss : Se déplace lentement et tire un cercle de projectiles"""
-        # déplacement vers le joueur (comme pour les autres)
+        if projectiles is None:
+            return
+            
+        # 1. DÉPLACEMENT vers le joueur
         dx = player.x - self.x
         dy = player.y - self.y
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
         
-        # Se déplace vers le joueur s'il est trop loin (théorique vu que j'ai mis 0.0125)
+        # Se déplace vers le joueur s'il est trop loin
         if distance > self.attack_range * 0.125:
             norm_dx = dx / distance
             norm_dy = dy / distance
@@ -168,10 +204,7 @@ class Enemy:
             self.x += norm_dx * self.speed
             self.y += norm_dy * self.speed
         
-        # Tir de projectiles
-        if projectiles is None:
-            return
-        
+        # 2. GESTION DES TIRS
         # Cooldown entre les tirs
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
@@ -182,6 +215,90 @@ class Enemy:
             
             self.shoot_circle(projectiles)
             self.shoot_cooldown = self.shoot_rate
+    
+    def _update_pyromante(self, player, fire_zones, pending_zones):
+        """Pyromante : Se déplace en cercle et pose DEUX zones de feu avec prévisualisation"""
+        # 1. MOUVEMENT CIRCULAIRE
+        dx = player.x - self.x
+        dy = player.y - self.y
+        distance_to_player = math.sqrt(dx*dx + dy*dy)
+        
+        if distance_to_player > self.circle_radius:
+            # Se rapprocher du cercle
+            norm_dx = dx / max(distance_to_player, 0.1)
+            norm_dy = dy / max(distance_to_player, 0.1)
+            self.x += norm_dx * self.speed
+            self.y += norm_dy * self.speed
+        else:
+            # Se déplacer en cercle AUTOUR du joueur
+            self.circle_angle += self.circle_speed
+            target_x = player.x + math.cos(self.circle_angle) * self.circle_radius
+            target_y = player.y + math.sin(self.circle_angle) * self.circle_radius
+            
+            move_x = target_x - self.x
+            move_y = target_y - self.y
+            move_dist = math.sqrt(move_x*move_x + move_y*move_y)
+            
+            if move_dist > 0:
+                move_x = move_x / move_dist * self.speed
+                move_y = move_y / move_dist * self.speed
+                self.x += move_x
+                self.y += move_y
+        
+        # 2. GESTION DES PRÉVISUALISATIONS ACTIVES
+        for preview in self.active_previews[:]:
+            preview[2] -= 1  # Décrémente le timer
+            if preview[2] <= 0:
+                # Timer terminé -> créer la flaque de feu
+                if fire_zones is not None:
+                    from .projectiles import FireZone
+                    fire_zones.append(FireZone(preview[0], preview[1], self.settings))
+                self.active_previews.remove(preview)
+        
+        # 3. DÉCLENCHEMENT D'UNE NOUVELLE ATTAQUE (2 flaques)
+        if (self.fire_zone_cooldown <= 0 and 
+            fire_zones is not None and
+            pending_zones is not None):
+            
+            # Calculer DEUX positions différentes pour les flaques
+            flame_positions = []
+            for i in range(2):
+                # Position autour du joueur (éviter les positions trop proches)
+                angle = random.random() * 2 * math.pi
+                min_dist = 60  # Distance minimale entre les deux flaques
+                max_dist = 120
+                flame_distance = random.randint(min_dist, max_dist)
+                
+                flame_x = player.x + math.cos(angle) * flame_distance
+                flame_y = player.y + math.sin(angle) * flame_distance
+                
+                # Garder dans l'écran
+                flame_x = max(self.settings.x0 + 50, 
+                            min(flame_x, self.settings.x0 + self.settings.screen_width - 50))
+                flame_y = max(self.settings.y0 + 50, 
+                            min(flame_y, self.settings.y0 + self.settings.screen_height - 50))
+                
+                flame_positions.append((flame_x, flame_y))
+            
+            # Ajouter les flaques au système de pending (pour prévisualisation globale)
+            for i, (fx, fy) in enumerate(flame_positions):
+                pending_zones.append({
+                    'x': fx,
+                    'y': fy,
+                    'timer': self.preview_duration + (i * self.preview_duration),  # Décalage de 0.75s
+                    'source': self  # Référence au Pyromante
+                })
+            
+            self.fire_zone_cooldown = self.fire_zone_rate
+        
+        elif self.fire_zone_cooldown > 0:
+            self.fire_zone_cooldown -= 1
+        
+        # Garde le Pyromante dans l'écran
+        self.x = max(self.settings.x0 + self.radius, 
+                    min(self.x, self.settings.x0 + self.settings.screen_width - self.radius))
+        self.y = max(self.settings.y0 + self.radius, 
+                    min(self.y, self.settings.y0 + self.settings.screen_height - self.radius))
     
     def shoot(self, dx, dy, projectiles):
         """Tire un projectile vers le joueur (pour shooter)"""
@@ -261,26 +378,70 @@ class Enemy:
                     int(self.y + inner_radius * math.sin(angle))
                 ))
             pygame.draw.polygon(screen, (255, 200, 200), points)
-        
-        # Barre de vie (plus grande pour le mini-boss)
-        bar_width = 50 if self.type == "destructeur" else 40
-        bar_height = 8 if self.type == "destructeur" else 6
-        bar_x = self.x - bar_width // 2
-        bar_y = self.y - self.radius - 15 if self.type == "destructeur" else self.y - self.radius - 10
-        
-        # Fond de la barre
-        pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
-        
-        # Vie actuelle
-        health_width = (self.health / self.max_health) * bar_width
-        if self.health > self.max_health * 0.6:
-            health_color = (0, 255, 0)
-        elif self.health > self.max_health * 0.3:
-            health_color = (255, 255, 0)
-        else:
-            health_color = (255, 0, 0)
+        elif self.type == "pyromante":
+            # Flamme intérieure qui pulse
+            flame_size = self.radius - 5 + int(3 * math.sin(pygame.time.get_ticks() * 0.01))
+            pygame.draw.circle(screen, (255, 200, 0), (int(self.x), int(self.y)), flame_size)
             
-        pygame.draw.rect(screen, health_color, (bar_x, bar_y, health_width, bar_height))
+            # Indicateur de zone de feu (cercle extérieur) - pulse quand prêt à attaquer
+            if self.fire_zone_cooldown <= 30:  # Prêt à attaquer
+                zone_indicator = int(8 * (1 + math.sin(pygame.time.get_ticks() * 0.01)))
+                pygame.draw.circle(screen, (255, 50, 0, 150), 
+                                (int(self.x), int(self.y)), 
+                                self.radius + zone_indicator, 3)
+            
+            # Indicateur du nombre de flaques disponibles
+            if self.fire_zone_cooldown <= 0:
+                for i in range(2):
+                    angle = i * (math.pi / 4) + pygame.time.get_ticks() * 0.001
+                    indicator_x = self.x + math.cos(angle) * (self.radius + 15)
+                    indicator_y = self.y + math.sin(angle) * (self.radius + 15)
+                    pygame.draw.circle(screen, (255, 100, 0), 
+                                    (int(indicator_x), int(indicator_y)), 4)
+        
+        # BARRE DE VIE - AJOUT CRITIQUE !
+        self._draw_health_bar(screen)
+    
+    def _draw_health_bar(self, screen):
+        """Dessine la barre de vie de l'ennemi"""
+        # Taille de la barre selon le type
+        if self.type == "destructeur":
+            bar_width = 50
+            bar_height = 8
+            bar_y_offset = -15  # Plus haut pour le mini-boss
+        else:
+            bar_width = 40
+            bar_height = 6
+            bar_y_offset = -10
+        
+        # Position de la barre (au-dessus de l'ennemi)
+        bar_x = self.x - bar_width // 2
+        bar_y = self.y - self.radius + bar_y_offset
+        
+        # Fond de la barre (gris foncé)
+        pygame.draw.rect(screen, (50, 50, 50), 
+                        (bar_x, bar_y, bar_width, bar_height))
+        
+        # Calcul de la largeur de vie
+        health_percent = max(0, self.health / self.max_health)
+        health_width = int(bar_width * health_percent)
+        
+        # Couleur de la barre de vie (vert → jaune → rouge)
+        if health_percent > 0.6:
+            bar_color = (0, 255, 0)  # Vert
+        elif health_percent > 0.3:
+            bar_color = (255, 255, 0)  # Jaune
+        else:
+            bar_color = (255, 0, 0)  # Rouge
+        
+        # Barre de vie remplie
+        if health_width > 0:
+            pygame.draw.rect(screen, bar_color, 
+                           (bar_x, bar_y, health_width, bar_height))
+        
+        # Bordure de la barre
+        pygame.draw.rect(screen, (200, 200, 200), 
+                        (bar_x, bar_y, bar_width, bar_height), 1)
         
         # Effet spécial pour le destructeur (mini-boss)
         if self.type == "destructeur":
