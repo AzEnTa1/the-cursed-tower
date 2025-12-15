@@ -20,7 +20,6 @@ class Weapon:
         self.multishot_queue = []  # Queue pour les tirs multishot
         self.is_shooting_multishot = False
         
-        # Arc shot system (NOUVEAU)
         self.arc_shot = False  # True si le perk est activé
         self.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
         
