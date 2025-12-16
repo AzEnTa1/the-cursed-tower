@@ -27,7 +27,6 @@ class HUD:
         
     def draw_health_bar(self, screen):
         """Barre de vie avec pourcentage"""
-        print("test")
         # Fond de la barre
         bar_x = self.margin + self.settings.x0
         bar_y = self.margin + self.settings.y0
