@@ -1,11 +1,11 @@
-# src/entities/enemies/pyromante.py 
+# src/entities/enemies/pyromane.py 
 import pygame
 import math
 import random
 from .enemy import Enemy
 from ..projectiles import FireZone
 
-class Pyromante(Enemy):
+class Pyromane(Enemy):
     def __init__(self, x, y, settings):
         super().__init__(self, x, y, settings)
         
