@@ -251,7 +251,6 @@ class Enemy:
             if preview[2] <= 0:
                 # Timer terminé -> créer la flaque de feu
                 if fire_zones is not None:
-                    from .projectiles import FireZone
                     fire_zones.append(FireZone(preview[0], preview[1], self.settings))
                 self.active_previews.remove(preview)
         
