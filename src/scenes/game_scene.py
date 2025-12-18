@@ -2,7 +2,7 @@ import pygame
 import math
 from src.entities.player import Player
 from src.entities.weapons import Weapon
-from src.entities.enemys import Enemy
+from src.entities.enemies import *
 from src.entities.spawn_effect import SpawnEffect
 from src.systems.wave_manager import WaveManager
 from src.systems.game_stats import GameStats
@@ -159,8 +159,8 @@ class GameScene(BaseScene):
 
         # maj des ennemis
         for enemy in self.enemies[:]:
-            # Passe les zones de feu et pending_zones au Pyromante
-            if enemy.type == "pyromante":
+            # Passe les zones de feu et pending_zones au pyromane
+            if enemy.type == "pyromane":
                 enemy.update(self.player, self.fire_zones, self.pending_fire_zones)
             elif enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
@@ -256,7 +256,18 @@ class GameScene(BaseScene):
     
     def create_enemy_from_effect(self, effect):
         """Crée un ennemi après la fin de l'effet"""
-        return Enemy(effect.x, effect.y, self.settings, effect.enemy_type)
+        if effect.enemy_type == "charger":
+            return Charger(effect.x, effect.y, self.settings)
+        elif effect.enemy_type == "shooter":
+            return Shooter(effect.x, effect.y, self.settings)
+        elif effect.enemy_type == "suicide":
+            return Suicide(effect.x, effect.y, self.settings)
+        elif effect.enemy_type == "destructeur":
+            return Destructeur(effect.x, effect.y, self.settings)
+        elif effect.enemy_type == "pyromane":
+            return Pyromane(effect.x, effect.y, self.settings)
+        else:
+            return Basic(effect.x, effect.y, self.settings)
     
     def next_floor(self):
         """Passe à l'étage suivant (appelé après la transition)"""

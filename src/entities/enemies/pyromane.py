@@ -7,8 +7,8 @@ from ..projectiles import FireZone
 
 class Pyromane(Enemy):
     def __init__(self, x, y, settings):
-        super().__init__(self, x, y, settings)
-        
+        super().__init__(x, y, settings)
+        self.type = "pyromane"
         # Stats de base selon le type
        
         # Support/Zone : Pose des zones de feu AVEC PRÉVISUALISATION
@@ -127,7 +127,7 @@ class Pyromane(Enemy):
     
     def draw(self, screen):
         """Dessine l'ennemi avec sa barre de vie"""
-        super().draw(self, screen)
+        super().draw(screen)
     
         # Flamme intérieure qui pulse
         flame_size = self.radius - 5 + int(3 * math.sin(pygame.time.get_ticks() * 0.01))

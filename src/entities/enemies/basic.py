@@ -1,21 +1,19 @@
 # src/entities/enemies/charger.py 
-import pygame
 import math
 from .enemy import Enemy
 
-class Charger(Enemy):
+class Basic(Enemy):
     def __init__(self, x, y, settings):
         super().__init__(x, y, settings)
-        self.type = "charger"
+        self.type = "basic"
         # Stats de base selon le type
-
-        # Cours rapidement vers le joueur
-        self.speed = 3
-        self.health = 40
-        self.max_health = 40
-        self.damage = 15
-        self.color = (255, 255, 0)  # Jaune
-        self.radius = 22
+        # enemy basic
+        self.speed = 2
+        self.health = 30
+        self.max_health = 30
+        self.damage = 10
+        self.color = (255, 0, 0)  # Rouge
+        self.radius = 20
         self.attack_range = 0
            
     
@@ -29,12 +27,4 @@ class Charger(Enemy):
         
         self.x += dx * self.speed
         self.y += dy * self.speed
-    
-
-    
-    def draw(self, screen): #global pour enemies
-        """Dessine l'ennemi avec sa barre de vie"""
-        super().draw(screen)
-
-        # Indicateur de type (cercle intérieur ou motif)
-        pygame.draw.circle(screen, (255, 255, 0), (int(self.x), int(self.y)), self.radius - 8)       
+  

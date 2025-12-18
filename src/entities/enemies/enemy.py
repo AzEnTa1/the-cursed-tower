@@ -6,14 +6,7 @@ class Enemy:
         self.x = x
         self.y = y
         self.settings = settings
-        # enemy basic
-        self.speed = 2
-        self.health = 30
-        self.max_health = 30
-        self.damage = 10
-        self.color = (255, 0, 0)  # Rouge
-        self.radius = 20
-        self.attack_range = 0
+        
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""

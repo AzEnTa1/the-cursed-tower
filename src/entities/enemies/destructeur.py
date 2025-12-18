@@ -6,8 +6,8 @@ from ..projectiles import Projectile
 
 class Destructeur(Enemy):
     def __init__(self, x, y, settings):
-        super().__init__(self, x, y, settings)
-
+        super().__init__(x, y, settings)
+        self.type = "destructeur"
         # Mini-boss : Tire une salve circulaire
         self.speed = 1.2  
         self.health = 150
@@ -83,7 +83,7 @@ class Destructeur(Enemy):
 
     def draw(self, screen):
         """Dessine l'ennemi avec sa barre de vie"""
-        super().draw(self, screen)
+        super().draw(screen)
         
         # Mini-boss 
         points = []

@@ -6,8 +6,8 @@ from ..projectiles import Projectile
 
 class Shooter(Enemy):
     def __init__(self, x, y, settings):
-        super().__init__(self, x, y, settings)
-        
+        super().__init__(x, y, settings)
+        self.type = "shooter"
         # Stats de base selon le type
 
         # Tire des projectiles
@@ -68,6 +68,6 @@ class Shooter(Enemy):
     
     def draw(self, screen):
         """Dessine l'ennemi avec sa barre de vie"""
-        super().draw(self, screen)
+        super().draw(screen)
         
         pygame.draw.circle(screen, (50, 50, 255), (int(self.x), int(self.y)), self.radius - 8)

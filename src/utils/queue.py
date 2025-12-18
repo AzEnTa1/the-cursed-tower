@@ -36,9 +36,9 @@ class WaveQueue:
     """Génère des vagues d'ennemis de plus en plus difficiles"""
     
     # Configuration des vagues : [basic, charger, shooter, destructeur, suicide]
-    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromante']
+    ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromane']
 
-    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide, pyromante]
+    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide, pyromane]
     WAVE_CONFIGS = [
         [35, 15, 15, 5, 10, 20],     # Vague 1
         [25, 20, 15, 10, 10, 20],    # Vague 2
