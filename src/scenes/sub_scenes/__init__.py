@@ -1,5 +1,8 @@
 # src/scenes/sub_scenes/__init__.py
-
-from .base_sub_scene import BaseSubScene
 from .perks_sub_scene import PerksSubScene
 from .pause_sub_scene import PauseSubScene
+
+__all__ = [
+    "PerksSubScene",
+    "PauseSubScene"
+]

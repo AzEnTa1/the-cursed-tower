@@ -5,8 +5,8 @@ from .enemy import Enemy
 
 class Suicide(Enemy):
     def __init__(self, x, y, settings):
-        super().__init__(self, x, y, settings)
-
+        super().__init__(x, y, settings)
+        self.type = "suicide"
         # Explose au contact
         self.speed = 4
         self.health = 15
@@ -43,7 +43,7 @@ class Suicide(Enemy):
     
     def draw(self, screen):
         """Dessine l'ennemi avec sa barre de vie"""
-        super().draw(self, screen)
+        super().draw(screen)
 
         # Effet d'explosion pour les suicides
         if self.is_exploding:

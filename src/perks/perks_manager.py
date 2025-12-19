@@ -1,5 +1,4 @@
 import random
-import math
 from .perks import Perks
 
 class PerksManager:

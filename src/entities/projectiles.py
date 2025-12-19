@@ -83,7 +83,7 @@ class Projectile:
 
 
 class FireZone:
-    """Zone de feu posée par le Pyromante - Version améliorée visuellement"""
+    """Zone de feu posée par le pyromane - Version améliorée visuellement"""
     def __init__(self, x, y, settings):
         self.x = x
         self.y = y
