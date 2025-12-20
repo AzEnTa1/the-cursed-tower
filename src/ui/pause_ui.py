@@ -3,7 +3,7 @@ import pygame
 class PauseUI:
     def __init__(self, settings):
         self.settings = settings
-        menu_rect = None
+        self.menu_rect = None
 
     def draw(self, screen, exit_rect, back_to_menu_rect):
         """dessine l'interface complète"""

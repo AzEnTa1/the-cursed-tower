@@ -1,4 +1,6 @@
 # config/settings.py
+import pygame
+
 class Settings:
     def __init__(self):
         # CONFIGURATION GÉNÉRALE
@@ -25,3 +27,7 @@ class Settings:
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
         self.SCENE_GAME_OVER = "game_over"
+
+        # FONTS
+        self.font = pygame.font.Font(None, 48) # Police par défaut, taille 48
+        self.small_font = pygame.font.Font(None, 24) # ---, taille 24

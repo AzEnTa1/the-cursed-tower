@@ -22,7 +22,7 @@ class PerksUI:
         # si une image n'est pas trouvée, on remplace par une image aléatoire parmi celle disponibles
         for perks in self.perks_imgs:
             if self.perks_imgs[perks] is None:
-                self.perks_imgs[perks] = random.choice([img for img in self.perks_imgs.values() if img is not None])
+                self.perks_imgs[perks] = pygame.image.load(r"assets\images\Blank_Icon.png")
 
     def draw(self, screen, perks_rect, perks_list):
         """dessine l'interface complète"""
