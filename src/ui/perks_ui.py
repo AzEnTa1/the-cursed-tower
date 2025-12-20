@@ -1,3 +1,4 @@
+# src/ui/perks_ui.py
 import pygame
 
 class PerksUI:

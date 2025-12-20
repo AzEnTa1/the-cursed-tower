@@ -1,3 +1,4 @@
+# src/ui/hud.py
 import pygame
 
 class HUD:

@@ -1,6 +1,6 @@
 # src/entities/player.py
 import pygame
-#from config.settings import PLAYER_SPEED, PLAYER_SIZE, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT, RED
+
 class Player:
     def __init__(self, x, y, settings):
         self.settings = settings

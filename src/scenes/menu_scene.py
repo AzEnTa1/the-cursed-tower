@@ -1,5 +1,6 @@
+# src/scene/menu_scene.py
 import pygame
-from .base_scene import BaseScene # Importation de la classe de base des scènes (jsp si on a le droit car on a théoriquement pas vu en cour)
+from .base_scene import BaseScene
 
 class MenuScene(BaseScene):
     def __init__(self, game, settings):

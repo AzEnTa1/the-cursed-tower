@@ -1,3 +1,4 @@
+# src/ui/game_over_ui
 import pygame
 
 class GameOverUI:

@@ -1,3 +1,5 @@
+# src/scenes/sub_scenes/base_sub_scene.py
+
 class BaseSubScene:
     """Classe de base pour toutes les sub-scènes du jeu""" # Perks et Pause
     

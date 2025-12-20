@@ -1,3 +1,4 @@
+# src/scenes/sub_scenes/perks_sub_scene.py
 import pygame
 from .base_sub_scene import BaseSubScene
 from src.perks.perks_manager import PerksManager

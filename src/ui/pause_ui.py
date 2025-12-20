@@ -1,3 +1,4 @@
+# src/ui/pause_ui
 import pygame
 
 class PauseUI:

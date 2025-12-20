@@ -1,4 +1,4 @@
-import pygame
+# src/entities/weapons.py
 import math
 import random
 from .projectiles import Projectile

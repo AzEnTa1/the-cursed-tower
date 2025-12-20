@@ -1,4 +1,4 @@
-
+# src/entities/enemies/__init__.py
 from .charger import Charger
 from .shooter import Shooter
 from .suicide import Suicide

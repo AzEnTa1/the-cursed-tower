@@ -1,3 +1,4 @@
+# src/scenes/sub_scenes/pause_sub_scene.py
 import pygame
 from .base_sub_scene import BaseSubScene
 from src.ui.pause_ui import PauseUI
