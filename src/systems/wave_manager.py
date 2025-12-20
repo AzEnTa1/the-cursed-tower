@@ -62,13 +62,13 @@ class WaveManager:
         margin = 100
         center_margin = 200
         
-        left = round(self.settings.x0 + margin)
-        right = round(self.settings.x0 + self.settings.screen_width - margin)
-        top = round(self.settings.y0 + margin)
-        bottom = round(self.settings.y0 + self.settings.screen_height - margin)
+        left = round(margin)
+        right = round(self.settings.screen_width - margin)
+        top = round(margin)
+        bottom = round(self.settings.screen_height - margin)
         
-        center_x = self.settings.x0 + self.settings.screen_width // 2
-        center_y = self.settings.y0 + self.settings.screen_height // 2
+        center_x = self.settings.screen_width // 2
+        center_y = self.settings.screen_height // 2
         
         max_attempts = 10
         for _ in range(max_attempts):

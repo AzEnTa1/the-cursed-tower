@@ -9,8 +9,8 @@ class MenuScene(BaseScene):
     def on_enter(self):
         """Initialisation du menu"""
         # Rectangle pour le bouton Jouer (x, y, width, height)
-        self.play_button = pygame.Rect(self.settings.x0 + self.settings.screen_width//2 - 100, self.settings.y0 + self.settings.screen_height//2, 200, 50)
-        self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1 + self.settings.x0, self.settings.screen_height*0.2 + self.settings.y0, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
+        self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1, self.settings.screen_height*0.2, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
         print("Menu Scene")
     
     def handle_event(self, event):
@@ -51,7 +51,7 @@ class MenuScene(BaseScene):
 
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
-        self.play_button = pygame.Rect(self.settings.x0 + self.settings.screen_width//2 - 100, self.settings.y0 + self.settings.screen_height//2, 200, 50)
-        self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1 + self.settings.x0, self.settings.screen_height*0.2 + self.settings.y0, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
+        self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1, self.settings.screen_height*0.2, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
         
         

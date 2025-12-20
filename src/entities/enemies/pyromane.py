@@ -97,10 +97,10 @@ class Pyromane(Enemy):
                 flame_y = player.y + math.sin(angle) * flame_distance
                 
                 # Garder dans l'écran
-                flame_x = max(self.settings.x0 + 50, 
-                            min(flame_x, self.settings.x0 + self.settings.screen_width - 50))
-                flame_y = max(self.settings.y0 + 50, 
-                            min(flame_y, self.settings.y0 + self.settings.screen_height - 50))
+                flame_x = max(50, 
+                            min(flame_x, self.settings.screen_width - 50))
+                flame_y = max(50, 
+                            min(flame_y, self.settings.screen_height - 50))
                 
                 flame_positions.append((flame_x, flame_y))
             
@@ -119,10 +119,10 @@ class Pyromane(Enemy):
             self.fire_zone_cooldown -= 1
         
         # Garde le Pyromante dans l'écran
-        self.x = max(self.settings.x0 + self.radius, 
-                    min(self.x, self.settings.x0 + self.settings.screen_width - self.radius))
-        self.y = max(self.settings.y0 + self.radius, 
-                    min(self.y, self.settings.y0 + self.settings.screen_height - self.radius))
+        self.x = max(self.radius, 
+                    min(self.x, self.settings.screen_width - self.radius))
+        self.y = max(self.radius, 
+                    min(self.y, self.settings.screen_height - self.radius))
     
     
     def draw(self, screen):

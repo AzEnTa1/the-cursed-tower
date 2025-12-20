@@ -12,7 +12,7 @@ class PauseUI:
         overlay = pygame.Surface((self.settings.screen_width, self.settings.screen_height), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 150))
         pygame.draw.rect(overlay, (100, 100, 100, 240), self.menu_rect)
-        screen.blit(overlay, (self.settings.x0, self.settings.y0))
+        screen.blit(overlay, (0, 0))
 
         txt = self.settings.font["h3"].render("Cliquer pour quitter, ECHAP pour retourner au jeu", True, (0, 0, 0))
         rnd_rect = txt.get_rect(center=self.menu_rect.center)

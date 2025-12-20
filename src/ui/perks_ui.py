@@ -45,4 +45,4 @@ class PerksUI:
 
     def resize(self):
         """redéfini la taille de chaque éléments"""
-        self.menu_rect = pygame.Rect(self.settings.x0 + 100, self.settings.y0 + 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)

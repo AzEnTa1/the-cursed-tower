@@ -61,8 +61,8 @@ class Projectile:
                 self.trail_particles.remove(particle)
         
         # Vérifie les bords de l'écran
-        if (self.x < 0 or self.x > self.settings.screen_width + self.settings.x0 or 
-            self.y < 0 or self.y > self.settings.screen_height + self.settings.y0):
+        if (self.x < 0 or self.x > self.settings.screen_width or 
+            self.y < 0 or self.y > self.settings.screen_height):
             self.lifetime = 0
     
     def draw(self, screen):

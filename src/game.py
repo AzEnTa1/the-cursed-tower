@@ -19,6 +19,9 @@ class Game:
         self.full_screen = False
         pygame.display.set_caption(self.settings.title)
         
+        # Surface de la fenetre utilisé
+        self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+
         # Horloge pour les FPS
         self.clock = pygame.time.Clock()
         
@@ -71,6 +74,7 @@ class Game:
                     self.settings.screen_width, self.settings.screen_height = round(event.dict["h"]/3*4), event.dict["h"]
                     self.settings.y0 = 0
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//2
+                self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
                 self.current_scene.resize()
                 print(self.settings.screen_width, self.settings.screen_height)
             
@@ -103,7 +107,7 @@ class Game:
         
         # Dessine la scène actuelle
         if self.current_scene:
-            self.current_scene.draw(self.screen)
+            self.current_scene.draw(self.used_screen)
     
         #dessine la bordure pour limiter l'écran en 4:3
         pygame.draw.rect(self.screen, (50, 50, 50), (0, 0, self.settings.x0, self.settings.screen_height))
@@ -112,6 +116,7 @@ class Game:
         pygame.draw.rect(self.screen, (50, 50, 50), (0, self.settings.y0 + self.settings.screen_height, self.settings.screen_width, self.settings.y0))
 
         # Met à jour l'affichage
+        self.screen.blit(self.used_screen, (self.settings.x0, self.settings.y0))
         pygame.display.flip()
     
     def run(self):

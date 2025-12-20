@@ -55,14 +55,14 @@ class PerksSubScene(BaseSubScene):
         
         # Rect des 3 cases de perks
         images_rect = (
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.15, self.settings.y0 + self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.4, self.settings.y0 + self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.65, self.settings.y0 + self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2)
+            pygame.Rect(self.settings.screen_width*0.15, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
+            pygame.Rect(self.settings.screen_width*0.4, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
+            pygame.Rect(self.settings.screen_width*0.65, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2)
             )
         text_rect = (
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.15, self.settings.y0 + self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.4, self.settings.y0 + self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
-            pygame.Rect(self.settings.x0 + self.settings.screen_width*0.65, self.settings.y0 + self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50)
+            pygame.Rect(self.settings.screen_width*0.15, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
+            pygame.Rect(self.settings.screen_width*0.4, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
+            pygame.Rect(self.settings.screen_width*0.65, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50)
         )
         #((Rect de l'image, Rect du texte, union des 2), ...)
 
