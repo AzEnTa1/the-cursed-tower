@@ -184,7 +184,9 @@ class GameScene(BaseScene):
                             self.player.add_score(10)
 
                         # Affiche les perks si le score est divisible par 200
-                        if self.player.score % 200 == 0:
+                        if self.player.xp >= 200:
+                            #self.(player?, )on_level_up() #pourrait etre util
+                            self.player.xp %= 200
                             self.game_paused = True
                             self.current_sub_scene = self.perks_sub_scene
                             self.current_sub_scene.on_enter()
@@ -222,7 +224,9 @@ class GameScene(BaseScene):
                     self.player.add_score(15)
 
                     # Affiche les perks si le score est divisible par 200
-                    if self.player.score % 200 == 0:
+                    if self.player.xp >= 200:
+                        #self.on_level_up() #pourrait etre util
+                        self.player.xp %= 200
                         self.game_paused = True
                         self.current_sub_scene = self.perks_sub_scene
                         self.current_sub_scene.on_enter()

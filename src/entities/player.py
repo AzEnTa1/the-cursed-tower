@@ -17,7 +17,8 @@ class Player:
         
         # Score
         self.score = 0
-        
+        self.xp = 0
+
         # États des touches
         self.keys_pressed = {
             'left': False,
@@ -112,6 +113,7 @@ class Player:
     def add_score(self, points):
         """Ajoute des points au score"""
         self.score += points
+        self.xp += points
     
     def draw(self, screen):
         """Dessine le joueur avec sa barre de vie"""
