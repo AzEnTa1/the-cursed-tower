@@ -28,13 +28,13 @@ class PerksSubScene(BaseSubScene):
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.perks_rect[0][2].collidepoint(event.pos):
+            if self.perks_rect[0][2].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.perks_manager.choose_perk(self.perks_list[0])
                 self.on_exit()
-            elif self.perks_rect[1][2].collidepoint(event.pos):
+            elif self.perks_rect[1][2].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.perks_manager.choose_perk(self.perks_list[1])
                 self.on_exit()
-            elif self.perks_rect[2][2].collidepoint(event.pos):
+            elif self.perks_rect[2][2].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.perks_manager.choose_perk(self.perks_list[2])
                 self.on_exit()
     

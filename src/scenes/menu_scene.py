@@ -16,7 +16,7 @@ class MenuScene(BaseScene):
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.play_button.collidepoint(event.pos):
+            if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.start_game()
         
         elif event.type == pygame.KEYDOWN:

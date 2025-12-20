@@ -25,9 +25,9 @@ class PauseSubScene(BaseSubScene):
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.exit_rect.collidepoint(event.pos):
+            if self.exit_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene.game_paused = False
-            elif self.back_to_menu_rect.collidepoint(event.pos):
+            elif self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
                 
     

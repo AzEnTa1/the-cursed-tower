@@ -26,7 +26,7 @@ class GameOverScene(BaseScene):
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_RETURN:
                  self.game.change_scene(self.settings.SCENE_MENU)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if self.quit_button.collidepoint(event.pos):
+            if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
 
     
