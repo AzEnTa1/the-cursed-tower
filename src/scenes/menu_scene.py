@@ -1,4 +1,4 @@
-# src/scene/menu_scene.py
+# src/scenes/menu_scene.py
 import pygame
 from .base_scene import BaseScene
 
