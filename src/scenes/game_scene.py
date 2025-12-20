@@ -334,9 +334,8 @@ class GameScene(BaseScene):
             
             # Texte de compte à rebours
             if pending['timer'] > 0:
-                font = pygame.font.Font(None, 24)
                 time_left = pending['timer'] / 60  # Convertir en secondes
-                countdown_text = font.render(f"{time_left:.1f}s", True, (255, 255, 255))
+                countdown_text = self.settings.font["h3"].render(f"{time_left:.1f}s", True, (255, 255, 255))
                 screen.blit(countdown_text, (pending['x'] - 15, pending['y'] - 60))
         
         # Dessine les projectiles

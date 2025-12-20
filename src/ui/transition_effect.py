@@ -1,5 +1,5 @@
+# src/ui/transition_effect.py
 import pygame
-#from config.settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
 
 class TransitionEffect:
     def __init__(self, settings):

@@ -29,5 +29,9 @@ class Settings:
         self.SCENE_GAME_OVER = "game_over"
 
         # FONTS
-        self.font = pygame.font.Font(None, 48) # Police par défaut, taille 48
-        self.small_font = pygame.font.Font(None, 24) # ---, taille 24
+        self.font = {
+            "h1":pygame.font.Font(None, 48),
+            "h2":pygame.font.Font(None, 36),
+            "h3":pygame.font.Font(None, 24),
+            "h4":pygame.font.Font(None, 18)
+        }

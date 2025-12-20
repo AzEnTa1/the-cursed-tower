@@ -7,10 +7,6 @@ class HUD:
         self.weapon = weapon
         self.settings = settings
         
-        # Polices
-        self.title_font = pygame.font.Font(None, 36)
-        self.normal_font = pygame.font.Font(None, 24)
-        self.small_font = pygame.font.Font(None, 18)
         
         # Positions
         self.margin = 10
@@ -47,7 +43,7 @@ class HUD:
         pygame.draw.rect(screen, color, (bar_x, bar_y, health_width, self.bar_height))
         
         # Texte
-        health_text = self.normal_font.render(
+        health_text = self.settings.font["h3"].render(
             f"VIE: {self.player.health}/{self.player.max_health}", 
             True, self.settings.WHITE
         )
@@ -58,13 +54,13 @@ class HUD:
         wave_info = self.wave_manager.get_wave_info()
         
         # Étage et vague
-        floor_text = self.title_font.render(
+        floor_text = self.settings.font["h2"].render(
             f"ÉTAGE {wave_info['floor']}", 
             True, self.settings.WHITE
         )
         screen.blit(floor_text, (self.settings.screen_width - 150 + self.settings.x0, self.margin))
         
-        wave_text = self.normal_font.render(
+        wave_text = self.settings.font["h3"].render(
             f"VAGUE {wave_info['current_wave']}/3", 
             True, self.settings.WHITE
         )
@@ -84,7 +80,7 @@ class HUD:
             state_text = "ÉTAGE TERMINÉ!"
             state_color = self.settings.GREEN
             
-        state_display = self.normal_font.render(state_text, True, state_color)
+        state_display = self.settings.font["h3"].render(state_text, True, state_color)
         screen.blit(state_display, (self.settings.screen_width - 150 + self.settings.x0, self.margin + 60))
         
     def draw_aim_indicator(self, screen):
@@ -104,9 +100,9 @@ class HUD:
         
         # Texte
         if stationary_percent >= 1.0:
-            aim_text = self.normal_font.render("PRÊT À TIRER!", True, self.settings.GREEN)
+            aim_text = self.settings.font["h3"].render("PRÊT À TIRER!", True, self.settings.GREEN)
         else:
-            aim_text = self.normal_font.render(f"VISÉE: {int(stationary_percent * 100)}%", True, self.settings.WHITE)
+            aim_text = self.settings.font["h3"].render(f"VISÉE: {int(stationary_percent * 100)}%", True, self.settings.WHITE)
             
         screen.blit(aim_text, (aim_x, aim_y + self.bar_height + 2))
         
@@ -115,11 +111,11 @@ class HUD:
         info_y = self.settings.screen_height - 40 + self.settings.y0
         
         # Score
-        score_text = self.small_font.render(f"Score: {self.player.score}", True, self.settings.WHITE)
+        score_text = self.settings.font["h4"].render(f"Score: {self.player.score}", True, self.settings.WHITE)
         screen.blit(score_text, (self.margin + self.settings.x0, info_y))
         
         # Instructions
-        instructions = self.small_font.render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, self.settings.WHITE)
+        instructions = self.settings.font["h4"].render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, self.settings.WHITE)
         screen.blit(instructions, (self.settings.screen_width // 2 - instructions.get_width() // 2 + self.settings.x0, info_y))
         
     def draw_quick_stats(self, screen):
@@ -128,11 +124,11 @@ class HUD:
         stats_y = 100 + self.settings.y0
         
         # Score actuel
-        score_text = self.normal_font.render(f"SCORE: {self.player.score}", True, self.settings.YELLOW)
+        score_text = self.settings.font["h3"].render(f"SCORE: {self.player.score}", True, self.settings.YELLOW)
         screen.blit(score_text, (stats_x, stats_y))
         
         # Ennemis tués dans cette vague (approximatif)
         enemies_killed = max(0, self.wave_manager.enemies_remaining - len(self.wave_manager.current_wave_enemies))
         if self.wave_manager.wave_number > 0:
-            kills_text = self.small_font.render(f"Tués cette vague: {enemies_killed}", True, self.settings.WHITE)
+            kills_text = self.settings.font["h4"].render(f"Tués cette vague: {enemies_killed}", True, self.settings.WHITE)
             screen.blit(kills_text, (stats_x, stats_y + 30))

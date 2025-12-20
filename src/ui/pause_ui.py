@@ -9,7 +9,7 @@ class PauseUI:
         """dessine l'interface complète"""
         
         pygame.draw.rect(screen, (100, 100, 100, 0), self.menu_rect)
-        txt = pygame.font.Font(None, 24).render("Cliquer pour quitter, ECHAP pour retourner au jeu", True, (0, 0, 0))
+        txt = self.settings.font["h3"].render("Cliquer pour quitter, ECHAP pour retourner au jeu", True, (0, 0, 0))
         rnd_rect = txt.get_rect(center=self.menu_rect.center)
         screen.blit(txt, rnd_rect)
 

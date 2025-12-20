@@ -1,5 +1,4 @@
 import pygame
-import random
 
 class PerksUI:
     def __init__(self, settings):
@@ -28,7 +27,7 @@ class PerksUI:
         """dessine l'interface complète"""
         self._draw_background(screen)
         for rect, perk in zip(perks_rect, perks_list):
-            txt = pygame.font.Font(None, 24).render(perk, True, (0, 0, 0))
+            txt = self.settings.font["h3"].render(perk, True, (0, 0, 0))
             pygame.draw.rect(screen, (255, 0, 0, 0), rect[2])
             pygame.draw.rect(screen, (255, 255, 255, 0), rect[2].inflate(-5, -5))
             screen.blit(txt, txt.get_rect(center=rect[1].center))
@@ -39,7 +38,7 @@ class PerksUI:
     def _draw_background(self, screen):
         """dessine le background"""
         pygame.draw.rect(screen, (255, 255, 0, 0), self.menu_rect)
-        txt = pygame.font.Font(None, 24).render("affichage perks", True, (0, 0, 0))
+        txt = self.settings.font["h3"].render("affichage perks", True, (0, 0, 0))
         rnd_rect = txt.get_rect(center=self.menu_rect.center)
         screen.blit(txt, rnd_rect)
 
