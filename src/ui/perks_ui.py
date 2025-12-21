@@ -7,16 +7,16 @@ class PerksUI:
         
         self.perks_imgs = {
                            "player_speed":pygame.image.load(r"assets\images\Speed_Icon.png"),
-                           "player_attack_speed":None,
-                           "player_attack_damage":None,
-                           "player_max_health":pygame.image.load(r"assets\images\Heal_Icon.png"),
-                           "player_size_up":None,
-                           "player_size_down":None,
-                           "player_regen":pygame.image.load(r"assets\images\Heal_Icon.png"),
-                           "projectil_speed":None, 
-                           "multishot":None,
-                           "infinite life":None,
-                           "arc_shot":None
+                           "player_attack_speed":pygame.image.load(r"assets\images\Attack_speed_icon.png"),
+                           "player_attack_damage":pygame.image.load(r"assets\images\Attack_icon.png"),
+                           "player_max_health":pygame.image.load(r"assets\images\Heal_icon.png"),
+                           "player_size_up":pygame.image.load(r"assets\images\Player_size_up_icon.png"),
+                           "player_size_down":pygame.image.load(r"assets\images\Player_size_down_icon.png"),
+                           "player_regen":pygame.image.load(r"assets\images\Regen_icon.png"),
+                           "projectil_speed":pygame.image.load(r"assets\images\Projectil_speed_icon.png"), 
+                           "multishot":pygame.image.load(r"assets\images\Multishot_icon.png"),
+                           "infinite life":pygame.image.load(r"assets\images\Shield_icon.png"),
+                           "arc_shot":pygame.image.load(r"assets\images\Arc_shoot_icon.png"),
         }
 
         # si une image n'est pas trouvée, on remplace par une image aléatoire parmi celle disponibles
