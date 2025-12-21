@@ -48,6 +48,7 @@ class Game:
         # Commencer par le menu
         self.change_scene(self.settings.SCENE_MENU)
     
+
     def change_scene(self, scene_name):
         """Change la scène actuelle"""
         if scene_name in self.scenes:
@@ -89,23 +90,25 @@ class Game:
                 if event.key == pygame.K_f:
                     if not self.full_screen:
                         self.full_screen = True
-                        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-                        self.settings.screen_width, self.settings.screen_height = self.screen.get_size()
+                        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)   
                     else:
                         self.full_screen = False
                         self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
-                        self.settings.screen_width, self.settings.screen_height = self.screen.get_size()
-                    self.current_scene.resize()
+
+                    width, height = self.screen.get_size()
+                    self.resize(width, height)
 
             # Passe les événements à la scène actuelle
             if self.current_scene:
                 self.current_scene.handle_event(event)
     
+
     def update(self):
         """Mise à jour de la logique du jeu"""
         if self.current_scene:
             self.current_scene.update()
     
+
     def draw(self):
         """Rendu graphique"""
         # Efface l'écran
@@ -125,6 +128,23 @@ class Game:
         self.screen.blit(self.used_screen, (self.settings.x0, self.settings.y0))
         pygame.display.flip()
     
+
+    def resize(self, width, height):
+        if height/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0] > width : # largeur limitante 
+            self.settings.screen_width = width
+            self.settings.screen_height = round(width/self.settings.ASPECT_RATIO[0]*self.settings.ASPECT_RATIO[1])
+            self.settings.y0 = (height - self.settings.screen_height)//self.settings.BORDER_WIDTH
+            self.settings.x0 = 0
+        else: # Hauteur limitante
+            self.settings.screen_width = round(height/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0])
+            self.settings.screen_height = height
+            self.settings.y0 = 0
+            self.settings.x0 = (width - self.settings.screen_width)//self.settings.BORDER_WIDTH
+        self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+        self.current_scene.resize()
+        print(self.settings.screen_width, self.settings.screen_height)
+
+
     def run(self):
         """Boucle principale du jeu"""
         while self.running:
