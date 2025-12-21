@@ -56,21 +56,27 @@ class MenuScene(BaseScene):
         #play_rect = play_text.get_rect(center=self.play_button.center)
         ##screen.blit(play_text, play_rect)
 
-        font = pygame.font.SysFont(None, 60)
-
-        text_normal = font.render("JOUER(entrée)", True, (255, 255, 255))
-        text_hover = font.render("JOUER(entrée)", True, (255, 200, 0))
-
-        button_rect = text_normal.get_rect(center=self.play_button.center)
+        # Bouton Jouer avec effet hover
         mouse_pos = pygame.mouse.get_pos()
-        mouse_click = pygame.mouse.get_pressed()[0]
-
-        if button_rect.collidepoint(mouse_pos):
-            screen.blit(text_hover, button_rect)
-            if mouse_click:
+        font = pygame.font.SysFont(None, 60)
+        white = (255, 255, 255)
+        yellow = (255, 250, 0)
+        text_normal = font.render("JOUER(entrée)", True, (white))
+        button_rect = text_normal.get_rect(center=self.play_button.center)
+        if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(mouse_pos):
+            text_normal = font.render("JOUER(entrée)", True, (yellow))
+            screen.blit(text_normal, button_rect)
+            if mouse_clicked := pygame.mouse.get_pressed()[0]:
                 self.start_game()
         else:
             screen.blit(text_normal, button_rect)
+
+
+        
+
+    
+        
+
 
 
     def resize(self):
