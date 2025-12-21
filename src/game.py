@@ -64,7 +64,6 @@ class Game:
             else:
                 self.current_scene.on_enter()
             
-    
     def handle_events(self):
         """Gestion des événements"""
         for event in pygame.event.get():
@@ -84,8 +83,6 @@ class Game:
                     self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//self.settings.BORDER_WIDTH
                 self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
                 self.current_scene.resize()
-                print(self.settings.screen_width, self.settings.screen_height)
-
 
             # Événement de bascule plein écran
             elif event.type == pygame.KEYDOWN:

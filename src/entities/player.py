@@ -1,14 +1,18 @@
 # src/entities/player.py
 import pygame
-
+from config.settings import Settings
 class Player:
+    """
+    Classe du joueur
+    Gère le déplacement, la vie, le score et les interactions
+    """
     def __init__(self, x, y, settings):
         self.settings = settings
         self.x = x
         self.y = y
         self.speed = settings.player_speed
         self.size = settings.player_size
-        self.color = (0, 255, 0)
+        self.color = self.settings.GREEN
         self.infinite_life = False
 
         # Points de vie
@@ -17,7 +21,6 @@ class Player:
         
         # Score
         self.score = 0
-        self.xp = 0
 
         # États des touches
         self.keys_pressed = {
@@ -27,8 +30,6 @@ class Player:
             'down': False
         }
 
-        
-        
         # Dernière touche pressée pour chaque axe
         self.last_horizontal_key = None
         self.last_vertical_key = None
@@ -73,9 +74,7 @@ class Player:
     
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
-        
-        
-        # le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk)
+        # le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk) ======================
         if self.infinite_life:
             self.health = self.max_health
 
@@ -113,9 +112,8 @@ class Player:
     def add_score(self, points):
         """Ajoute des points au score"""
         self.score += points
-        self.xp += points
     
     def draw(self, screen):
-        """Dessine le joueur avec sa barre de vie"""
+        """Dessine le joueur (sans la barre de vie)"""
         # Corps du joueur
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.size)

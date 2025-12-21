@@ -24,7 +24,6 @@ class Weapon:
         self.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
         
         self.settings = settings
-        print(f"Weapon created: {self.damage} damage")
     
     def update(self, player, current_time, projectiles, enemies, dt):
         """Gère le tir automatique et le multishot"""

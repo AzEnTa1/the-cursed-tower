@@ -17,6 +17,9 @@ from src.entities.projectiles import FireZone
 
 class GameScene(BaseScene):
     def __init__(self, game, settings):
+        """
+        Scène principale de jeu
+        """
         super().__init__(game, settings)
         self.player = None
         self.weapon = None
@@ -30,7 +33,7 @@ class GameScene(BaseScene):
         self.current_time = 0
         self.current_floor = 1
         self.spawn_effects = []
-        self.fire_zones = []  # zones de feu actives
+        self.fire_zones = []  # Zones de feu actives
         self.pending_fire_zones = []  # Zones en prévisualisation
         
     def on_enter(self):
@@ -45,7 +48,7 @@ class GameScene(BaseScene):
         self.wave_manager.setup_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)
         
-        # sous scènes
+        # Sous-scènes
         self.perks_sub_scene = PerksSubScene(self.game, self, self.settings, self.player, self.weapon)
         self.pause_sub_scene = PauseSubScene(self.game, self, self.settings)
         self.game_paused = False
@@ -62,11 +65,11 @@ class GameScene(BaseScene):
         self.spawn_effects = [] 
         self.fire_zones = []
         self.pending_fire_zones = []
-        
-        print(f"Début de l'étage {self.current_floor}")
 
     def handle_event(self, event):
-        """Gère les événements du jeu"""
+        """
+        Gère les événements du jeu
+        """
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 # Met le jeu en pause
@@ -91,24 +94,35 @@ class GameScene(BaseScene):
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    pass
+                    pass  # Touche P déjà gérée
             self.player.handle_event(event)
     
     def update(self):
-        """Met à jour le jeu"""
+        """Met à jour la logique du jeu"""
         if self.game_paused:
             self.current_sub_scene.update()
             return
         
         self.current_time = pygame.time.get_ticks()
-        dt = self.game.clock.get_time()  # Récupère le delta time
+        dt = self.game.clock.get_time()  # Delta time en millisecondes
         
-        # Met à jour l'effet de transition
+        # Mise à jour de l'effet de transition
         self.transition.update(dt)
         if self.transition.is_active():
             return
         
-        # maj des effets d'apparition
+        # Mise à jour des différentes composantes du jeu
+        self._update_spawn_effects(dt)
+        self._update_wave_manager()
+        self._update_player_and_weapon(dt)
+        self._update_projectiles()
+        self._update_enemies(dt)
+        self._update_fire_zones()
+        
+        self._check_floor_completion()
+    
+    def _update_spawn_effects(self, dt):
+        """Met à jour les effets d'apparition des ennemis"""
         for effect in self.spawn_effects[:]:
             effect.update(dt)
             if effect.is_complete():
@@ -117,8 +131,10 @@ class GameScene(BaseScene):
                 self.enemies.append(enemy)
                 self.wave_manager.current_wave_enemies.append(enemy) 
                 self.spawn_effects.remove(effect)
-        
-        # si possible, démarrer une nouvelle vague
+    
+    def _update_wave_manager(self):
+        """Met à jour le gestionnaire de vagues"""
+        # Si possible, démarrer une nouvelle vague
         if (self.wave_manager.is_between_waves() and 
             self.wave_manager.update(self.current_time) and 
             len(self.enemies) == 0 and 
@@ -129,21 +145,25 @@ class GameScene(BaseScene):
                 for x, y, enemy_type in spawn_positions:
                     effect = SpawnEffect(x, y, self.settings, enemy_type)
                     self.spawn_effects.append(effect)
-
-        # maj joueur
+    
+    def _update_player_and_weapon(self, dt):
+        """Met à jour le joueur et son arme"""
+        # Mise à jour du joueur
         self.player.update()
         
-        # maj arme + tir de projectiles
+        # Mise à jour de l'arme et tir de projectiles
         self.weapon.update_direction(self.player.last_dx, self.player.last_dy)
-        self.weapon.update(self.player, self.current_time, self.projectiles, self.enemies, dt) 
-        
-        # maj projectiles joueurs
+        self.weapon.update(self.player, self.current_time, self.projectiles, self.enemies, dt)
+    
+    def _update_projectiles(self):
+        """Met à jour les projectiles du joueur et des ennemis"""
+        # Mise à jour des projectiles joueurs
         for projectile in self.projectiles[:]:
             projectile.update()
             if not projectile.is_alive():
                 self.projectiles.remove(projectile)
         
-        # maj des projectiles ennemis
+        # Mise à jour des projectiles ennemis
         for projectile in self.enemy_projectiles[:]:
             projectile.update()
             if not projectile.is_alive():
@@ -153,88 +173,88 @@ class GameScene(BaseScene):
             distance = ((projectile.x - self.player.x)**2 + (projectile.y - self.player.y)**2)**0.5
             if distance < self.player.size + projectile.radius:
                 if self.player.take_damage(projectile.damage):
-                    self.game_stats.on_death(self.player)
-                    self.game.change_scene(self.settings.SCENE_GAME_OVER)
+                    self._handle_player_death()
                 if projectile in self.enemy_projectiles:
                     self.enemy_projectiles.remove(projectile)
-
-        # maj des ennemis
+    
+    def _update_enemies(self, dt):
+        """Met à jour tous les ennemis"""
         for enemy in self.enemies[:]:
             # Passe les zones de feu et pending_zones au pyromane
             if enemy.type == "pyromane":
                 enemy.update(self.player, self.fire_zones, self.pending_fire_zones)
+            # Passe les projectiles ennemis au shooter et destructeur
             elif enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
             else:   
                 enemy.update(self.player, None)
                         
             # Collisions projectiles joueur → ennemis
-            for projectile in self.projectiles[:]:
-                distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
-                if distance < enemy.radius + projectile.radius:
-                    if enemy.take_damage(projectile.damage):
-                        self.enemies.remove(enemy)
-                        self.wave_manager.on_enemy_died(enemy)
-                        # Score différent selon le type d'ennemi
-                        if enemy.type == "destructeur":
-                            self.player.add_score(50)
-                        elif enemy.type == "suicide":
-                            self.player.add_score(20)
-                        else:
-                            self.player.add_score(10)
-
-                        # Affiche les perks si le score est divisible par 200
-                        if self.player.xp >= 200:
-                            #self.(player?, )on_level_up() #pourrait etre util
-                            self.player.xp %= 200
-                            self.game_paused = True
-                            self.current_sub_scene = self.perks_sub_scene
-                            self.current_sub_scene.on_enter()
-                    
-                    if projectile in self.projectiles:
-                        self.projectiles.remove(projectile)
-                    break
+            self._check_player_projectile_collisions(enemy)
             
             # Collisions ennemis mêlée → joueur
             if enemy.type != "shooter" and enemy.type != "destructeur":
-                distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
-                if distance < enemy.radius + self.player.size:
-                    if self.player.take_damage(enemy.damage):
-                        self.game_stats.on_death(self.player)
-                        self.game.change_scene(self.settings.SCENE_GAME_OVER)
-                
-                    # Recul
-                    dx = enemy.x - self.player.x
-                    dy = enemy.y - self.player.y
-                    distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
-                    enemy.x += (dx / distance) * 15
-                    enemy.y += (dy / distance) * 15
-
+                self._check_melee_collision(enemy)
+            
             # Gestion des suicides
             if enemy.type == "suicide":
-                distance_to_player = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
-                
-                if enemy.is_exploding and enemy.explosion_timer <= 0:
-                    if distance_to_player < enemy.explosion_radius:
-                        if self.player.take_damage(enemy.damage):
-                            self.game_stats.on_death(self.player)
-                            self.game.change_scene(self.settings.SCENE_GAME_OVER)
+                self._handle_suicide_enemy(enemy)
+    
+    def _check_player_projectile_collisions(self, enemy):
+        """Vérifie les collisions entre projectiles joueur et ennemi"""
+        for projectile in self.projectiles[:]:
+            distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
+            if distance < enemy.radius + projectile.radius:
+                if enemy.take_damage(projectile.damage):
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
-                    self.player.add_score(15)
+                    # Score différent selon le type d'ennemi
+                    if enemy.type == "destructeur":
+                        self.player.add_score(50)
+                    elif enemy.type == "suicide":
+                        self.player.add_score(20)
+                    else:
+                        self.player.add_score(10)
+                    
+                    self._check_for_level_up()
 
-                    # Affiche les perks si le score est divisible par 200
-                    if self.player.xp >= 200:
-                        #self.on_level_up() #pourrait etre util
-                        self.player.xp %= 200
-                        self.game_paused = True
-                        self.current_sub_scene = self.perks_sub_scene
-                        self.current_sub_scene.on_enter()
-                elif distance_to_player < 50 and not enemy.is_exploding:
-                    enemy.is_exploding = True
-                    enemy.explosion_timer = 15
+                if projectile in self.projectiles:
+                    self.projectiles.remove(projectile)
+                break
+    
+    def _check_melee_collision(self, enemy):
+        """Vérifie les collisions en mêlée entre ennemi et joueur"""
+        distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
+        if distance < enemy.radius + self.player.size:
+            if self.player.take_damage(enemy.damage):
+                self._handle_player_death()
+            
+            # Recul
+            dx = enemy.x - self.player.x
+            dy = enemy.y - self.player.y
+            distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
+            enemy.x += (dx / distance) * 15
+            enemy.y += (dy / distance) * 15
+    
+    def _handle_suicide_enemy(self, enemy):
+        """Gère le comportement de l'ennemi suicide"""
+        distance_to_player = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
         
-        # METTRE À JOUR LES PRÉVISUALISATIONS DE FLAMMES
+        if enemy.is_exploding and enemy.explosion_timer <= 0:
+            if distance_to_player < enemy.explosion_radius:
+                if self.player.take_damage(enemy.damage):
+                    self._handle_player_death()
+            self.enemies.remove(enemy)
+            self.wave_manager.on_enemy_died(enemy)
+            self.player.add_score(15)
+            self._check_for_level_up()
+        elif distance_to_player < 50 and not enemy.is_exploding:
+            enemy.is_exploding = True
+            enemy.explosion_timer = 15
+    
+    def _update_fire_zones(self):
+        """Met à jour les zones de feu"""
+        # Mettre à jour les prévisualisations de flammes
         for pending in self.pending_fire_zones[:]:
             pending['timer'] -= 1
             
@@ -243,24 +263,41 @@ class GameScene(BaseScene):
                 self.fire_zones.append(FireZone(pending['x'], pending['y'], self.settings))
                 self.pending_fire_zones.remove(pending)
         
-        # Maj des zones de feu et dégâts au joueur
+        # Mise à jour des zones de feu et dégâts au joueur
         for fire_zone in self.fire_zones[:]:
             if not fire_zone.update():
                 self.fire_zones.remove(fire_zone)
             else:
                 # Vérifie les dégâts au joueur
                 fire_zone.check_damage(self.player)
-        
-        # vérifier si l'étage est fini
+    
+    def _check_floor_completion(self):
+        """Vérifie si l'étage est terminé"""
         if (self.wave_manager.are_all_waves_cleared() and 
             len(self.enemies) == 0 and 
             len(self.enemy_projectiles) == 0 and
             len(self.spawn_effects) == 0):
-            
+
+            # Démarre l'effet de transition
             self.transition.start(self.next_floor)
     
+    def _handle_player_death(self):
+        """Gère la mort du joueur"""
+        self.game_stats.on_death(self.player)
+        self.game.change_scene(self.settings.SCENE_GAME_OVER)
+    
+    def _check_for_level_up(self):
+        """Vérifie si le joueur peut monter de niveau"""
+        if self.player.xp >= 200:
+            self.player.xp %= 200
+            self.game_paused = True
+            self.current_sub_scene = self.perks_sub_scene
+            self.current_sub_scene.on_enter()
+    
     def create_enemy_from_effect(self, effect):
-        """Crée un ennemi après la fin de l'effet"""
+        """
+        Crée un ennemi après la fin de l'effet d'apparition
+        """
         if effect.enemy_type == "charger":
             return Charger(effect.x, effect.y, self.settings)
         elif effect.enemy_type == "shooter":
@@ -275,7 +312,10 @@ class GameScene(BaseScene):
             return Basic(effect.x, effect.y, self.settings)
     
     def next_floor(self):
-        """Passe à l'étage suivant (appelé après la transition)"""
+        """
+        Passe à l'étage suivant
+        Appelé après la fin de l'effet de transition
+        """
         self.current_floor += 1
         self.enemies.clear()
         self.projectiles.clear()
@@ -292,13 +332,15 @@ class GameScene(BaseScene):
         self.player.x = self.settings.screen_width // 2
         self.player.y = self.settings.screen_height // 2
         
-        # Petit heal entre les étages
+        # Petit heal entre les étages (20 PV)
         self.player.health = min(self.player.health + 20, self.player.max_health)
         
-        print(f"Nouvel étage: {self.current_floor}")
+        # Log: Nouvel étage {self.current_floor}
     
     def draw(self, screen):
-        """Dessine le jeu"""
+        """
+        Dessine le jeu sur l'écran
+        """
         # Fond noir
         screen.fill((0, 0, 0))
         
@@ -306,7 +348,38 @@ class GameScene(BaseScene):
         for effect in self.spawn_effects:
             effect.draw(screen)
         
-        # Dessine les prévisualisations de flammes (sous les projectiles)
+        # Dessine les prévisualisations de flammes
+        self._draw_fire_previews(screen)
+        
+        # Dessine les projectiles
+        for projectile in self.projectiles:
+            projectile.draw(screen)
+        for projectile in self.enemy_projectiles:
+            projectile.draw(screen)
+
+        # Dessine les zones de feu
+        for fire_zone in self.fire_zones:
+            fire_zone.draw(screen)
+        
+        # Dessine les ennemis
+        for enemy in self.enemies:
+            enemy.draw(screen)
+        
+        # Dessine le joueur
+        self.player.draw(screen)
+        
+        # Dessine le HUD
+        self.hud.draw(screen)
+        
+        # Dessine l'effet de transition
+        self.transition.draw(screen)
+        
+        # Dessine le menu de pause
+        if self.game_paused:
+            self.current_sub_scene.draw(screen)
+    
+    def _draw_fire_previews(self, screen):
+        """Dessine les prévisualisations des zones de feu"""
         for pending in self.pending_fire_zones:
             preview_surface = pygame.Surface((100, 100), pygame.SRCALPHA)
             preview_radius = 40
@@ -342,34 +415,8 @@ class GameScene(BaseScene):
                 time_left = pending['timer'] / 60  # Convertir en secondes
                 countdown_text = self.settings.font["h3"].render(f"{time_left:.1f}s", True, (255, 255, 255))
                 screen.blit(countdown_text, (pending['x'] - 15, pending['y'] - 60))
-        
-        # Dessine les projectiles
-        for projectile in self.projectiles:
-            projectile.draw(screen)
-        for projectile in self.enemy_projectiles:
-            projectile.draw(screen)
-
-        # Dessine les zones de feu
-        for fire_zone in self.fire_zones:
-            fire_zone.draw(screen)
-        
-        # Dessine les ennemis
-        for enemy in self.enemies:
-            enemy.draw(screen)
-        
-        # Dessine le joueur
-        self.player.draw(screen)
-        
-        # Dessine le HUD
-        self.hud.draw(screen)
-        
-        # Dessine l'effet de transition
-        self.transition.draw(screen)
-        
-        # Dessine le menu de pause
-        if self.game_paused:
-            self.current_sub_scene.draw(screen)
 
     def resize(self):
+        """Appelé lorsque la fenêtre change de taille"""
         if self.game_paused:
             self.current_sub_scene.resize()
