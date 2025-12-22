@@ -54,6 +54,9 @@ class Player:
             elif event.key in (pygame.K_s, pygame.K_DOWN):
                 self.keys_pressed['down'] = True
                 self.last_vertical_key = 'down'
+            # Dash 
+            elif event.key == pygame.K_x:
+                self.dash()
                 
         elif event.type == pygame.KEYUP:
             if event.key in (pygame.K_q, pygame.K_LEFT):
@@ -72,6 +75,7 @@ class Player:
                 self.keys_pressed['down'] = False
                 if self.last_vertical_key == 'down':
                     self.last_vertical_key = 'up' if self.keys_pressed['up'] else None
+        
     
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
@@ -104,6 +108,25 @@ class Player:
         # Garde le joueur dans l'écran
         self.x = max(self.size, min(self.x, self.settings.screen_width - self.size))
         self.y = max(self.size, min(self.y, self.settings.screen_height - self.size))
+
+    def dash(self):
+        # Mouvement horizontal - dernière touche prime
+        dx = 0
+        if self.last_horizontal_key == 'left':
+            dx = -self.speed
+        elif self.last_horizontal_key == 'right':
+            dx = self.speed
+        
+        # Mouvement vertical - dernière touche prime
+        dy = 0
+        if self.last_vertical_key == 'up':
+            dy = -self.speed
+        elif self.last_vertical_key == 'down':
+            dy = self.speed
+        
+        # Applique le mouvement
+        self.x += dx*10
+        self.y += dy*10
     
     def take_damage(self, amount):
         """Inflige des dégâts au joueur"""
