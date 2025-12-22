@@ -72,5 +72,6 @@ class Settings:
             "h1": pygame.font.Font(None, 48),
             "h2": pygame.font.Font(None, 36),
             "h3": pygame.font.Font(None, 24),
-            "h4": pygame.font.Font(None, 18)
+            "h4": pygame.font.Font(None, 18),
+            "main_menu": pygame.font.SysFont(None, 60)
         }

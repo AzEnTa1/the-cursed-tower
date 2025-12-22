@@ -24,6 +24,9 @@ class PerksUI:
             if self.perks_imgs[perks] is None:
                 self.perks_imgs[perks] = pygame.image.load(r"assets\images\Blank_Icon.png")
 
+        self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        
+
     def draw(self, screen, perks_rect, perks_list):
         """dessine l'interface complète"""
         self._draw_background(screen)
@@ -45,4 +48,4 @@ class PerksUI:
 
     def resize(self):
         """redéfini la taille de chaque éléments"""
-        self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        self.menu_rect.update(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
