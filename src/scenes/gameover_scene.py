@@ -31,7 +31,7 @@ class GameOverScene(BaseScene):
     
     def update(self):
         """Pas de logique à mettre à jour pour l'instant"""
-        if self.quit_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+        if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
         else:
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (0, 0, 0))
