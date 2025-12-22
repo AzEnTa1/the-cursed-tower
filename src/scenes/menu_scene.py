@@ -12,7 +12,6 @@ class MenuScene(BaseScene):
         # Rectangle pour le bouton Jouer (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
         self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1, self.settings.screen_height*0.2, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
-        print("Menu Scene")
     
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
@@ -34,54 +33,34 @@ class MenuScene(BaseScene):
     
     def draw(self, screen):
         """Dessine le menu"""
-        # Fond noir
-        screen.fill((0, 0, 0))
-
-        #image de fond redimentionner a la taille de l'ecran
-        bg_image = pygame.image.load(r"assets/images/Menu.png")        
-        bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
-        screen.blit(bg_image, (0, 0))
-
-
-        # Titre
-        #pygame.draw.rect(screen, (255, 255, 0), self.bg_title_rect)
-        #title_text = self.settings.font["h1"].render("Tour Maudite", True, (0, 0, 0))
-        #title_rect = title_text.get_rect(center=self.bg_title_rect.center)
-        #screen.blit(title_text, title_rect)
-
-        # Bouton Jouer transparant avec ecriture "Jouer" blanche
-    
-         #pygame.draw.rect(screen, (0, 0, 0, 0), self.play_button.inflate(-5, -5))
-        #play_text = self.settings.font["h2"].render("Jouer", True, (255, 255, 255))
-        #play_rect = play_text.get_rect(center=self.play_button.center)
-        ##screen.blit(play_text, play_rect)
-
+        # Charger l'image de fond
+        try:
+            bg_image = pygame.image.load("assets/images/Menu.png")
+            bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
+            screen.blit(bg_image, (0, 0))
+        except FileNotFoundError:
+            # Fallback si l'image n'existe pas
+            screen.fill((50, 50, 100))
+        
         # Bouton Jouer avec effet hover
-        mouse_pos = pygame.mouse.get_pos()
         font = pygame.font.SysFont(None, 60)
-        white = (255, 255, 255)
-        yellow = (255, 250, 0)
-        text_normal = font.render("JOUER(entrée)", True, (white))
+        
+        text_normal = font.render("JOUER(entrée)", True, (255, 255, 255))
+        text_hover = font.render("JOUER(entrée)", True, (255, 200, 0))
+        
         button_rect = text_normal.get_rect(center=self.play_button.center)
-        if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(mouse_pos):
-            text_normal = font.render("JOUER(entrée)", True, (yellow))
-            screen.blit(text_normal, button_rect)
-            if mouse_clicked := pygame.mouse.get_pressed()[0]:
-                self.start_game()
+        mouse_pos = pygame.mouse.get_pos()
+        
+        # Afficher le bouton avec effet hover
+        if button_rect.collidepoint(mouse_pos):
+            screen.blit(text_hover, button_rect)
         else:
             screen.blit(text_normal, button_rect)
-
-
-        
-
     
-        
-
-
-
     def resize(self):
-        """appelé lorsque la fenêtre change de taille"""
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
         self.bg_title_rect = pygame.Rect(self.settings.screen_width*0.1, self.settings.screen_height*0.2, self.settings.screen_width*0.8, self.settings.screen_height*0.2)
-        
-        

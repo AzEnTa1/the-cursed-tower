@@ -4,6 +4,10 @@ import random
 import math
 
 class Projectile:
+    """
+    Projectile tiré par le joueur ou les ennemis
+    Gère le mouvement, la durée de vie et les effets visuels
+    """
     def __init__(self, x, y, dx, dy, damage, settings, color=(255, 255, 0), radius=5, is_multishot=False):
         self.x = x
         self.y = y
@@ -306,114 +310,73 @@ class FireZone:
         return False
     
     def draw(self, screen):
-        """Dessine la zone de feu avec des effets visuels avancés"""
-        # 1. DESSINER LA FUMÉE (en premier, au fond)
+        """Dessine la zone de feu avec des effets visuels simplifiés"""
+        current_time = pygame.time.get_ticks()
+        
+        # Fumée
         for smoke in self.smoke_particles:
             if smoke['life'] > 0:
                 alpha = int(180 * (smoke['life'] / smoke['max_life']))
                 if smoke['life'] < smoke['fade_start']:
                     alpha = int(180 * (smoke['life'] / smoke['fade_start']))
-                
                 color = (smoke['color'][0], smoke['color'][1], smoke['color'][2], alpha)
                 pygame.draw.circle(screen, color,
-                                 (int(smoke['x']), int(smoke['y'])),
-                                 int(smoke['size']))
+                                (int(smoke['x']), int(smoke['y'])),
+                                int(smoke['size']))
         
-        # 2. DESSINER LES COUCHES DE FLAMME PRINCIPALES
-        for i, layer in enumerate(self.pulse_layers):
-            layer_pulse = math.sin(self.pulse_timer * layer['speed'] + layer['offset']) * 5
+        # Flammes
+        pulse = math.sin(self.pulse_timer) * 8
+        base_radius = self.base_radius + pulse
+        
+        # Dessiner 3 cercles concentriques au lieu de couches complexes
+        for i in range(3, 0, -1):
+            radius = base_radius * i / 3
+            color_idx = min(i, len(self.fire_gradient) - 1)
+            color = self.fire_gradient[color_idx]
+            alpha = int(color[3] * (0.4 + 0.6 * (i/3)))
             
-            for r in range(int(layer['radius'] + layer_pulse), 0, -2):
-                ratio = r / (layer['radius'] + layer_pulse)
-                color_index = min(int(ratio * len(self.fire_gradient)), len(self.fire_gradient)-1)
-                color = self.fire_gradient[color_index]
-                
-                alpha = int(color[3] * (0.3 + 0.7 * (1 - ratio)))
-                adjusted_color = (color[0], color[1], color[2], alpha)
-                
-                temp_surface = pygame.Surface((r*2, r*2), pygame.SRCALPHA)
-                pygame.draw.circle(temp_surface, adjusted_color, (r, r), r)
-                screen.blit(temp_surface, (int(self.x - r), int(self.y - r)))
+            temp_surface = pygame.Surface((int(radius*2), int(radius*2)), pygame.SRCALPHA)
+            pygame.draw.circle(temp_surface, (color[0], color[1], color[2], alpha), 
+                            (int(radius), int(radius)), int(radius))
+            screen.blit(temp_surface, (int(self.x - radius), int(self.y - radius)))
         
-        # 3. DESSINER LES PARTICULES DE FLAMME INDIVIDUELLES
+        # Particules de Flammes
         for particle in self.flame_particles:
             if particle['life'] > 0:
                 life_ratio = particle['life'] / particle['max_life']
                 color = self.fire_gradient[particle['color_index']]
+                alpha = int(color[3] * life_ratio * 0.7)
                 
-                brightness = 0.5 + 0.5 * life_ratio
-                adjusted_color = (
-                    min(255, int(color[0] * brightness)),
-                    min(255, int(color[1] * brightness)),
-                    min(255, int(color[2] * brightness)),
-                    int(color[3] * life_ratio * 0.7)
-                )
+                # Particule avec un simple glow
+                pygame.draw.circle(screen, (color[0], color[1], color[2], alpha),
+                                (int(particle['x']), int(particle['y'])),
+                                int(particle['size']))
                 
-                # Effet glow
-                for glow in range(3, 0, -1):
-                    glow_size = particle['size'] + glow
-                    glow_alpha = int(adjusted_color[3] * 0.3 / glow)
-                    glow_color = (adjusted_color[0], adjusted_color[1], adjusted_color[2], glow_alpha)
-                    
-                    temp_surface = pygame.Surface((glow_size*2, glow_size*2), pygame.SRCALPHA)
-                    pygame.draw.circle(temp_surface, glow_color, 
-                                     (int(glow_size), int(glow_size)), 
-                                     int(glow_size))
-                    screen.blit(temp_surface, 
-                              (int(particle['x'] - glow_size), 
-                               int(particle['y'] - glow_size)))
-                
-                # Particule principale
-                pygame.draw.circle(screen, adjusted_color,
-                                 (int(particle['x']), int(particle['y'])),
-                                 int(particle['size']))
+                # Petit glow autour
+                glow_size = particle['size'] + 2
+                glow_alpha = int(alpha * 0.3)
+                pygame.draw.circle(screen, (color[0], color[1], color[2], glow_alpha),
+                                (int(particle['x']), int(particle['y'])),
+                                int(glow_size))
         
-        # 4. DESSINER LES ÉTINCELLES
+        # Etincelle
         for spark in self.spark_particles:
             if spark['life'] > 0:
-                # Dessiner la traînée
-                for i, (trail_x, trail_y) in enumerate(spark['trail']):
-                    trail_alpha = int(255 * (i / len(spark['trail'])))
-                    trail_size = spark['size'] * (0.3 + 0.7 * (i / len(spark['trail'])))
-                    
-                    trail_color = (spark['color'][0], spark['color'][1], spark['color'][2], trail_alpha)
-                    pygame.draw.circle(screen, trail_color,
-                                     (int(trail_x), int(trail_y)),
-                                     int(trail_size))
-                
-                # Étincelle principale
                 spark_alpha = int(255 * (spark['life'] / 50))
                 spark_color = (spark['color'][0], spark['color'][1], spark['color'][2], spark_alpha)
                 pygame.draw.circle(screen, spark_color,
-                                 (int(spark['x']), int(spark['y'])),
-                                 int(spark['size']))
+                                (int(spark['x']), int(spark['y'])),
+                                int(spark['size']))
         
-        # 5. EFFET DE DISTORSION DE CHALEUR
-        heat_wave = math.sin(self.heat_distortion_timer) * 3
-        for i in range(8):
-            angle = i * (math.pi / 4) + self.wave_timer
-            wave_x = self.x + math.cos(angle) * (self.radius + heat_wave)
-            wave_y = self.y + math.sin(angle) * (self.radius + heat_wave)
-            
-            for j in range(3):
-                offset = j * 0.3
-                end_x = wave_x + math.cos(angle + offset) * 10
-                end_y = wave_y + math.sin(angle + offset) * 10
-                
-                pygame.draw.line(screen, (255, 200, 100, 80),
-                               (int(wave_x), int(wave_y)),
-                               (int(end_x), int(end_y)), 2)
+        # Contour Simple
+        glow_radius = base_radius + 4
+        glow_alpha = 20
+        glow_color = (255, 150, 50, glow_alpha)
         
-        # 6. CONTOUR LUMINEUX
-        for i in range(2, 0, -1):
-            glow_radius = self.radius + i * 4
-            glow_alpha = 30 - i * 10
-            glow_color = (255, 150, 50, glow_alpha)
-            
-            temp_surface = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
-            pygame.draw.circle(temp_surface, glow_color, 
-                             (glow_radius, glow_radius), 
-                             glow_radius, 3)
-            screen.blit(temp_surface, 
-                      (int(self.x - glow_radius), 
-                       int(self.y - glow_radius)))
+        temp_surface = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(temp_surface, glow_color, 
+                        (glow_radius, glow_radius), 
+                        glow_radius, 2)
+        screen.blit(temp_surface, 
+                (int(self.x - glow_radius), 
+                int(self.y - glow_radius)))

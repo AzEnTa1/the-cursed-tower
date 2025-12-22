@@ -65,7 +65,6 @@ class Game:
             else:
                 self.current_scene.on_enter()
             
-    
     def handle_events(self):
         """Gestion des événements"""
         for event in pygame.event.get():
@@ -75,7 +74,16 @@ class Game:
             
             # Événement de redimensionnement
             elif event.type == pygame.VIDEORESIZE:
-                self.resize(event.dict["w"], event.dict["h"])
+                if event.dict["h"]/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0] > event.dict["w"] : # largeur limitante 
+                    self.settings.screen_width, self.settings.screen_height = event.dict["w"], round(event.dict["w"]/self.settings.ASPECT_RATIO[0]*self.settings.ASPECT_RATIO[1])
+                    self.settings.y0 = (event.dict["h"] - self.settings.screen_height)//self.settings.BORDER_WIDTH
+                    self.settings.x0 = 0
+                else: # Hauteur limitante
+                    self.settings.screen_width, self.settings.screen_height = round(event.dict["h"]/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0]), event.dict["h"]
+                    self.settings.y0 = 0
+                    self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//self.settings.BORDER_WIDTH
+                self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+                self.current_scene.resize()
 
             # Événement de bascule plein écran
             elif event.type == pygame.KEYDOWN:
