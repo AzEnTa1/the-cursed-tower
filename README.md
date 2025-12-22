@@ -1,7 +1,6 @@
 # Rapport Technique (1 page long)
 ## Organisation Générale du Projet
 
-
 - src/ : Code source principal
   - entities/ : Entités du jeu (joueur, ennemis, projectiles)
   - scenes/ : Scènes du jeu (menu, jeu principal, sous-menus)
