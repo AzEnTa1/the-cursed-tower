@@ -14,6 +14,7 @@ class WaveManager:
         self.enemies_remaining = 0
         self.state = "between_waves"  # between_waves, in_wave, all_cleared
         self.settings = settings
+        self.is_boss_floor = False
         
         # Timing des vagues
         self.wave_start_time = 0
@@ -23,7 +24,24 @@ class WaveManager:
         """Configure les vagues pour un nouvel étage"""
         self.floor_number = floor_number
         self.wave_number = 0
-        self.wave_queue.setup_waves_for_floor(floor_number)
+        
+        # Vérifier si c'est un étage de boss (tous les 4 étages)
+        # Modifier pour que le boss apparaisse après chaque groupe de 4 étages normaux
+        self.is_boss_floor = (floor_number > 1 and floor_number % 4 == 1)
+        # Étages boss : 5, 9, 13, 17... (après 4 étages normaux)
+
+
+        # self.is_boss_floor = True  # Toujours vrai pour debug ====================================================
+
+
+        if self.is_boss_floor:
+            # Pour un étage de boss
+            boss_level = (floor_number - 1) // 4  # Niveau du boss
+            self.wave_queue.setup_boss_floor(boss_level)
+        else:
+            # Étage normal
+            self.wave_queue.setup_waves_for_floor(floor_number)
+        
         self.state = "between_waves"
         self.wave_start_time = pygame.time.get_ticks()
         self.current_wave_enemies.clear()

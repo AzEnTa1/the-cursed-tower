@@ -19,7 +19,7 @@ class Pyromane(Enemy):
         self.color = (255, 100, 0)
         self.radius = 20
         self.attack_range = 250
-        
+        self.damage = 0 
         self.fire_zone_cooldown = 0
         self.fire_zone_rate = 210  # 3.5 secondes entre les attaques
         self.fire_zones_placed = 0

@@ -36,12 +36,30 @@ class PerksManager:
             "player_attack_damage": 10,
             "player_max_health": 10,
             "player_size_up": 10,
-            "player_size_down": variable_debug,
+            "player_size_down": 9,
             "player_regen": 8,
             "projectil_speed": 8,
-            "multishot": 6,  # (Plus rare)
+            "multishot": variable_debug,  # (Plus rare)
             "infinite life": variable_debug,  # (Très rare)
-            "arc_shot": 4  # (Très rare)
+            "arc_shot": variable_debug  # (Très rare)
+            # shot_rebounce
+            # wall_rebounce
+            # zone de dégat autour peri-
+            # life steal
+            # poison projectil
+            # chain lightnig
+            # explosive arrow
+            # piercing shot
+            # homing shot
+            # shotgun
+            # laser beam
+            # area heal
+            # shield
+            # reflect projectil
+            # time slow
+            # invincibility
+            # double damage
+            # 
         }
         
         perks_list = list(self.perks_dict.keys())

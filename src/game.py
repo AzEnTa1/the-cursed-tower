@@ -1,6 +1,7 @@
 # src/game.py 
 import pygame
 import sys
+import random
 from config.settings import Settings
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
@@ -12,6 +13,9 @@ class Game:
     Gère l'initialisation, la boucle principale, les scènes, et les événements
     """
     def __init__(self):
+
+        self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
+        random.seed(self.global_seed)
         # Initialisation des paramètres 
         self.settings = Settings() 
 

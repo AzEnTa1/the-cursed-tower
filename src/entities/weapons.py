@@ -116,9 +116,7 @@ class Weapon:
     def _prepare_multishot(self, x, y, dx, dy, projectiles):
         """Prépare les projectiles pour le multishot"""
         total_shots = self.multishot_count + 1  # +1 pour le tir principal
-        
-        print(f"DEBUG: Multishot - {total_shots} tirs")
-        
+                
         # Crée la queue de tirs et tire immédiatement le premier
         self.multishot_queue = []
         for i in range(total_shots):

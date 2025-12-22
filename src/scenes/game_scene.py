@@ -1,6 +1,7 @@
 # src/scenes/game_scene.py
 import pygame
 import math
+import random
 from src.entities.player import Player
 from src.entities.weapons import Weapon
 from src.entities.enemies import *
@@ -35,6 +36,8 @@ class GameScene(BaseScene):
         self.spawn_effects = []
         self.fire_zones = []  # Zones de feu actives
         self.pending_fire_zones = []  # Zones en prévisualisation
+        self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
+        random.seed(self.global_seed)
         
     def on_enter(self):
         """Initialisation du jeu"""
@@ -184,7 +187,7 @@ class GameScene(BaseScene):
             if enemy.type == "pyromane":
                 enemy.update(self.player, self.fire_zones, self.pending_fire_zones)
             # Passe les projectiles ennemis au shooter et destructeur
-            elif enemy.type in ["shooter", "destructeur"]:
+            elif enemy.type in ["shooter", "destructeur", "boss"]:
                 enemy.update(self.player, self.enemy_projectiles)
             else:   
                 enemy.update(self.player, None)
@@ -309,6 +312,13 @@ class GameScene(BaseScene):
             return Destructeur(effect.x, effect.y, self.settings)
         elif effect.enemy_type == "pyromane":
             return Pyromane(effect.x, effect.y, self.settings)
+        elif effect.enemy_type == "boss":
+            return ProceduralBoss(
+                effect.x, effect.y, 
+                self.settings, 
+                self.current_floor,
+                self.game.global_seed  # Passer la seed globale
+            )
         else:
             return Basic(effect.x, effect.y, self.settings)
     
