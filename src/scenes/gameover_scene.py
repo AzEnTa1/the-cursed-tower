@@ -13,9 +13,7 @@ class GameOverScene(BaseScene):
         """Initialisation du Game Over"""
         self.ui = GameOverUI(self.settings, game_stats)
         
-        self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (0, 0, 0))
-        self.quit_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
-        self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
+        
 
         print("Game Over Scene")
     
@@ -35,7 +33,16 @@ class GameOverScene(BaseScene):
     
     def draw(self, screen):
         """Dessine le menu Game Over"""
+        self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (0, 0, 0))
+        self.quit_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
+        mouse_pos = pygame.mouse.get_pos()
+        if self.quit_rect.move(self.settings.x0, self.settings.y0).collidepoint(mouse_pos):
+            self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
+        else:
+            self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (0, 0, 0))
         self.ui.draw(screen, self.quit_button, self.quit_rect, self.quit_text)
+        
         
 
     def resize(self):
