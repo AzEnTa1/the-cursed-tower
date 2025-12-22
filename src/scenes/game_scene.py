@@ -244,7 +244,8 @@ class GameScene(BaseScene):
             if distance_to_player < enemy.explosion_radius:
                 if self.player.take_damage(enemy.damage):
                     self._handle_player_death()
-            self.enemies.remove(enemy)
+            if enemy in self.enemies:
+                self.enemies.remove(enemy)
             self.wave_manager.on_enemy_died(enemy)
             self.player.add_score(15)
             self._check_for_level_up()
