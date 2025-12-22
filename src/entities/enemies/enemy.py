@@ -1,19 +1,21 @@
-# src/entities/enemies/charger.py 
+# src/entities/enemies/enemy.py 
 import pygame
 
 class Enemy:
+    """
+    Classe de base pour tous les ennemis
+    Définit les propriétés et méthodes communes
+    """
     def __init__(self, x, y, settings):
         self.x = x
         self.y = y
         self.settings = settings
-        
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
         pass
-    
-    
-    def take_damage(self, amount): #global pour enemies
+
+    def take_damage(self, amount):
         """Inflige des dégâts à l'ennemi"""
         self.health -= amount
         return self.health <= 0
@@ -24,10 +26,10 @@ class Enemy:
         # Corps de l'ennemi
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
         
-        # BARRE DE VIE - AJOUT CRITIQUE !
+        # Barre de vie
         self._draw_health_bar(screen)
     
-    def _draw_health_bar(self, screen, bar_width = 40, bar_height = 6, bar_y_offset = -10): #pour tous sauf destructeur
+    def _draw_health_bar(self, screen, bar_width = 40, bar_height = 6, bar_y_offset = -10):
         """Dessine la barre de vie de l'ennemi""" 
         
         # Position de la barre (au-dessus de l'ennemi)

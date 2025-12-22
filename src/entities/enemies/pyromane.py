@@ -6,25 +6,24 @@ from .enemy import Enemy
 from ..projectiles import FireZone
 
 class Pyromane(Enemy):
+    """
+    Ennemi pyromane - pose des zones de feu avec prévisualisation
+    Se déplace en cercle autour du joueur
+    """
     def __init__(self, x, y, settings):
         super().__init__(x, y, settings)
-        self.type = "pyromane"
-        # Stats de base selon le type
-       
-        # Support/Zone : Pose des zones de feu AVEC PRÉVISUALISATION
+        self.type = "pyromane"       
         self.speed = 1.2
         self.health = 35
         self.max_health = 35
-        self.damage = 0
         self.color = (255, 100, 0)
         self.radius = 20
         self.attack_range = 250
         
-        # Système de zones de feu amélioré
         self.fire_zone_cooldown = 0
         self.fire_zone_rate = 210  # 3.5 secondes entre les attaques
         self.fire_zones_placed = 0
-        self.max_fire_zones = 2  # 2 flaques par attaque
+        self.max_fire_zones = random.randint(1, 2)  # Entre 1 et 2 flaques par attaque
         
         # Mouvement circulaire
         self.circle_angle = random.random() * 2 * math.pi
@@ -32,18 +31,16 @@ class Pyromane(Enemy):
         self.circle_speed = 0.015
         
         # Gestion des flaques en attente
-        self.pending_fire_zones = []  # Liste des flaques à créer avec leur timing
+        self.pending_fire_zones = []  
         
         # Prévisualisation
         self.preview_cooldown = 0
         self.preview_duration = 45  # 0.75s à 60 FPS (45 frames)
         self.active_previews = []  # Prévisualisations actives [(x, y, timer)]
-        
-    
-    def update(self, player, projectiles=None, pending_zones=None):
+
+
+    def update(self, player, fire_zones=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
-        fire_zones = projectiles
-        # 1. MOUVEMENT CIRCULAIRE
         dx = player.x - self.x
         dy = player.y - self.y
         distance_to_player = math.sqrt(dx*dx + dy*dy)

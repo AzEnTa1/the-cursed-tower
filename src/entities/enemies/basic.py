@@ -1,22 +1,22 @@
-# src/entities/enemies/charger.py 
+# src/entities/enemies/basic.py 
 import math
 from .enemy import Enemy
+from config.settings import Settings
 
 class Basic(Enemy):
+    """
+    Ennemi basique
+    """
     def __init__(self, x, y, settings):
         super().__init__(x, y, settings)
         self.type = "basic"
-        # Stats de base selon le type
-        # enemy basic
         self.speed = 2
         self.health = 30
         self.max_health = 30
         self.damage = 10
-        self.color = (255, 0, 0)  # Rouge
+        self.color = self.settings.RED
         self.radius = 20
-        self.attack_range = 0
            
-    
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
         dx = player.x - self.x
@@ -27,4 +27,8 @@ class Basic(Enemy):
         
         self.x += dx * self.speed
         self.y += dy * self.speed
+
+        # Garder l'ennemi dans les limites de l'écran
+        self.x = max(self.radius, min(self.x, self.settings.screen_width - self.radius))
+        self.y = max(self.radius, min(self.y, self.settings.screen_height - self.radius))
   

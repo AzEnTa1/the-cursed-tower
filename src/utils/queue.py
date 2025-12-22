@@ -2,8 +2,11 @@
 from random import choices
 
 class Queue:
-    """Implémentation personnalisée d'une file (FIFO) pour gérer les vagues d'ennemis"""
+    """
+    Implémentation d'une file (First-In, First-Out) avec liste Python
     
+    Utilisée par WaveManager pour gérer la séquence des vagues d'ennemis
+    """
     def __init__(self):
         self.items = []
     
@@ -35,10 +38,10 @@ class Queue:
 class WaveQueue:
     """Génère des vagues d'ennemis de plus en plus difficiles"""
     
-    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide]
+    # Configuration des vagues
     ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromane']
 
-    # Configuration des vagues : [basic, charger, shooter, destructeur, suicide, pyromane]
+    # Configuration des vagues
     WAVE_CONFIGS = [
         [35, 15, 15, 5, 10, 20],     # Vague 1
         [25, 20, 15, 10, 10, 20],    # Vague 2
