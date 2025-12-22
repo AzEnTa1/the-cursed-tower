@@ -43,7 +43,7 @@ class GameOverScene(BaseScene):
         
 
     def resize(self):
-        self.quit_button = pygame.Rect(self.settings.screen_width*0.4, self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
+        self.quit_button.update(self.settings.screen_width*0.4, self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
         self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
         self.ui.resize()
 

@@ -29,5 +29,5 @@ class GameOverUI:
 
 
     def resize(self):
-        self.stats_rect = pygame.Rect(self.settings.screen_width*0.1, self.settings.screen_height*0.1, self.settings.screen_width*0.8, self.settings.screen_height*0.8)
+        self.stats_rect.update(self.settings.screen_width*0.1, self.settings.screen_height*0.1, self.settings.screen_width*0.8, self.settings.screen_height*0.8)
         self.stats_text_rect = self.stats_text.get_rect(center=(self.stats_rect.center[0], self.settings.screen_height*0.15))

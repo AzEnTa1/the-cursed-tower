@@ -62,6 +62,6 @@ class MenuScene(BaseScene):
         Appelé lorsque la fenêtre change de taille
         Recalcule les positions des éléments
         """
-        self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.play_button.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
         self.button_rect = self.text.get_rect(center=self.play_button.center)

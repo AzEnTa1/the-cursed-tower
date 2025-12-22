@@ -4,7 +4,8 @@ import pygame
 class PauseUI:
     def __init__(self, settings):
         self.settings = settings
-        self.menu_rect = None
+        self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+
 
     def draw(self, screen, exit_rect, back_to_menu_rect):
         """dessine l'interface complète"""
@@ -23,5 +24,5 @@ class PauseUI:
 
 
     def resize(self):
-        self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
+        self.menu_rect.update(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
         

@@ -18,8 +18,37 @@ class PerksSubScene(BaseSubScene):
         self.ui = PerksUI(self.settings)
         self.perks_manager = PerksManager(self.settings, self.player, self.weapon)
         self.perks_list = self.perks_manager.get_perks()
-        self.perks_rect = ()
-        self.resize()
+        
+        # Rect des 3 cases de perks
+        images_rect = (
+            pygame.Rect(self.settings.screen_width*0.15, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
+            pygame.Rect(self.settings.screen_width*0.4, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2),
+            pygame.Rect(self.settings.screen_width*0.65, self.settings.screen_height*0.3, self.settings.screen_width*0.2, self.settings.screen_width*0.2)
+            )
+        text_rect = (
+            pygame.Rect(self.settings.screen_width*0.15, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
+            pygame.Rect(self.settings.screen_width*0.4, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50),
+            pygame.Rect(self.settings.screen_width*0.65, self.settings.screen_height*0.3 + self.settings.screen_width*0.2, self.settings.screen_width*0.2, 50)
+        )
+        #((Rect de l'image, Rect du texte, union des 2), ...)
+
+        self.perks_rect = (
+            (
+                images_rect[0],
+                text_rect[0],
+                pygame.Rect.union(images_rect[0], text_rect[0])
+                ),
+            (
+                images_rect[1],
+                text_rect[1],
+                pygame.Rect.union(images_rect[1], text_rect[1])
+                ),
+            (
+                images_rect[2],
+                text_rect[2],
+                pygame.Rect.union(images_rect[2], text_rect[2])
+                )
+        )
         
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -48,10 +77,6 @@ class PerksSubScene(BaseSubScene):
 
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
-        #height et width sont les vraie dimension de la fenetre
-        #!= self.settings.screen_height/width qui sont les dimension de la fenetre interne 4:3
-        #permet de diminué les calcules fait en permanance pour dessiner les élements
-        #|-> surement inutils
         
         # Rect des 3 cases de perks
         images_rect = (

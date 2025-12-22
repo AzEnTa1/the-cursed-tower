@@ -13,9 +13,8 @@ class PauseSubScene(BaseSubScene):
         """Appelée quand la scène devient active"""
         self.ui = PauseUI(self.settings)
         
-        self.exit_rect = None
-        self.back_to_menu_rect = None
-        self.resize()
+        self.exit_rect = (self.settings.screen_width*0.85 , self.settings.screen_width*0.05, self.settings.screen_width*0.1, self.settings.screen_width*0.1)
+        self.back_to_menu_rect = (self.settings.screen_width*0.4 , self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
         
     
     def on_exit(self):
@@ -42,7 +41,7 @@ class PauseSubScene(BaseSubScene):
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
         
-        self.exit_rect = pygame.Rect(self.settings.screen_width*0.85 , self.settings.screen_width*0.05, self.settings.screen_width*0.1, self.settings.screen_width*0.1)
-        self.back_to_menu_rect = pygame.Rect(self.settings.screen_width*0.4 , self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
+        self.exit_rect.update(self.settings.screen_width*0.85 , self.settings.screen_width*0.05, self.settings.screen_width*0.1, self.settings.screen_width*0.1)
+        self.back_to_menu_rect.update(self.settings.screen_width*0.4 , self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
         self.ui.resize()
         
