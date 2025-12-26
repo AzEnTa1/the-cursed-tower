@@ -23,6 +23,7 @@ class GameOverUI:
         screen.blit(self.stats_text, self.stats_text_rect)
         #dessine le bouton quitter
         pygame.draw.rect(screen, (200, 0, 0), quit_button.inflate(-5, -5))
+        pygame.transform.scale(bg_image, (quit_button.width, quit_button.height))
         screen.blit(quit_text, quit_rect)
         
 

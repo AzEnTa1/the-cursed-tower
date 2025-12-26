@@ -121,7 +121,9 @@ class Game:
         # Dessine la scène actuelle
         if self.current_scene:
             self.current_scene.draw(self.used_screen)
-    
+
+
+
         # Dessiner les bordures
         pygame.draw.rect(self.screen, self.settings.BORDER_COLOR, (0, 0, self.settings.x0, self.settings.screen_height))
         pygame.draw.rect(self.screen, self.settings.BORDER_COLOR, (0, 0, self.settings.screen_width, self.settings.y0))

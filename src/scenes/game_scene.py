@@ -352,8 +352,11 @@ class GameScene(BaseScene):
         """
         Dessine le jeu sur l'écran
         """
-        # Fond noir
-        screen.fill((0, 0, 0))
+        # image de fond
+        fond= pygame.image.load(r"assets/images/Sol-compressed.jpg")        
+        fond = pygame.transform.scale(fond, (self.settings.screen_width, self.settings.screen_height))
+        screen.blit(fond, (0, 0))
+        
         
         # Dessine les effets d'apparition EN PREMIER (au fond)
         for effect in self.spawn_effects:
