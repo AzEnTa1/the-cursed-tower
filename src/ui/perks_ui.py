@@ -32,8 +32,13 @@ class PerksUI:
         self._draw_background(screen)
         for rect, perk in zip(perks_rect, perks_list):
             txt = self.settings.font["h3"].render(perk, True, (0, 0, 0))
-            pygame.draw.rect(screen, (255, 0, 0, 0), rect[2])
-            pygame.draw.rect(screen, (255, 255, 255, 0), rect[2].inflate(-5, -5))
+            fd_perks = pygame.image.load(r"assets/images/Fd_perks.png")
+            fd_perks = pygame.transform.scale(fd_perks, (rect[0][2], rect[0][3]))
+            screen.blit(fd_perks, rect[0])
+            fd_text = pygame.image.load(r"assets/images/Fd_perks.png")
+            fd_text = pygame.transform.scale(fd_text, (rect[1][2], rect[1][3]))
+            screen.blit(fd_text, rect[1])
+            txt = self.settings.font["h3"].render(perk, True, (255, 255, 255))
             screen.blit(txt, txt.get_rect(center=rect[1].center))
             #affichage image
             screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
@@ -41,10 +46,9 @@ class PerksUI:
 
     def _draw_background(self, screen):
         """dessine le background"""
-        pygame.draw.rect(screen, (255, 255, 0, 0), self.menu_rect)
-        txt = self.settings.font["h3"].render("affichage perks", True, (0, 0, 0))
-        rnd_rect = txt.get_rect(center=self.menu_rect.center)
-        screen.blit(txt, rnd_rect)
+        bg_image = pygame.image.load(r"assets/images/Perks_menu.png")        
+        bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
+        screen.blit(bg_image, (0, 0))
 
     def resize(self):
         """redéfini la taille de chaque éléments"""
