@@ -60,6 +60,10 @@ class GameScene(BaseScene):
         # HUD
         self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
         self.transition = TransitionEffect(self.settings)
+
+        # Image de fond
+        self.fond = pygame.image.load(r"assets/images/Sol-compressed.jpg")
+        self.fond = pygame.transform.scale(self.fond, (self.settings.screen_width, self.settings.screen_height))
         
         # Listes
         self.projectiles = []
@@ -353,9 +357,8 @@ class GameScene(BaseScene):
         Dessine le jeu sur l'écran
         """
         # image de fond
-        fond= pygame.image.load(r"assets/images/Sol-compressed.jpg")        
-        fond = pygame.transform.scale(fond, (self.settings.screen_width, self.settings.screen_height))
-        screen.blit(fond, (0, 0))
+        
+        screen.blit(self.fond, (0, 0))
         
         
         # Dessine les effets d'apparition EN PREMIER (au fond)
@@ -432,5 +435,7 @@ class GameScene(BaseScene):
 
     def resize(self):
         """Appelé lorsque la fenêtre change de taille"""
+        self.fond = pygame.transform.scale(self.fond, (self.settings.screen_width, self.settings.screen_height))
+        
         if self.game_paused:
             self.current_sub_scene.resize()
