@@ -124,9 +124,9 @@ class HUD:
         stats_x = self.settings.screen_width - 200
         stats_y = 100
         
-        # Score actuel
-        score_text = self.settings.font["h3"].render(f"SCORE: {self.player.score}", True, self.settings.YELLOW)
-        screen.blit(score_text, (stats_x, stats_y))
+        # XP actuel
+        xp_text = self.settings.font["h3"].render(f"XP: {self.player.xp} / 200", True, self.settings.YELLOW)
+        screen.blit(xp_text, (stats_x, stats_y))
         
         # Ennemis tués dans cette vague (approximatif)
         enemies_killed = max(0, self.wave_manager.enemies_remaining - len(self.wave_manager.current_wave_enemies))

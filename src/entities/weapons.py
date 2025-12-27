@@ -4,14 +4,14 @@ import random
 from .projectiles import Projectile
 
 class Weapon:
-    def __init__(self, settings, damage, fire_rate=0.5, projectile_speed=20):
-        self.fire_rate = fire_rate  # tirs par seconde
+    def __init__(self, settings, player_data, damage=30, fire_rate=0.5, projectile_speed=20):
+        self.fire_rate = player_data["fire_rate"]  # tirs par seconde
         self.damage = random.randint(damage - 5, damage + 5)
-        self.projectile_speed = projectile_speed
+        self.projectile_speed = player_data["projectil_speed"]
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)
         self.stationary_time = 0
-        self.stationary_threshold = 25
+        self.stationary_threshold = player_data["stationary_threshold"]
         
         # Multishot system
         self.multishot_count = 0  # Nombre de projectiles supplémentaires

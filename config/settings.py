@@ -2,7 +2,7 @@
 import pygame
 
 class Settings:
-    def __init__(self):
+    def __init__(self, player_data):
         # Configurations générales
         self.screen_width = 800
         self.screen_height = 600
@@ -20,24 +20,24 @@ class Settings:
         self.YELLOW = (255, 255, 0)
 
         # Joueur
-        self.player_speed = 5
-        self.player_size = 20
-        self.player_health = 100
-
+        self.player_speed = player_data["speed"] # 5
+        self.player_size = player_data["size"] # 20
+        self.player_health = player_data["max_health"] # 100
+        
         # Scènes
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
         self.SCENE_GAME_OVER = "game_over"
 
         # Armes
-        self.WEAPON_DAMAGE = 30
-        self.WEAPON_FIRE_RATE = 2  # tirs par seconde
-        self.WEAPON_PROJECTILE_SPEED = 10
-        self.WEAPON_DAMAGE_VARIANCE = 5  # ± pour les dégâts aléatoires
+        self.WEAPON_DAMAGE = player_data["base_damages"] # 30
+        self.WEAPON_FIRE_RATE = player_data["fire_rate"] # 2  # tirs par seconde
+        self.WEAPON_PROJECTILE_SPEED = player_data["projectil_speed"] # 10
+        self.WEAPON_DAMAGE_VARIANCE = player_data["damage_variance"] # 5  # ± pour les dégâts aléatoires
         
         # Multishot
         self.WEAPON_SHOT_INTERVAL = 100  # ms entre chaque projectile du multishot
-        self.WEAPON_STATIONARY_THRESHOLD = 25  # frames d'immobilité avant tir
+        self.WEAPON_STATIONARY_THRESHOLD = player_data["stationary_threshold"] # 25  # frames d'immobilité avant tir
         self.WEAPON_TARGETING_RANGE = 500  # distance maximale pour cibler un ennemi
         self.WEAPON_ARC_ANGLE = 15  # degrés pour le tir en arc
         

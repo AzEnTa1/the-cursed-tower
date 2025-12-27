@@ -8,7 +8,7 @@ class Player:
     Classe du joueur
     Gère le déplacement, la vie, le score et les interactions
     """
-    def __init__(self, x, y, settings):
+    def __init__(self, x, y, settings, player_data):
         self.settings = settings
         self.x = x
         self.y = y
@@ -18,8 +18,8 @@ class Player:
         self.infinite_life = False
 
         # Points de vie
-        self.health = 100
-        self.max_health = 100
+        self.health = settings.player_health
+        self.max_health = settings.player_health
         
         # Score
         self.score = 0

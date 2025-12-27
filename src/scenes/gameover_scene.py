@@ -9,7 +9,7 @@ class GameOverScene(BaseScene):
         self.ui = None
         self.quit_button = None
         
-    def on_enter(self, game_stats):
+    def on_enter(self, player_data, game_stats):
         """Initialisation du Game Over"""
         self.ui = GameOverUI(self.settings, game_stats)
         self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (0, 0, 0))

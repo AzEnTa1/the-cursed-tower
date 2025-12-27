@@ -7,7 +7,7 @@ class MenuScene(BaseScene):
     def __init__(self, game, settings):
         super().__init__(game, settings)
         
-    def on_enter(self):
+    def on_enter(self, player_data):
         """Initialisation du menu"""
         # Rectangle pour le bouton Jouer (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)

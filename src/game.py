@@ -2,6 +2,7 @@
 import pygame
 import sys
 import random
+import json
 from config.settings import Settings
 from src.scenes.menu_scene import MenuScene
 from src.scenes.game_scene import GameScene
@@ -14,11 +15,13 @@ class Game:
     """
     def __init__(self):
 
-        self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
+        self.global_seed = random.randrange(2**32)  # Seed unique par partie
         random.seed(self.global_seed)
-        # Initialisation des paramètres 
-        self.settings = Settings() 
+        # Initialisation des paramètres
+        self.player_data = self.get_player_data()
 
+        self.settings = Settings(self.player_data)
+        
         # Initialisation de Pygame
         pygame.init()
         
@@ -65,9 +68,9 @@ class Game:
             
             # Appel on_enter sur la nouvelle scène
             if scene_name == self.settings.SCENE_GAME_OVER:
-                self.current_scene.on_enter(self.game_stats)
+                self.current_scene.on_enter(self.player_data, self.game_stats)
             else:
-                self.current_scene.on_enter()
+                self.current_scene.on_enter(self.player_data)
             
     def handle_events(self):
         """Gestion des événements"""
@@ -78,27 +81,17 @@ class Game:
             
             # Événement de redimensionnement
             elif event.type == pygame.VIDEORESIZE:
-                if event.dict["h"]/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0] > event.dict["w"] : # largeur limitante 
-                    self.settings.screen_width, self.settings.screen_height = event.dict["w"], round(event.dict["w"]/self.settings.ASPECT_RATIO[0]*self.settings.ASPECT_RATIO[1])
-                    self.settings.y0 = (event.dict["h"] - self.settings.screen_height)//self.settings.BORDER_WIDTH
-                    self.settings.x0 = 0
-                else: # Hauteur limitante
-                    self.settings.screen_width, self.settings.screen_height = round(event.dict["h"]/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0]), event.dict["h"]
-                    self.settings.y0 = 0
-                    self.settings.x0 = (event.dict["w"] - self.settings.screen_width)//self.settings.BORDER_WIDTH
-                self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
-                self.current_scene.resize()
+                self.resize(event.dict["w"], event.dict["h"])
 
             # Événement de bascule plein écran
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_f:
+                if event.key == pygame.K_F11:
                     if not self.full_screen:
-                        self.full_screen = True
                         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)   
                     else:
-                        self.full_screen = False
                         self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 
+                    self.full_screen = not self.full_screen
                     width, height = self.screen.get_size()
                     self.resize(width, height)
 
@@ -149,6 +142,13 @@ class Game:
         self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
         self.current_scene.resize()
         print(self.settings.screen_width, self.settings.screen_height)
+
+
+    def get_player_data(self):
+        with open(r"data/player_data.json", 'r', encoding='utf-8') as f:
+            player_data = json.load(f)
+
+        return player_data
 
 
     def run(self):

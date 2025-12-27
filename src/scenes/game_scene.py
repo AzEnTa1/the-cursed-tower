@@ -39,14 +39,15 @@ class GameScene(BaseScene):
         self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
         random.seed(self.global_seed)
         
-    def on_enter(self):
+    def on_enter(self, player_data):
         """Initialisation du jeu"""
         self.player = Player(
             self.settings.screen_width//2, 
             self.settings.screen_height//2, 
-            self.settings
+            self.settings,
+            player_data
         )
-        self.weapon = Weapon(self.settings, damage=30, fire_rate=2, projectile_speed=10) 
+        self.weapon = Weapon(self.settings, player_data) 
         self.wave_manager = WaveManager(self.settings)
         self.wave_manager.setup_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)
