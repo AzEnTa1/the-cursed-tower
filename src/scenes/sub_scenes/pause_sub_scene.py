@@ -11,7 +11,9 @@ class PauseSubScene(BaseSubScene):
     
     def on_enter(self):
         """Appelée quand la scène devient active"""
-        self.ui = PauseUI(self.settings)
+        
+        self.ui = PauseUI()
+        self.ui.init(self.settings)
         self.exit_text = self.settings.font["h3"].render("Continuer (echap)", True, (255, 0, 0))
         self.exit_rect = pygame.image.load(r"assets/images/Fd_perks.png")
         self.exit_rect = pygame.transform.scale(self.exit_rect, (200, 50))
