@@ -405,3 +405,14 @@ class Player:
         if self.dash_cooldown <= 0:
             return 1.0
         return 1.0 - (self.dash_cooldown / self.dash_cooldown_max)
+    
+    def get_stats(self)->dict:
+        """sert a obtenir les stats du joueur"""
+        return {
+            "speed":self.speed,
+            "size":self.size,
+            "current_health":self.health,
+            "max_health":self.max_health,
+            "score":self.score,
+            "xp":self.xp
+        }

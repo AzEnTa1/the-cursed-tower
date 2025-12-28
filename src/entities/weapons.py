@@ -215,3 +215,12 @@ class Weapon:
         """Met à jour la direction de tir basée sur le mouvement"""
         if dx != 0 or dy != 0:
             self.last_direction = (dx, dy)
+
+    def get_stats(self)->dict:
+        """renvoi les donnés associé a l'arme du joueur (pour le menu pause)"""
+        return {
+            "fire_rate":self.fire_rate,
+            "damage":self.damage,
+            "projectil_speed":self.projectile_speed,
+            "stationary_threshold":self.stationary_threshold
+        }

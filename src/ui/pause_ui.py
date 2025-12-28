@@ -1,8 +1,8 @@
-#src/ui/pause_ui
+# src/ui/pause_ui
 import pygame
 
 class PauseUI:
-    def init(self, settings):
+    def __init__(self, settings):
         self.settings = settings
         self.menu_rect = pygame.Rect(100, 50, self.settings.screen_width - 200, self.settings.screen_height - 100)
 
