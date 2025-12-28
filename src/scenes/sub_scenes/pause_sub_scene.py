@@ -12,10 +12,22 @@ class PauseSubScene(BaseSubScene):
     def on_enter(self):
         """Appelée quand la scène devient active"""
         self.ui = PauseUI(self.settings)
+        self.exit_text = self.settings.font["h3"].render("Continuer (echap)", True, (255, 0, 0))
+        self.exit_rect = pygame.image.load(r"assets/images/Fd_perks.png")
+        self.exit_rect = pygame.transform.scale(self.exit_rect, (200, 50))
+        self.exit_rect = self.exit_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 - 75))
+        self.exit_text_rect = self.exit_text.get_rect(center=self.exit_rect.center)
         
-        self.exit_rect = pygame.Rect(self.settings.screen_width*0.85 , self.settings.screen_width*0.05, self.settings.screen_width*0.1, self.settings.screen_width*0.1)
-        self.back_to_menu_rect = pygame.Rect(self.settings.screen_width*0.4 , self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
+        #fait un bouton transparant derrière le texte
+
+
+        self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
+        self.back_to_menu_rect = pygame.image.load(r"assets/images/Fd_perks.png")
+        self.back_to_menu_rect = pygame.transform.scale(self.back_to_menu_rect, (200, 50))
+        self.back_to_menu_rect = self.back_to_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5))
+        self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
         
+
     
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -28,20 +40,30 @@ class PauseSubScene(BaseSubScene):
                 self.game_scene.game_paused = False
             elif self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
+            else:
+                None
                 
     
     def update(self):
         """Met à jour la logique de la scène"""
-        pass
-    
+        if self.exit_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            self.exit_text = self.settings.font["h3"].render("Continuer (echap)", True, (255, 255, 255))
+        else:
+            self.exit_text = self.settings.font["h3"].render("Continuer (echap)", True, (255, 0, 0))
+
+        if self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 255, 255))
+        else:
+            self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
+
     def draw(self, screen):
         """Dessine la scène"""
-        self.ui.draw(screen, self.exit_rect, self.back_to_menu_rect)
+        self.ui.draw(screen, self.exit_rect, self.exit_text_rect, self.exit_text, self.back_to_menu_rect, self.back_to_menu_text_rect, self.back_to_menu_text)
 
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
-        
-        self.exit_rect.update(self.settings.screen_width*0.85 , self.settings.screen_width*0.05, self.settings.screen_width*0.1, self.settings.screen_width*0.1)
-        self.back_to_menu_rect.update(self.settings.screen_width*0.4 , self.settings.screen_height*0.8, self.settings.screen_width*0.2, self.settings.screen_height*0.1)
-        self.ui.resize()
-        
+        # Met à jour les positions des éléments UI en fonction de la nouvelle taille de l'écran
+        self.exit_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 - 75, 200, 50)
+        self.exit_text_rect = self.exit_text.get_rect(center=self.exit_rect.center)
+        self.back_to_menu_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 37.5, 200, 50)
+        self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
