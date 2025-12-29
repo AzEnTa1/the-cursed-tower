@@ -29,8 +29,8 @@ class Game:
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height), pygame.RESIZABLE)
         self.full_screen = False
         pygame.display.set_caption(self.settings.title)
-        #icon = pygame.image.load(r"assets/images/icon.ico")
-        #pygame.display.set_icon(icon)
+        icon = pygame.image.load(r"TheCursedTower.png")
+        pygame.display.set_icon(icon)
 
         # Initialiser les fonts
         self.settings.initialize_fonts()

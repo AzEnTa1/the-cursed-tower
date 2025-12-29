@@ -4,9 +4,13 @@ class GameStats:
     def __init__(self, game, settings):
         self.game = game
         self.settings = settings
-        self.player = None
+        self.stats = None
 
+    def on_death(self):
+        """useless"""
+        pass
 
-    def on_death(self, player):
-        self.player = player
-        self.game.game_stats = self
+    def update(self, player, weapon)->dict:
+        """met a jours les stats du joueur et les retourne"""
+        self.stats = {**player.get_stats(), **weapon.get_stats()}
+        return self.stats

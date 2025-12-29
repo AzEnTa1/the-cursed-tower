@@ -84,7 +84,7 @@ class GameScene(BaseScene):
                 self.game_paused = not self.game_paused
                 if self.game_paused:
                     self.current_sub_scene = self.pause_sub_scene
-                    self.current_sub_scene.on_enter()
+                    self.current_sub_scene.on_enter(self.game_stats.update(self.player, self.weapon))
                 else:
                     self.current_sub_scene = None
                 
@@ -292,7 +292,8 @@ class GameScene(BaseScene):
     
     def _handle_player_death(self):
         """Gère la mort du joueur"""
-        self.game_stats.on_death(self.player)
+        self.game_stats.update(self.player, self.weapon)
+        self.game.game_stats = self.game_stats.stats
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
     
     def _check_for_level_up(self):
