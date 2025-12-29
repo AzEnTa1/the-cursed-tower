@@ -40,7 +40,7 @@ class PauseSubScene(BaseSubScene):
             if self.exit_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene.game_paused = False
             elif self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.game.change_scene(self.settings.SCENE_MENU)
+                self.game_scene._handle_player_death()
                 
     
     def update(self):
