@@ -1,18 +1,15 @@
 {
-    "name":"unamed",
-
-    "max_health":1000,
-    "size":20,
-    "speed":5,
-
-    "base_damages":200,
-    "fire_rate":2,
-    "projectil_speed":10,
-    "damage_variance":5,
+    "name": "unamed",
+    "max_health": 1000,
+    "size": 20,
+    "speed": 5,
+    "base_damages": 200,
+    "fire_rate": 2,
+    "projectil_speed": 10,
+    "damage_variance": 5,
     "stationary_threshold": 25,
-
-    "best_score":0,
-    "game_played":0,
-    "coins":0,
-    "all_time_coins":0
+    "best_score": 0,
+    "game_played": 0,
+    "coins": 0,
+    "all_time_coins": 0
 }

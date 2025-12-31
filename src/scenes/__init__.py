@@ -2,9 +2,11 @@
 from .game_scene import GameScene
 from .gameover_scene import GameOverScene
 from .menu_scene import MenuScene
+from .talents_scene import TalentsScene
 
 __all__ = [
     "GameScene",
     "GameOverScene",
-    "MenuScene"
+    "MenuScene",
+    "TalentsScene"
 ]

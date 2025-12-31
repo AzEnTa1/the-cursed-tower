@@ -4,9 +4,7 @@ import sys
 import random
 import json
 from config.settings import Settings
-from src.scenes.menu_scene import MenuScene
-from src.scenes.game_scene import GameScene
-from src.scenes.gameover_scene import GameOverScene
+from src.scenes import *
 
 class Game:
     """
@@ -49,9 +47,10 @@ class Game:
         self.scenes = {
             self.settings.SCENE_MENU: MenuScene(self, self.settings),
             self.settings.SCENE_GAME: GameScene(self, self.settings),
-            self.settings.SCENE_GAME_OVER: GameOverScene(self, self.settings)
+            self.settings.SCENE_GAME_OVER: GameOverScene(self, self.settings),
+            self.settings.SCENE_TALENTS: TalentsScene(self, self.settings),
         }
-        # Statistiques du jeu à passer à l'écran de fin
+        # Statistiques du jeu à passer à l'écran de mort
         self.game_stats = None
 
         # Commencer par le menu
@@ -153,6 +152,12 @@ class Game:
         return player_data
 
 
+    def save(self):
+        """MAJ du JSON associé au joueur"""
+        with open(r"data/player_data.json", 'w', encoding='utf-8') as f:
+            json.dump(self.player_data, f, indent=4, ensure_ascii=False)
+
+
     def run(self):
         """Boucle principale du jeu"""
         while self.running:
@@ -168,6 +173,9 @@ class Game:
             # Contrôle des FPS
             self.clock.tick(self.settings.fps)
         
+        # Sauvegarde des données du joueur
+        self.save()
+
         # Nettoyage
         pygame.quit()
         sys.exit()

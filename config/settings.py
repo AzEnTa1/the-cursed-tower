@@ -28,6 +28,7 @@ class Settings:
         self.SCENE_MENU = "menu"
         self.SCENE_GAME = "game"
         self.SCENE_GAME_OVER = "game_over"
+        self.SCENE_TALENTS = "talents"
 
         # Armes
         self.WEAPON_DAMAGE = player_data["base_damages"] # 30
