@@ -50,8 +50,9 @@ class PauseSubScene(BaseSubScene):
             elif self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene._handle_player_death()
             elif self.stat_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.game.change_sub_scene(self.settings.SUB_SCENE_STATS, self.game_scene, self.settings)
-                
+                self.game_scene.current_sub_scene = self.game_scene.stat_sub_scene
+                self.game_scene.current_sub_scene.on_enter(self.game_scene.game_stats.update(self.game_scene.player, self.game_scene.weapon))
+
     
     def update(self):
         """Met à jour la logique de la scène"""
