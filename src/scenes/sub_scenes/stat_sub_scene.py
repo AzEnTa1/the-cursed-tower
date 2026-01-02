@@ -20,7 +20,7 @@ class StatSubScene(BaseSubScene):
 
 
         self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
-        self.back_to_menu_rect = pygame.image.load(r"assets/images/Fd_perks.png")
+        self.back_to_menu_rect = pygame.image.load(r"assets/images/cadre.png")
         self.back_to_menu_rect = pygame.transform.scale(self.back_to_menu_rect, (200, 50))
         self.back_to_menu_rect = self.back_to_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5))
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)

@@ -11,7 +11,7 @@ class MenuScene(BaseScene):
         """Initialisation du menu"""
         # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
-        self.talents_button = pygame.Rect(self.settings.screen_width - 100, self.settings.screen_height//2, 50, 50)
+        self.talents_button = pygame.Rect(self.settings.screen_width - 100, self.settings.screen_height//2, 100, 100)
         
         # Charger l'image de fond
         try:
