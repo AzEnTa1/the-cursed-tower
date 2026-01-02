@@ -13,6 +13,7 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
+from .sub_scenes.stat_sub_scene import StatSubScene
 from src.entities.projectiles import FireZone
 
 
@@ -53,6 +54,7 @@ class GameScene(BaseScene):
         self.game_stats = GameStats(self.game, self.settings)
         
         # Sous-scènes
+        self.stat_sub_scene = StatSubScene(self.game, self, self.settings)
         self.perks_sub_scene = PerksSubScene(self.game, self, self.settings, self.player, self.weapon)
         self.pause_sub_scene = PauseSubScene(self.game, self, self.settings)
         self.game_paused = False

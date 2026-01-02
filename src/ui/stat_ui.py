@@ -10,7 +10,7 @@ class StatUI:
         self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
 
 
-    def draw(self, screen, exit_rect, exit_text_rect, exit_text, back_to_menu_rect, back_to_menu_text_rect, back_to_menu_text):
+    def draw(self, screen, exit_rect, exit_text_rect, exit_text):
         """dessine l'interface complète 
         importer les rect utils dans la logique de pause_sub_scene et draw ici
         """        
@@ -34,12 +34,6 @@ class StatUI:
         bg_image = pygame.transform.scale(bg_image, (exit_rect.width, exit_rect.height))
         screen.blit(bg_image, exit_rect)
         screen.blit(exit_text, exit_text_rect)
-
-        # Met le bouton menu
-        bg_image = pygame.image.load(r"assets/images/Fd_perks.png")
-        bg_image = pygame.transform.scale(bg_image, (back_to_menu_rect.width, back_to_menu_rect.height))
-        screen.blit(bg_image, back_to_menu_rect)
-        screen.blit(back_to_menu_text, back_to_menu_text_rect)        
 
 
     def resize(self):
