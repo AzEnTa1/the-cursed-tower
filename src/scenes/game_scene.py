@@ -295,6 +295,7 @@ class GameScene(BaseScene):
         self.game_stats.update(self.player, self.weapon)
         self.game.game_stats = self.game_stats.stats
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
+        pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
     
     def _check_for_level_up(self):
         """Vérifie si le joueur peut monter de niveau"""

@@ -34,8 +34,12 @@ class GameOverScene(BaseScene):
         """Pas de logique à mettre à jour pour l'instant"""
         if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
+            if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
+                self.exit_hovered = True
+                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
         else:
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 0, 0))
+            self.exit_hovered = False
     
     def draw(self, screen):
         """Dessine le menu Game Over"""        

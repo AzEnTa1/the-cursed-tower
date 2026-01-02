@@ -3,7 +3,7 @@ import pygame
 from .base_sub_scene import BaseSubScene
 from src.ui.pause_ui import PauseUI
 
-class PauseSubScene(BaseSubScene):
+class StatSubScene(BaseSubScene):
     """Gère le Menu Pause""" # Perks et Pause
     
     def __init__(self, game, game_scene, settings):
@@ -29,13 +29,6 @@ class PauseSubScene(BaseSubScene):
         self.back_to_menu_rect = self.back_to_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5))
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
         
-        # fait un bouton
-
-        self.stat_text = self.settings.font["h3"].render("Statistiques", True, (255, 0, 0))
-        self.stat_rect = pygame.image.load(r"assets/images/Fd_perks.png")
-        self.stat_rect = pygame.transform.scale(self.stat_rect, (200, 50))
-        self.stat_rect = self.stat_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 75*2))
-        self.stat_text_rect = self.stat_text.get_rect(center=self.stat_rect.center)
 
     
     def on_exit(self):
@@ -49,8 +42,6 @@ class PauseSubScene(BaseSubScene):
                 self.game_scene.game_paused = False
             elif self.back_to_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene._handle_player_death()
-            elif self.stat_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.game.change_sub_scene(self.settings.SUB_SCENE_STATS, self.game_scene, self.settings)
                 
     
     def update(self):
@@ -75,18 +66,10 @@ class PauseSubScene(BaseSubScene):
             self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered1 = False
 
-        if self.stat_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.stat_text = self.settings.font["h3"].render("Statistiques", True, (255, 255, 255))
-            if not hasattr(self, 'stat_hovered') or not self.stat_hovered:
-                self.stat_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
-        else:
-            self.stat_text = self.settings.font["h3"].render("Statistiques", True, (255, 0, 0))
-            self.stat_hovered = False
-
     def draw(self, screen):
         """Dessine la scène"""
-        self.ui.draw(screen, self.exit_rect, self.exit_text_rect, self.exit_text, self.back_to_menu_rect, self.back_to_menu_text_rect, self.back_to_menu_text, self.stat_rect, self.stat_text_rect, self.stat_text)
+        self.ui.draw(screen, self.exit_rect, self.exit_text_rect, self.exit_text, self.back_to_menu_rect, self.back_to_menu_text_rect, self.back_to_menu_text)
+
 
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
@@ -95,6 +78,4 @@ class PauseSubScene(BaseSubScene):
         self.exit_text_rect = self.exit_text.get_rect(center=self.exit_rect.center)
         self.back_to_menu_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 37.5, 200, 50)
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
-        self.stat_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 75*2, 200, 50)
-        self.stat_text_rect = self.stat_text.get_rect(center=self.stat_rect.center)
         self.ui.resize()

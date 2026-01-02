@@ -82,7 +82,8 @@ class Projectile:
         
         # Dessine le projectile principal
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
-    
+        
+
     def is_alive(self):
         return self.lifetime > 0
 

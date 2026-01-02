@@ -29,10 +29,12 @@ class MenuScene(BaseScene):
         """Gère les clics de souris et touches"""
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
                 self.start_game()
         
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:  # Touche ENTER
+                pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
                 self.start_game()
     
     def start_game(self):
@@ -44,8 +46,12 @@ class MenuScene(BaseScene):
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+            if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
+                self.exit_hovered = True
+                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
         else:
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
+            self.exit_hovered = False
     
     def draw(self, screen):
         """Dessine le menu"""

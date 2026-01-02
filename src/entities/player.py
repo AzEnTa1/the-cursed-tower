@@ -282,7 +282,8 @@ class Player:
         """Inflige des dégâts au joueur"""
         if self.is_dashing:
             return False  # Invulnérable pendant le dash
-            
+
+        pygame.mixer.Sound("assets/sounds/degat_1.mp3").play()
         self.health -= amount
         self.damage_flash_timer = self.damage_flash_duration
         return self.health <= 0

@@ -1,7 +1,7 @@
 # src/ui/pause_ui
 import pygame
 
-class PauseUI:
+class StatUI:
     def __init__(self, game_stats:dict, settings):
         self.settings = settings
         self.game_stats = game_stats
@@ -10,7 +10,7 @@ class PauseUI:
         self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
 
 
-    def draw(self, screen, exit_rect, exit_text_rect, exit_text, back_to_menu_rect, back_to_menu_text_rect, back_to_menu_text, stat_rect, stat_text_rect, stat_text):
+    def draw(self, screen, exit_rect, exit_text_rect, exit_text, back_to_menu_rect, back_to_menu_text_rect, back_to_menu_text):
         """dessine l'interface complète 
         importer les rect utils dans la logique de pause_sub_scene et draw ici
         """        
@@ -20,7 +20,14 @@ class PauseUI:
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
 
-        
+        # Affiche les stats # le text se met automatiquement par rapport a stats_rect
+        pygame.draw.rect(screen, (100, 100, 100, 240), self.stats_rect)
+        i = 0
+        for key in self.game_stats.keys():
+            i += 1
+            txt = self.settings.font["h4"].render(f"{key}: {self.game_stats[key]}", True, (0, 0, 0))
+            rect = txt.get_rect(topleft = (self.stats_rect[0] + 5, self.stats_rect[1] + 20*i + 5))
+            screen.blit(txt, rect)
 
         # Met le bouton quitter
         bg_image = pygame.image.load(r"assets/images/Fd_perks.png")
@@ -32,13 +39,7 @@ class PauseUI:
         bg_image = pygame.image.load(r"assets/images/Fd_perks.png")
         bg_image = pygame.transform.scale(bg_image, (back_to_menu_rect.width, back_to_menu_rect.height))
         screen.blit(bg_image, back_to_menu_rect)
-        screen.blit(back_to_menu_text, back_to_menu_text_rect)   
-
-        # Met les stats #
-        bg_image = pygame.image.load(r"assets/images/Fd_perks.png")
-        bg_image = pygame.transform.scale(bg_image, (stat_rect.width, stat_rect.height))
-        screen.blit(bg_image, stat_rect)
-        screen.blit(stat_text, stat_text_rect)     
+        screen.blit(back_to_menu_text, back_to_menu_text_rect)        
 
 
     def resize(self):
