@@ -1,6 +1,6 @@
 {
     "name": "unamed",
-    "max_health": 1000,
+    "max_health": 100,
     "size": 20,
     "speed": 5,
     "base_damages": 200,

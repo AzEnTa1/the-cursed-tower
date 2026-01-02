@@ -11,10 +11,23 @@ class TalentsScene(BaseScene):
         """Initialisation du menu"""
         # Rectangle pour le bouton Jouer (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
-        
+        self.talent_rect = {
+            "max_health":None,
+            "regen_speed":None,
+            "player_speed":None,
+            "player_size":None,
+            "dash_cooldown":None,
+            "dash_distance":None,
+            "attack_damages":None,
+            "attack_speed":None,
+            "stationnary_threshold":None,
+            "projectil_size":None,
+            "projectil_speed":None,
+
+        }
         # Charger l'image de fond
         try:
-            self.bg_image = pygame.image.load("assets/images/Fd_perks.png")
+            self.bg_image = pygame.image.load("assets/images/background/perks_scene.png")
             self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
             
         except FileNotFoundError:
@@ -35,12 +48,10 @@ class TalentsScene(BaseScene):
             if event.key == pygame.K_RETURN:  # Touche ENTER
                 self.start_game()
     
-    def start_game(self):
-        """Démarre le jeu"""
-        self.game.change_scene(self.settings.SCENE_GAME)
+    
     
     def update(self):
-        """Pas de logique particulière pour le menu simple (pr l'instant)"""
+        """met a jours les éléments et la logique de la scene"""
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
@@ -48,7 +59,7 @@ class TalentsScene(BaseScene):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
     
     def draw(self, screen):
-        """Dessine le menu"""
+        """Dessine la scene"""
         
         # Image de fond
         screen.blit(self.bg_image, (0, 0))

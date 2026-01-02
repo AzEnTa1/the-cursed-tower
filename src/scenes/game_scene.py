@@ -63,7 +63,7 @@ class GameScene(BaseScene):
         self.transition = TransitionEffect(self.settings)
 
         # Image de fond
-        self.fond = pygame.image.load(r"assets/images/Sol-compressed.jpg")
+        self.fond = pygame.image.load(r"assets/images/background/game_scene.png")
         self.fond = pygame.transform.scale(self.fond, (self.settings.screen_width, self.settings.screen_height))
         
         # Listes
@@ -279,6 +279,9 @@ class GameScene(BaseScene):
             else:
                 # Vérifie les dégâts au joueur
                 fire_zone.check_damage(self.player)
+        # vérifie si le joueur est mort
+        if self.player.take_damage(0):
+            self._handle_player_death()
     
     def _check_floor_completion(self):
         """Vérifie si l'étage est terminé"""
@@ -295,6 +298,7 @@ class GameScene(BaseScene):
         self.game_stats.update(self.player, self.weapon)
         self.game.game_stats = self.game_stats.stats
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
+        pygame.mixer.music.stop()
         pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
     
     def _check_for_level_up(self):

@@ -9,12 +9,13 @@ class MenuScene(BaseScene):
         
     def on_enter(self, player_data):
         """Initialisation du menu"""
-        # Rectangle pour le bouton Jouer (x, y, width, height)
+        # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.talents_button = pygame.Rect(self.settings.screen_width - 100, self.settings.screen_height//2, 50, 50)
         
         # Charger l'image de fond
         try:
-            self.bg_image = pygame.image.load("assets/images/Menu.png")
+            self.bg_image = pygame.image.load("assets/images/background/menu_scene.png")
             self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
             
         except FileNotFoundError:
@@ -31,6 +32,9 @@ class MenuScene(BaseScene):
             if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
                 self.start_game()
+            elif self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                        self.game.change_scene(self.settings.SCENE_TALENTS)
+
         
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:  # Touche ENTER
@@ -62,6 +66,7 @@ class MenuScene(BaseScene):
         # Bouton Jouer avec effet hover
         
         screen.blit(self.text, self.button_rect)
+        pygame.draw.rect(screen, (255, 255, 0), self.talents_button)
     
     def resize(self):
         """
@@ -69,5 +74,6 @@ class MenuScene(BaseScene):
         Recalcule les positions des éléments
         """
         self.play_button.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
+        self.talents_button.update(self.settings.screen_width - 100, self.settings.screen_height//2, 50, 50)
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
         self.button_rect = self.text.get_rect(center=self.play_button.center)

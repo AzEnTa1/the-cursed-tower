@@ -14,12 +14,12 @@ class GameOverUI:
     def draw(self, screen, quit_button, quit_rect, quit_text):
         """dessine l'interface complète"""
         #met une image de fond
-        bg_image = pygame.image.load(r"assets/images/Death_menu.png")        
+        bg_image = pygame.image.load(r"assets/images/background/gameover_scene.png")        
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
         screen.blit(self.stats_text, self.stats_text_rect)
         #dessine le bouton quitter
-        bg_image2 = pygame.image.load(r"assets/images/Fd_perks.png")
+        bg_image2 = pygame.image.load(r"assets/images/cadre.png")
         bg_image2 = pygame.transform.scale(bg_image2, (quit_button.width, quit_button.height))
         screen.blit(bg_image2, quit_button)
         screen.blit(quit_text, quit_rect)
