@@ -1,4 +1,4 @@
-# src/entities/enemys/shooter.py 
+# src/entities/enemies/shooter.py 
 import pygame
 import math
 from .enemy import Enemy

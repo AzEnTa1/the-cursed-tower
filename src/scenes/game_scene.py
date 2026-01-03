@@ -144,7 +144,6 @@ class GameScene(BaseScene):
     
     def _update_wave_manager(self):
         """Met à jour le gestionnaire de vagues"""
-        # Si possible, démarrer une nouvelle vague
         if (self.wave_manager.is_between_waves() and 
             self.wave_manager.update(self.current_time) and 
             len(self.enemies) == 0 and 
@@ -152,10 +151,24 @@ class GameScene(BaseScene):
             
             spawn_positions = self.wave_manager.start_next_wave()
             if spawn_positions:
-                for x, y, enemy_type in spawn_positions:
-                    effect = SpawnEffect(x, y, self.settings, enemy_type)
-                    self.spawn_effects.append(effect)
-    
+                for spawn_data in spawn_positions:
+                    
+                    # Vérifier si c'est un boss (tuple de 4 éléments)
+                    if isinstance(spawn_data, tuple) and len(spawn_data) == 4 and spawn_data[2] == "boss":
+                        # Boss : (x, y, "boss", seed)
+                        x, y, enemy_type, boss_seed = spawn_data
+                        effect = SpawnEffect(x, y, self.settings, "boss")
+                        effect.boss_data = boss_seed
+                        self.spawn_effects.append(effect)
+                    elif isinstance(spawn_data, tuple) and len(spawn_data) == 3:
+                        # Ennemi normal : (x, y, enemy_type)
+                        x, y, enemy_type = spawn_data
+                        effect = SpawnEffect(x, y, self.settings, enemy_type)
+                        self.spawn_effects.append(effect)
+                    else:
+                        # Format inattendu
+                        print(f"Format de spawn : {spawn_data}")
+
     def _update_player_and_weapon(self, dt):
         """Met à jour le joueur et son arme"""
         # Mise à jour du joueur
@@ -213,27 +226,38 @@ class GameScene(BaseScene):
     def _check_player_projectile_collisions(self, enemy):
         """Vérifie les collisions entre projectiles joueur et ennemi"""
         for projectile in self.projectiles[:]:
-            distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
-            if distance < enemy.radius + projectile.radius:
-                if enemy.take_damage(projectile.damage):
-                    self.enemies.remove(enemy)
-                    self.wave_manager.on_enemy_died(enemy)
-                    # Score différent selon le type d'ennemi
-                    if enemy.type == "destructeur":
-                        self.player.add_score(50)
-                    elif enemy.type == "suicide":
-                        self.player.add_score(20)
-                    else:
-                        self.player.add_score(10)
-                    
-                    self._check_for_level_up()
-
-                if projectile in self.projectiles:
+            if enemy.type == "ascension_tree":
+                # Utiliser la méthode spéciale pour le boss arborescent
+                if self._check_boss_projectile_collisions(enemy, projectile):
                     self.projectiles.remove(projectile)
-                break
+                    break
+            else:
+                # Méthode normale pour les autres ennemis
+                distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
+                if distance < enemy.radius + projectile.radius:
+                    if enemy.take_damage(projectile.damage):
+                        self.enemies.remove(enemy)
+                        self.wave_manager.on_enemy_died(enemy)
+                        # Score différent selon le type d'ennemi
+                        if enemy.type == "destructeur":
+                            self.player.add_score(50)
+                        elif enemy.type == "suicide":
+                            self.player.add_score(20)
+                        else:
+                            self.player.add_score(10)
+                        
+                        self._check_for_level_up()
+
+                    if projectile in self.projectiles:
+                        self.projectiles.remove(projectile)
+                    break
     
     def _check_melee_collision(self, enemy):
         """Vérifie les collisions en mêlée entre ennemi et joueur"""
+        # Exclure le boss arborescent des collisions de mêlée
+        if enemy.type == "ascension_tree":
+            return  # Le boss n'a pas d'attaque de mêlée
+            
         distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
         if distance < enemy.radius + self.player.size:
             if self.player.take_damage(enemy.damage):
@@ -245,6 +269,47 @@ class GameScene(BaseScene):
             distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
             enemy.x += (dx / distance) * 15
             enemy.y += (dy / distance) * 15
+    
+    def _check_boss_projectile_collisions(self, enemy, projectile):
+        """Vérifie les collisions entre un projectile et le boss arborescent"""
+        # Vérifier collision avec le nœud racine
+        distance_to_root = ((enemy.root.x - projectile.x)**2 + 
+                        (enemy.root.y - projectile.y)**2)**0.5
+        
+        if distance_to_root < enemy.root.radius + projectile.radius:
+            if enemy.root.take_damage(projectile.damage):
+                # Si le cœur est détruit
+                self.enemies.remove(enemy)
+                self.wave_manager.on_enemy_died(enemy)
+                self.player.add_score(200)  # Gros score pour le boss
+                self._check_for_level_up()
+            return True
+        
+        # Vérifier récursivement les collisions avec les nœuds enfants
+        return self._check_boss_node_collisions(enemy.root, projectile)
+
+    def _check_boss_node_collisions(self, node, projectile, nodes_to_remove=None):
+        """Vérifie récursivement les collisions avec les nœuds de l'arbre"""
+        if nodes_to_remove is None:
+            nodes_to_remove = []
+        
+        if not node.active:
+            return False
+        
+        # Vérifier collision avec ce nœud
+        distance = ((node.x - projectile.x)**2 + (node.y - projectile.y)**2)**0.5
+        if distance < node.radius + projectile.radius:
+            if node.take_damage(projectile.damage):
+                nodes_to_remove.append(node)
+                self.player.add_score(10)  # Petit score pour un nœud
+            return True
+        
+        # Vérifier récursivement avec les enfants
+        for child in node.children:
+            if self._check_boss_node_collisions(child, projectile, nodes_to_remove):
+                return True
+        
+        return False
     
     def _handle_suicide_enemy(self, enemy):
         """Gère le comportement de l'ennemi suicide"""
@@ -302,6 +367,16 @@ class GameScene(BaseScene):
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
         pygame.mixer.music.stop()
         pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
+
+    def _handle_perks_menu_selection(self, perk_index):
+        """Gère la sélection d'un perk dans le menu"""
+        if perk_index < len(self.perks_sub_scene.perks_list):
+            perk = self.perks_sub_scene.perks_list[perk_index]
+            self.perks_sub_scene.perks_manager.choose_perk(perk)
+        
+        # Quitter le menu
+        self.game_paused = False
+        self.current_sub_scene = None
     
     def _check_for_level_up(self):
         """Vérifie si le joueur peut monter de niveau"""
@@ -309,7 +384,8 @@ class GameScene(BaseScene):
             self.player.xp %= 200
             self.game_paused = True
             self.current_sub_scene = self.perks_sub_scene
-            self.current_sub_scene.on_enter()
+            # Réinitialiser le menu perks
+            self.perks_sub_scene.on_enter()
     
     def create_enemy_from_effect(self, effect):
         """
@@ -326,15 +402,21 @@ class GameScene(BaseScene):
         elif effect.enemy_type == "pyromane":
             return Pyromane(effect.x, effect.y, self.settings)
         elif effect.enemy_type == "boss":
-            return ProceduralBoss(
-                effect.x, effect.y, 
-                self.settings, 
+            # Récupérer la seed du boss depuis les données de vague
+            if hasattr(effect, 'boss_data'):
+                boss_seed = effect.boss_data
+            else:
+                boss_seed = self.global_seed
+                
+            return AdaptiveBoss(
+                effect.x, effect.y,
+                self.settings,
                 self.current_floor,
-                self.global_seed  # Passer la seed globale
+                boss_seed
             )
         else:
             return Basic(effect.x, effect.y, self.settings)
-    
+        
     def next_floor(self):
         """
         Passe à l'étage suivant

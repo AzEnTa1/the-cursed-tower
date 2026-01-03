@@ -25,19 +25,12 @@ class WaveManager:
         self.floor_number = floor_number
         self.wave_number = 0
         
-        # Vérifier si c'est un étage de boss (tous les 4 étages)
-        # Modifier pour que le boss apparaisse après chaque groupe de 4 étages normaux
-        self.is_boss_floor = (floor_number > 1 and floor_number % 4 == 1)
-        # Étages boss : 5, 9, 13, 17... (après 4 étages normaux)
-
-
-        # self.is_boss_floor = True  # Toujours vrai pour debug ====================================================
-
-
+        # Boss tous les 3 étages (étages 3, 6, 9, etc.)
+        self.is_boss_floor = (floor_number > 1 and floor_number % 3 == 0)
+        
         if self.is_boss_floor:
             # Pour un étage de boss
-            boss_level = (floor_number - 1) // 4  # Niveau du boss
-            self.wave_queue.setup_boss_floor(boss_level)
+            self.wave_queue.setup_boss_floor(floor_number)
         else:
             # Étage normal
             self.wave_queue.setup_waves_for_floor(floor_number)
@@ -51,11 +44,11 @@ class WaveManager:
         """Met à jour l'état du gestionnaire de vagues"""
         if self.state == "between_waves" and self.wave_queue.has_more_waves():
             if current_time - self.wave_start_time >= self.time_between_waves:
-                return True # Indique qu'une nouvelle vague doit commencer
+                return True  # Indique qu'une nouvelle vague doit commencer
         return False
     
     def start_next_wave(self):
-        """Démarre la vague suivante"""
+        """Démarre la vague suivante - retourne TOUJOURS une liste de tuples (x, y, enemy_type)"""
         if not self.wave_queue.has_more_waves():
             return []
         
@@ -64,15 +57,28 @@ class WaveManager:
             return []
         
         self.wave_number += 1
-        self.enemies_remaining = len(wave_data)
         self.state = "in_wave"
         
         spawn_positions = []
-        for enemy_type in wave_data:
-            x, y = self.generate_spawn_position()
-            spawn_positions.append((x, y, enemy_type))
         
-        print(f"Vague {self.wave_number} - {len(spawn_positions)} ennemis")
+        # Traiter chaque élément de la vague
+        for enemy_info in wave_data:
+            x, y = self.generate_spawn_position()
+            
+            # Déterminer le type d'ennemi
+            if isinstance(enemy_info, tuple) and enemy_info[0] == "boss":
+                # C'est un boss : ("boss", seed)
+                _, boss_seed = enemy_info
+                spawn_positions.append((x, y, "boss", boss_seed))
+                self.enemies_remaining = 1
+                print(f"[WAVE] Boss généré avec seed {boss_seed}")
+            else:
+                # C'est un ennemi normal : juste le nom du type
+                enemy_type = enemy_info
+                spawn_positions.append((x, y, enemy_type))
+                self.enemies_remaining = len(wave_data)
+                print(f"[WAVE] {enemy_type} généré")
+        
         return spawn_positions
     
     def generate_spawn_position(self):
@@ -108,7 +114,8 @@ class WaveManager:
             distance_to_center = ((x - center_x)**2 + (y - center_y)**2)**0.5
             if distance_to_center > center_margin:
                 return x, y
-            
+        
+        # Fallback
         x = random.randint(left, right)
         y = random.randint(top, bottom)
         return x, y
@@ -128,7 +135,6 @@ class WaveManager:
         
         if not self.wave_queue.has_more_waves():
             self.state = "all_cleared"
-            print("Toutes les vagues terminées")
     
     def is_between_waves(self):
         return self.state == "between_waves"

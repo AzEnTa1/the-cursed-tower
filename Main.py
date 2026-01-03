@@ -1,4 +1,5 @@
 # Main.py
+import os
 import pygame
 from src import Game
 

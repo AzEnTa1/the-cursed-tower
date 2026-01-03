@@ -5,362 +5,406 @@ import random
 from .enemy import Enemy
 from ..projectiles import Projectile
 
-class BossGenerator:
+
+class RecursiveBossCore:
     """
-    Générateur procédural de boss basé sur des mécaniques modulaires
+    Noyau de génération récursive des patterns de boss
+    Utilise une approche fractale pour générer des comportements uniques
     """
     
-    # Mécaniques disponibles classées par difficulté
-    ATTACK_PATTERNS = {
-        "simple_circle": {"min_level": 1, "weight": 10},
-        "double_spiral": {"min_level": 2, "weight": 8},
-        "recursive_fractal": {"min_level": 3, "weight": 6},
-        "homing_missiles": {"min_level": 4, "weight": 5},
-        "time_delayed": {"min_level": 5, "weight": 4},
-        "rotating_barrage": {"min_level": 6, "weight": 3},
-    }
-    
-    MOVEMENT_PATTERNS = {
-        "stationary": {"min_level": 1, "weight": 5},
-        "linear_pursuit": {"min_level": 2, "weight": 8},
-        "circular_orbit": {"min_level": 3, "weight": 7},
-        "teleport_dodge": {"min_level": 4, "weight": 6},
-        "phase_shift": {"min_level": 5, "weight": 4},
-        "predictive_movement": {"min_level": 6, "weight": 3},
-    }
-    
-    SPECIAL_EFFECTS = {
-        "shield_phases": {"min_level": 2, "weight": 7},
-        "summon_minions": {"min_level": 3, "weight": 6},
-        "damage_auras": {"min_level": 4, "weight": 5},
-        "debuff_projectiles": {"min_level": 5, "weight": 4},
-        "arena_hazards": {"min_level": 6, "weight": 3},
-    }
-    
-    BEHAVIOR_MODIFIERS = {
-        "phase_transitions": {"min_level": 3, "weight": 6},
-        "enrage_timer": {"min_level": 4, "weight": 5},
-        "adaptive_difficulty": {"min_level": 5, "weight": 4},
-        "combo_attacks": {"min_level": 6, "weight": 3},
-    }
-    
-    @classmethod
-    def generate_boss_specs(cls, floor_number, global_seed):
+    @staticmethod
+    def generate_behavior_tree(floor_number, seed, depth=0, max_depth=4):
         """
-        Génère les spécifications d'un boss unique basées sur seed et étage
+        Génère un arbre de comportement récursif pour le boss
+        
+        Complexité : O(branches^depth) où branches = floor_number % 3 + 2
+        Cette complexité est contrôlée par max_depth pour éviter l'explosion exponentielle
         
         Args:
-            floor_number (int): Étage actuel (boss tous les 4 étages)
-            global_seed (int): Seed unique par partie
-            
+            floor_number (int): Niveau actuel (influence complexité)
+            seed (int): Graine unique pour la génération
+            depth (int): Profondeur actuelle (0 pour la racine)
+            max_depth (int): Profondeur maximale basée sur l'étage
+        
         Returns:
-            dict: Spécifications du boss
+            dict: Arbre de comportement avec branches récursives
         """
-        # Seed déterministe pour ce boss spécifique
-        boss_level = max(1, (floor_number - 1) // 4)
-        boss_seed = hash((global_seed, floor_number, boss_level)) % (2**32)
-        random.seed(boss_seed)
+        # Initialisation aléatoire déterministe basée sur la seed
+        local_random = random.Random(seed + depth * 1000 + floor_number * 10000)
         
-        # Complexité augmentée avec le niveau
-        base_complexity = 1 + (boss_level * 0.5)
+        # Cas de base : feuille de l'arbre (attaque simple)
+        if depth >= max_depth or floor_number < depth * 3:
+            attack_pattern = local_random.choice(['circle', 'spray', 'burst'])
+            
+            return {
+                'type': 'leaf',
+                'attack_pattern': attack_pattern,
+                'damage_multiplier': 0.3 + (depth * 0.1),
+                'speed_multiplier': 1.0 + (depth * 0.2),
+                'color': (
+                    min(255, 150 + depth * 20),
+                    min(255, 50 + depth * 30),
+                    max(0, 200 - depth * 40)
+                ),
+                'complexity': depth
+            }
         
-        # Sélection des mécaniques pondérées par difficulté
-        selected_attacks = cls._select_mechanics(
-            cls.ATTACK_PATTERNS, 
-            min(3, 1 + boss_level // 2),  # Nombre d'attaques
-            boss_level
-        )
+        # Cas récursif : nœud avec sous-comportements
+        branch_count = (floor_number % 3) + 2  # 2-4 branches selon étage
+        branches = []
         
-        selected_movement = cls._select_mechanics(
-            cls.MOVEMENT_PATTERNS,
-            1 + (boss_level // 3),  # 1-3 patterns de mouvement
-            boss_level
-        )
+        for i in range(branch_count):
+            # Chaque branche a une variation unique basée sur la seed
+            branch_seed = seed + i * 1000 + depth * 10000
+            branch = RecursiveBossCore.generate_behavior_tree(
+                floor_number=floor_number,
+                seed=branch_seed,
+                depth=depth + 1,
+                max_depth=max_depth
+            )
+            
+            # Ajout de métadonnées pour la branche
+            branch['phase_modifier'] = i / branch_count
+            branch['activation_threshold'] = 1.0 - (depth * 0.2)
+            branches.append(branch)
         
-        selected_effects = cls._select_mechanics(
-            cls.SPECIAL_EFFECTS,
-            min(2, boss_level // 2),  # 0-2 effets spéciaux
-            boss_level
-        )
-        
-        selected_behaviors = cls._select_mechanics(
-            cls.BEHAVIOR_MODIFIERS,
-            min(2, boss_level // 2),  # 0-2 comportements
-            boss_level
-        )
-        
-        # Génération du nom et apparence
-        name = cls._generate_boss_name(boss_seed, selected_attacks, boss_level)
-        color = cls._generate_boss_color(boss_seed, selected_attacks)
+        # Nœud parent qui combine les branches
+        node_type = local_random.choice(['sequential', 'parallel', 'alternating'])
         
         return {
-            "seed": boss_seed,
-            "level": boss_level,
-            "name": name,
-            "color": color,
-            "attacks": selected_attacks,
-            "movement": selected_movement,
-            "effects": selected_effects,
-            "behaviors": selected_behaviors,
-            "base_health": 500 + (boss_level * 150),
-            "base_damage": 15 + (boss_level * 3),
-            "complexity": base_complexity,
+            'type': 'node',
+            'node_type': node_type,
+            'branches': branches,
+            'transition_time': 60 + (depth * 20),  # Frames entre transitions
+            'health_trigger': 1.0 - ((depth + 1) * 0.25),  # % de vie pour activer
+            'color': (
+                max(0, 200 - depth * 30),
+                min(255, 100 + depth * 20),
+                min(255, 50 + depth * 40)
+            ),
+            'complexity': depth
         }
-    
-    @classmethod
-    def _select_mechanics(cls, mechanic_dict, count, boss_level):
-        """Sélectionne N mécaniques disponibles pour ce niveau"""
-        available = [
-            name for name, specs in mechanic_dict.items()
-            if specs["min_level"] <= boss_level
-        ]
+
+    @staticmethod
+    def recursive_attack_pattern(position, depth, pattern_tree, projectiles_list, 
+                                damage_base, speed_base, angle_offset=0, settings=None):
+        """
+        Exécute un pattern d'attaque récursif
         
-        if not available:
-            return []
+        Complexité contrôlée par la profondeur - s'arrête quand depth <= 0
         
-        # Pondération par poids et niveau
-        weights = []
-        for name in available:
-            base_weight = mechanic_dict[name]["weight"]
-            level_bonus = max(0, boss_level - mechanic_dict[name]["min_level"])
-            weights.append(base_weight + (level_bonus * 2))
+        Args:
+            position (tuple): (x, y) position de départ
+            depth (int): Profondeur actuelle (0 = premier niveau)
+            pattern_tree (dict): Arbre de comportement généré
+            projectiles_list (list): Liste pour ajouter les projectiles
+            damage_base (float): Dégâts de base
+            speed_base (float): Vitesse de base
+            angle_offset (float): Offset angulaire pour rotation
+            settings: Paramètres du jeu
+        """
+        if depth <= 0:
+            return
         
-        # Sélection sans remise
-        selected = []
-        for _ in range(min(count, len(available))):
-            if not available:
-                break
-                
-            chosen = random.choices(available, weights=weights, k=1)[0]
-            idx = available.index(chosen)
-            selected.append(chosen)
+        node = pattern_tree
+        x, y = position
+        
+        if node['type'] == 'leaf':
+            # Cas de base : génération de projectiles
+            RecursiveBossCore._generate_leaf_attack(
+                x, y, node, projectiles_list, damage_base, speed_base, 
+                angle_offset, settings
+            )
+        else:
+            # Cas récursif : traiter les branches
+            current_time = pygame.time.get_ticks() * 0.001
+            branch_angle = 360 / len(node['branches'])
             
-            # Retirer pour éviter les doublons
-            available.pop(idx)
-            weights.pop(idx)
-        
-        return selected
+            for i, branch in enumerate(node['branches']):
+                # Calcul d'offset angulaire pour cette branche
+                branch_angle_offset = angle_offset + (i * branch_angle)
+                branch_angle_rad = math.radians(branch_angle_offset)
+                
+                # Position décalée pour la branche
+                radius = 20 + (depth * 10)
+                branch_x = x + math.cos(branch_angle_rad) * radius
+                branch_y = y + math.sin(branch_angle_rad) * radius
+                
+                # Animation d'onde pour les branches
+                wave_offset = math.sin(current_time * 2 + i) * 5
+                branch_x += math.cos(branch_angle_rad) * wave_offset
+                branch_y += math.sin(branch_angle_rad) * wave_offset
+                
+                # Appel récursif avec profondeur réduite
+                RecursiveBossCore.recursive_attack_pattern(
+                    position=(branch_x, branch_y),
+                    depth=depth - 1,
+                    pattern_tree=branch,
+                    projectiles_list=projectiles_list,
+                    damage_base=damage_base * node['damage_multiplier'],
+                    speed_base=speed_base * node['speed_multiplier'],
+                    angle_offset=branch_angle_offset + (current_time * 20),
+                    settings=settings
+                )
     
-    @classmethod
-    def _generate_boss_name(cls, seed, attacks, level):
-        """Génère un nom unique pour le boss"""
-        random.seed(seed)
+    @staticmethod
+    def _generate_leaf_attack(x, y, leaf_data, projectiles_list, damage_base, 
+                             speed_base, angle_offset, settings):
+        """
+        Génère les projectiles pour une feuille de l'arbre
         
-        prefixes = ["Garde", "Seigneur", "Maître", "Dévoreur", "Corrupteur", "Ancien"]
-        suffixes = ["des Ombres", "du Néant", "Sanguinaire", "Implacable", "Chaotique", "Éternel"]
+        Args:
+            x, y (float): Position de départ
+            leaf_data (dict): Données de la feuille
+            projectiles_list (list): Liste pour ajouter les projectiles
+            damage_base (float): Dégâts de base
+            speed_base (float): Vitesse de base
+            angle_offset (float): Offset angulaire
+            settings: Paramètres du jeu
+        """
+        current_time = pygame.time.get_ticks() * 0.001
         
-        attack_keywords = {
-            "simple_circle": "Orbital",
-            "double_spiral": "Spirale",
-            "recursive_fractal": "Fractal",
-            "homing_missiles": "Poursuite",
-            "time_delayed": "Temporisé",
-            "rotating_barrage": "Tournoyant",
-        }
+        if leaf_data['attack_pattern'] == 'circle':
+            # Cercle de projectiles
+            projectile_count = 8 + int(math.sin(current_time) * 4)
+            for i in range(projectile_count):
+                angle = (2 * math.pi * i / projectile_count) + math.radians(angle_offset)
+                dx = math.cos(angle) * speed_base
+                dy = math.sin(angle) * speed_base
+                
+                projectiles_list.append(Projectile(
+                    x, y, dx, dy, damage_base,
+                    settings=settings,
+                    color=leaf_data['color'],
+                    radius=4 + int(math.sin(current_time + i) * 2)
+                ))
         
-        if attacks and attacks[0] in attack_keywords:
-            prefix = attack_keywords[attacks[0]]
-        else:
-            prefix = random.choice(prefixes)
+        elif leaf_data['attack_pattern'] == 'spray':
+            # Spray directionnel
+            base_angle = math.radians(angle_offset)
+            for i in range(-2, 3):
+                angle = base_angle + (i * math.radians(15))
+                dx = math.cos(angle) * speed_base
+                dy = math.sin(angle) * speed_base
+                
+                projectiles_list.append(Projectile(
+                    x, y, dx, dy, damage_base * 0.7,
+                    settings=settings,
+                    color=leaf_data['color'],
+                    radius=3
+                ))
         
-        suffix = random.choice(suffixes)
-        tier = {1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI"}.get(level, "")
-        
-        return f"{prefix} {suffix} {tier}".strip()
-    
-    @classmethod
-    def _generate_boss_color(cls, seed, attacks):
-        """Génère une couleur unique basée sur les attaques"""
-        random.seed(seed)
-        
-        color_map = {
-            "simple_circle": (100, 100, 255),    # Bleu
-            "double_spiral": (255, 100, 100),    # Rouge
-            "recursive_fractal": (100, 255, 100), # Vert
-            "homing_missiles": (255, 255, 100),  # Jaune
-            "time_delayed": (255, 100, 255),     # Magenta
-            "rotating_barrage": (100, 255, 255), # Cyan
-        }
-        
-        if attacks and attacks[0] in color_map:
-            base_color = color_map[attacks[0]]
-        else:
-            base_color = (148, 0, 211)  # Violet par défaut
-        
-        # Variation aléatoire
-        variation = random.randint(-20, 20)
-        return (
-            max(0, min(255, base_color[0] + variation)),
-            max(0, min(255, base_color[1] + variation)),
-            max(0, min(255, base_color[2] + variation)),
-        )
+        elif leaf_data['attack_pattern'] == 'burst':
+            # Burst concentrique
+            for ring in range(1, 4):
+                ring_projectiles = 4 * ring
+                ring_speed = speed_base * (0.5 + ring * 0.3)
+                for i in range(ring_projectiles):
+                    angle = (2 * math.pi * i / ring_projectiles) + current_time
+                    dx = math.cos(angle) * ring_speed
+                    dy = math.sin(angle) * ring_speed
+                    
+                    projectiles_list.append(Projectile(
+                        x, y, dx, dy, damage_base * 0.5,
+                        settings=settings,
+                        color=leaf_data['color'],
+                        radius=2 + ring
+                    ))
 
 
-class ProceduralBoss(Enemy):
+class AdaptiveBoss(Enemy):
     """
-    Boss généré procéduralement avec mécaniques combinées
+    Boss adaptatif avec comportement généré récursivement
+    
+    Caractéristiques :
+    - Unique à chaque apparition
+    - Évolue avec les étages
+    - Système de phases adaptatif
+    - Comportement généré procéduralement
+    - Utilise une fonction récursive pour les patterns d'attaque
     """
+    
+    # Cache pour les comportements générés (optimisation)
+    _behavior_cache = {}
     
     def __init__(self, x, y, settings, floor_number, global_seed):
         """
-        Initialise un boss unique
+        Initialise un boss unique basé sur l'étage et la seed
         
         Args:
-            x, y (int): Position
-            settings (Settings): Configuration
-            floor_number (int): Étage actuel
-            global_seed (int): Seed unique pour la partie
+            x, y (float): Position initiale
+            settings: Configuration du jeu
+            floor_number (int): Numéro de l'étage (influence complexité)
+            global_seed (int): Seed unique pour la génération procédurale
         """
         super().__init__(x, y, settings)
         
-        # Génération des spécifications
-        self.specs = BossGenerator.generate_boss_specs(floor_number, global_seed)
+        # Seed unique pour ce boss spécifique
+        self.boss_seed = hash((global_seed, floor_number, x, y)) % (2**32)
+        random.seed(self.boss_seed)
+        
+        # Type et identification
         self.type = "boss"
-        self.name = self.specs["name"]
+        self.name = self._generate_boss_name(floor_number)
         
-        # Statistiques basées sur specs
-        self.health = self.specs["base_health"]
+        # Statistiques évolutives
+        self.base_stats = self._calculate_base_stats(floor_number)
+        self.health = self.base_stats['health']
         self.max_health = self.health
-        self.damage = self.specs["base_damage"]
-        self.color = self.specs["color"]
-        self.radius = 35 + (self.specs["level"] * 5)
+        self.damage = self.base_stats['damage']
+        self.speed = self.base_stats['speed']
+        self.radius = self.base_stats['radius']
         
-        # Vitesses
-        self.speed = 1.2 + (self.specs["level"] * 0.1)
-        self.projectile_speed = 4 + (self.specs["level"] * 0.5)
+        # Apparence unique
+        self.color = self._generate_unique_color(floor_number)
+        self.secondary_color = (
+            min(255, (self.color[0] + 50) % 256),
+            min(255, (self.color[1] + 30) % 256),
+            min(255, (self.color[2] + 70) % 256)
+        )
         
-        # Système de phases
-        self.phase = 1
-        self.phases = self._determine_phases()
+        # Système de phases récursif
+        self.phase_depth = min(4, max(1, (floor_number // 3)))  # 1-4 phases
+        self.current_phase = 1
+        self.phase_transition_timer = 0
+        
+        # Génération du comportement récursif
+        self.behavior_tree = self._generate_behavior_tree(floor_number)
+        self.active_pattern = None
+        self.pattern_cooldown = 0
+        self.pattern_duration = 0
+        
+        # État interne
         self.phase_health_thresholds = self._calculate_phase_thresholds()
+        self.adaptive_multipliers = {
+            'damage': 1.0,
+            'speed': 1.0,
+            'attack_rate': 1.0,
+            'defense': 1.0
+        }
         
-        # Timers et cooldowns
-        self.attack_cooldown = 0
-        self.phase_timer = 0
-        self.enrage_timer = 3000  # 30 secondes à 100 FPS
-        
-        # État du boss
-        self.active_effects = []
-        self.summoned_minions = []
-        self.shield_active = False
-        self.shield_health = 0
-        self.enraged = False
-        
-        # Seed locale pour la prédictibilité
-        self.local_random = random.Random(self.specs["seed"])
-        
-        # Animation
+        # Animation et effets
         self.pulse_timer = 0
-        self.special_effect_timer = 0
+        self.rotation_angle = 0
+        self.special_effects = []
         
-        # Initialiser les mécaniques sélectionnées
-        self._initialize_mechanics()
+        # Timers
+        self.attack_timer = 0
+        self.movement_timer = 0
+        self.phase_timer = 0
+        
+        # IA adaptative
+        self.player_distance_history = []
+        self.preferred_distance = 200 + (floor_number * 20)
+        self.attack_pattern_history = []
+        
+        # Debug et logging
+        print(f"[BOSS] Créé: {self.name} (Étage {floor_number}, Seed {self.boss_seed})")
+        print(f"[BOSS] Phases: {self.phase_depth}, PV: {self.health}")
     
-    def _determine_phases(self):
-        """Détermine le nombre de phases selon les mécaniques"""
-        base_phases = 2  # Toujours au moins 2 phases
+    def _calculate_base_stats(self, floor_number):
+        """Calcule les statistiques de base selon l'étage"""
+        boss_level = max(1, floor_number // 3)
         
-        if "phase_transitions" in self.specs["behaviors"]:
-            base_phases += 1
+        return {
+            'health': 300 + (boss_level * 150),
+            'damage': 10 + (boss_level * 3),
+            'speed': 1.0 + (boss_level * 0.1),
+            'radius': 25 + min(boss_level * 3, 20),
+            'attack_cooldown': max(30, 90 - (boss_level * 5))
+        }
+    
+    def _generate_boss_name(self):
+        """Retourne toujours 'Boss' pour l'instant"""
+        return "Boss"
+    
+    def _generate_unique_color(self, floor_number):
+        """Génère une couleur unique basée sur la seed et l'étage"""
+        hue = (self.boss_seed % 360) / 360.0
+        saturation = 0.7 + min(0.3, (floor_number % 4) * 0.1)
+        value = 0.8 - min(0.5, (floor_number // 12) * 0.1)
         
-        if self.specs["level"] >= 4:
-            base_phases += 1
+        # Conversion HSV vers RGB
+        c = value * saturation
+        x = c * (1 - abs((hue * 6) % 2 - 1))
+        m = value - c
         
-        return min(base_phases, 4)  # Max 4 phases
+        if hue < 1/6:
+            r, g, b = c, x, 0
+        elif hue < 2/6:
+            r, g, b = x, c, 0
+        elif hue < 3/6:
+            r, g, b = 0, c, x
+        elif hue < 4/6:
+            r, g, b = 0, x, c
+        elif hue < 5/6:
+            r, g, b = x, 0, c
+        else:
+            r, g, b = c, 0, x
+        
+        return (
+            int((r + m) * 255),
+            int((g + m) * 255),
+            int((b + m) * 255)
+        )
+    
+    def _generate_behavior_tree(self, floor_number):
+        """Génère ou récupère l'arbre de comportement"""
+        cache_key = (self.boss_seed, floor_number)
+        
+        if cache_key not in AdaptiveBoss._behavior_cache:
+            max_depth = min(4, 1 + (floor_number // 6))  # Profondeur augmente avec étage
+            AdaptiveBoss._behavior_cache[cache_key] = RecursiveBossCore.generate_behavior_tree(
+                floor_number=floor_number,
+                seed=self.boss_seed,
+                depth=0,
+                max_depth=max_depth
+            )
+            print(f"[BOSS] Arbre généré - Profondeur: {max_depth}")
+        
+        return AdaptiveBoss._behavior_cache[cache_key]
     
     def _calculate_phase_thresholds(self):
         """Calcule les seuils de vie pour chaque phase"""
         thresholds = []
-        for i in range(self.phases, 0, -1):
-            thresholds.append(i / self.phases)
+        for i in range(self.phase_depth, 0, -1):
+            thresholds.append(i / self.phase_depth)
         return thresholds
-    
-    def _initialize_mechanics(self):
-        """Initialise toutes les mécaniques sélectionnées"""
-        # Attaques
-        self.attack_implementations = {}
-        for attack in self.specs["attacks"]:
-            if attack == "simple_circle":
-                self.attack_implementations[attack] = self._simple_circle_attack
-            elif attack == "double_spiral":
-                self.attack_implementations[attack] = self._double_spiral_attack
-            elif attack == "recursive_fractal":
-                self.attack_implementations[attack] = self._recursive_fractal_attack
-            elif attack == "homing_missiles":
-                self.attack_implementations[attack] = self._homing_missiles_attack
-            elif attack == "time_delayed":
-                self.attack_implementations[attack] = self._time_delayed_attack
-            elif attack == "rotating_barrage":
-                self.attack_implementations[attack] = self._rotating_barrage_attack
-        
-        # Mouvements
-        self.movement_implementation = self._get_movement_implementation(
-            self.specs["movement"][0] if self.specs["movement"] else "stationary"
-        )
-        
-        # Effets spéciaux
-        self.effect_implementations = []
-        for effect in self.specs["effects"]:
-            if effect == "shield_phases":
-                self.effect_implementations.append(self._shield_phases_effect)
-            elif effect == "summon_minions":
-                self.effect_implementations.append(self._summon_minions_effect)
-            elif effect == "damage_auras":
-                self.effect_implementations.append(self._damage_auras_effect)
-            elif effect == "debuff_projectiles":
-                self.effect_implementations.append(self._debuff_projectiles_effect)
-            elif effect == "arena_hazards":
-                self.effect_implementations.append(self._arena_hazards_effect)
-    
-    def _get_movement_implementation(self, movement_type):
-        """Retourne la fonction de mouvement appropriée"""
-        if movement_type == "stationary":
-            return self._stationary_movement
-        elif movement_type == "circular_orbit":
-            return self._circular_orbit_movement
-        elif movement_type == "teleport_dodge":
-            return self._teleport_dodge_movement
-        elif movement_type == "phase_shift":
-            return self._phase_shift_movement
-        elif movement_type == "predictive_movement":
-            return self._predictive_movement
-        else:  # "linear_pursuit" par défaut
-            return self._linear_pursuit_movement
     
     def update(self, player, enemy_projectiles=None):
         """
-        Met à jour le boss avec toutes ses mécaniques
-        """
-        # Incrémenter le timer de phase
-        self.phase_timer += 1
+        Met à jour le boss avec comportement adaptatif
         
-        # Vérifier le changement de phase
+        Args:
+            player: Instance du joueur
+            enemy_projectiles: Liste des projectiles ennemis
+        """
+        # Vérifier transition de phase
         self._check_phase_transition()
         
-        # Appliquer les effets spéciaux
-        for effect_func in self.effect_implementations:
-            effect_func(player)
-        
-        # Mouvement selon le pattern
-        if self.movement_implementation:
-            self.movement_implementation(player)
-        
-        # Gestion de l'enragement
-        if "enrage_timer" in self.specs["behaviors"]:
-            self._handle_enrage_timer()
-        
-        # Attaques
-        if self.attack_cooldown <= 0:
-            self._execute_selected_attack(enemy_projectiles)
-            self.attack_cooldown = self._calculate_attack_cooldown()
-        else:
-            self.attack_cooldown -= 1
-        
-        # Animation
+        # Mise à jour des timers
         self.pulse_timer += 0.05
-        self.special_effect_timer += 1
+        self.rotation_angle += 0.01
+        self.attack_timer += 1
+        self.movement_timer += 1
+        self.phase_timer += 1
         
-        # Garder dans l'écran
+        # Mise à jour des effets spéciaux
+        self._update_special_effects()
+        
+        # Mouvement adaptatif
+        self._adaptive_movement(player)
+        
+        # Gestion des attaques
+        if self.pattern_cooldown > 0:
+            self.pattern_cooldown -= 1
+        elif enemy_projectiles is not None:
+            self._execute_attack_pattern(enemy_projectiles)
+        
+        # Adaptation dynamique au joueur
+        self._adapt_to_player(player)
+        
+        # Garder dans les limites
         self._constrain_to_screen()
     
     def _check_phase_transition(self):
@@ -368,456 +412,390 @@ class ProceduralBoss(Enemy):
         health_ratio = self.health / self.max_health
         
         for i, threshold in enumerate(self.phase_health_thresholds):
-            if health_ratio <= threshold and self.phase < (self.phases - i):
-                self.phase = self.phases - i
+            if health_ratio <= threshold and self.current_phase < (self.phase_depth - i):
+                self.current_phase = self.phase_depth - i
                 self._on_phase_transition()
                 break
     
     def _on_phase_transition(self):
         """Déclenché lors d'un changement de phase"""
-        # Augmentation des statistiques
-        self.damage *= 1.3
-        self.attack_cooldown = max(30, self.attack_cooldown * 0.7)
+        # Augmentation des capacités
+        self.adaptive_multipliers['damage'] *= 1.3
+        self.adaptive_multipliers['attack_rate'] *= 1.2
+        self.adaptive_multipliers['defense'] *= 1.1
         
-        # Activation de nouvelles mécaniques en phase finale
-        if self.phase == self.phases:
-            self._activate_final_phase_abilities()
+        # Nouveau pattern d'attaque
+        self.pattern_cooldown = 0
+        self.active_pattern = None
+        self.attack_pattern_history.clear()
         
-        # Effet visuel de transition
-        self.special_effect_timer = 0
+        # Effet visuel
+        self.special_effects.append({
+            'type': 'phase_transition',
+            'timer': 60,
+            'radius': self.radius * 2,
+            'color': self.secondary_color,
+            'intensity': 1.0
+        })
+        
+        print(f"[BOSS] Phase {self.current_phase}/{self.phase_depth} activée")
+        print(f"[BOSS] Multiplicateurs: {self.adaptive_multipliers}")
     
-    def _activate_final_phase_abilities(self):
-        """Active les capacités de phase finale"""
-        if "adaptive_difficulty" in self.specs["behaviors"]:
-            # Le boss s'adapte au style du joueur
-            pass
-        
-        if "combo_attacks" in self.specs["behaviors"]:
-            # Combine plusieurs attaques
-            pass
-    
-    def _execute_selected_attack(self, enemy_projectiles):
-        """Exécute une attaque sélectionnée aléatoirement"""
-        if not self.attack_implementations:
-            return
-        
-        # Sélection intelligente selon la phase
-        if self.phase >= self.phases - 1 and len(self.attack_implementations) > 1:
-            # En phase finale, préférer les attaques complexes
-            attack_keys = list(self.attack_implementations.keys())
-            complex_attacks = [a for a in attack_keys if a in ["recursive_fractal", "rotating_barrage", "combo_attacks"]]
-            attack = self.local_random.choice(complex_attacks) if complex_attacks else self.local_random.choice(attack_keys)
-        else:
-            attack = self.local_random.choice(list(self.attack_implementations.keys()))
-        
-        # Exécuter l'attaque
-        self.attack_implementations[attack](enemy_projectiles)
-        
-        # Combos d'attaques
-        if "combo_attacks" in self.specs["behaviors"] and self.local_random.random() < 0.3:
-            self._execute_combo_attack(enemy_projectiles, attack)
-    
-    def _execute_combo_attack(self, enemy_projectiles, first_attack):
-        """Exécute une deuxième attaque en combo"""
-        other_attacks = [a for a in self.attack_implementations.keys() if a != first_attack]
-        if other_attacks:
-            second_attack = self.local_random.choice(other_attacks)
-            # Petit délai entre les attaques
-            # Note: pygame.time.delay() bloquerait le jeu, on utilisera plutôt un timer
-            self.attack_cooldown = 10  # Petit délai avant la deuxième attaque
-            self.attack_implementations[second_attack](enemy_projectiles)
-    
-    def _calculate_attack_cooldown(self):
-        """Calcule le cooldown d'attaque selon la phase et les mécaniques"""
-        base_cooldown = 120 - (self.specs["level"] * 10)  # 120 à 60 frames
-        
-        if self.enraged:
-            base_cooldown *= 0.5
-        
-        if self.phase > 1:
-            base_cooldown *= (0.8 ** (self.phase - 1))
-        
-        return max(30, int(base_cooldown))  # Minimum 30 frames
-    
-    def _handle_enrage_timer(self):
-        """Gère le timer d'enragement"""
-        if self.enrage_timer > 0:
-            self.enrage_timer -= 1
-        elif not self.enraged:
-            self.enraged = True
-            self._activate_enrage_mode()
-    
-    def _activate_enrage_mode(self):
-        """Active le mode enragé"""
-        self.color = (255, 50, 50)  # Rouge vif
-        self.damage *= 1.5
-        self.speed *= 1.3
-        self.attack_cooldown = max(15, self.attack_cooldown * 0.4)
-    
-    # ===== IMPLÉMENTATIONS DES ATTAQUES =====
-    
-    def _simple_circle_attack(self, enemy_projectiles):
-        """Attaque simple en cercle"""
-        num_projectiles = 8 + (self.phase * 2)
-        for i in range(num_projectiles):
-            angle = 2 * math.pi * i / num_projectiles
-            dx = math.cos(angle) * self.projectile_speed
-            dy = math.sin(angle) * self.projectile_speed
-            
-            enemy_projectiles.append(Projectile(
-                self.x, self.y, dx, dy, self.damage * 0.8, self.settings,
-                color=self.color, radius=6
-            ))
-    
-    def _double_spiral_attack(self, enemy_projectiles):
-        """Deux spirales tournant en sens inverse"""
-        self._spiral_attack(enemy_projectiles, clockwise=True)
-        self._spiral_attack(enemy_projectiles, clockwise=False)
-    
-    def _spiral_attack(self, enemy_projectiles, clockwise=True, depth=30, 
-                       start_angle=0, radius_increment=8, angle_increment=0.3):
-        """
-        Attaque en spirale récursive
-        
-        Complexité : O(depth) - linéaire
-        """
-        if depth <= 0:
-            return
-        
-        angle = start_angle
-        radius = 20
-        
-        for i in range(depth):
-            x = self.x + math.cos(angle) * radius
-            y = self.y + math.sin(angle) * radius
-            
-            # Direction tangentielle
-            if clockwise:
-                dx = -math.sin(angle) * self.projectile_speed
-                dy = math.cos(angle) * self.projectile_speed
-            else:
-                dx = math.sin(angle) * self.projectile_speed
-                dy = -math.cos(angle) * self.projectile_speed
-            
-            color = (100, 200, 255) if clockwise else (255, 200, 100)
-            
-            enemy_projectiles.append(Projectile(
-                x, y, dx, dy, self.damage * 0.6, self.settings,
-                color=color, radius=4
-            ))
-            
-            # Préparation pour le prochain
-            radius += radius_increment
-            angle += angle_increment if clockwise else -angle_increment
-        
-        # Optionnel : appel récursif pour spirale interne
-        if depth > 10 and self.local_random.random() < 0.3:
-            self._spiral_attack(
-                enemy_projectiles, clockwise, depth//2,
-                start_angle + math.pi, radius_increment * 1.5, angle_increment * 1.2
-            )
-    
-    def _recursive_fractal_attack(self, enemy_projectiles, depth=None, x=None, y=None, 
-                                  angle=0, length=100, branch_angle=45):
-        """
-        Attaque fractale récursive - Fonction récursive obligatoire
-        
-        Complexité : O(2^depth) - exponentielle mais contrôlée
-        """
-        if depth is None:
-            depth = 3 + min(2, self.specs["level"] // 2)
-        
-        if x is None:
-            x = self.x
-        if y is None:
-            y = self.y
-        
-        # Cas de base : feuille de l'arbre
-        if depth == 0:
-            dx = math.cos(angle) * self.projectile_speed
-            dy = math.sin(angle) * self.projectile_speed
-            
-            color_intensity = 200 - (self.phase * 40)
-            color = (color_intensity, 50, color_intensity)
-            
-            enemy_projectiles.append(Projectile(
-                x, y, dx, dy, self.damage * 0.7, self.settings,
-                color=color, radius=4 + self.phase
-            ))
-            return
-        
-        # Branche actuelle
-        end_x = x + math.cos(angle) * length
-        end_y = y + math.sin(angle) * length
-        
-        # Projectile pour cette branche
-        branch_dx = math.cos(angle) * self.projectile_speed * 0.6
-        branch_dy = math.sin(angle) * self.projectile_speed * 0.6
-        
-        branch_color = (150, 50, 150) if depth > 2 else (180, 50, 180)
-        
-        enemy_projectiles.append(Projectile(
-            x, y, branch_dx, branch_dy, self.damage * 0.8, self.settings,
-            color=branch_color, radius=5 + depth
-        ))
-        
-        # Appels récursifs pour les sous-branches
-        new_length = length * 0.7
-        new_branch_angle = branch_angle * (1 - (0.1 * (3 - depth)))  # Angle adaptatif
-        
-        # Branche gauche
-        self._recursive_fractal_attack(
-            enemy_projectiles, depth-1,
-            end_x, end_y,
-            angle - math.radians(new_branch_angle),
-            new_length, new_branch_angle
-        )
-        
-        # Branche droite
-        self._recursive_fractal_attack(
-            enemy_projectiles, depth-1,
-            end_x, end_y,
-            angle + math.radians(new_branch_angle),
-            new_length, new_branch_angle
-        )
-    
-    def _homing_missiles_attack(self, enemy_projectiles):
-        """Missiles guidés vers le joueur"""
-        num_missiles = 3 + self.phase
-        for i in range(num_missiles):
-            # Angle légèrement décalé pour chaque missile
-            angle_offset = (2 * math.pi / num_missiles) * i
-            dx = math.cos(angle_offset) * self.projectile_speed * 0.5
-            dy = math.sin(angle_offset) * self.projectile_speed * 0.5
-            
-            # Créer un projectile qui sera mis à jour pour suivre le joueur
-            # (Dans un système plus avancé, on créerait une classe HomingProjectile)
-            enemy_projectiles.append(Projectile(
-                self.x, self.y, dx, dy, self.damage * 0.7, self.settings,
-                color=(255, 100, 100), radius=5
-            ))
-    
-    def _time_delayed_attack(self, enemy_projectiles):
-        """Attaque avec délai avant explosion"""
-        # Pour l'instant, simple cercle avec couleur différente
-        self._simple_circle_attack(enemy_projectiles)
-        # (À améliorer avec un système de délai)
-    
-    def _rotating_barrage_attack(self, enemy_projectiles):
-        """Barrage tournant"""
-        num_barrages = 4
-        barrage_angle = (self.phase_timer * 0.05) % (2 * math.pi)
-        
-        for i in range(num_barrages):
-            angle = barrage_angle + (2 * math.pi / num_barrages) * i
-            dx = math.cos(angle) * self.projectile_speed
-            dy = math.sin(angle) * self.projectile_speed
-            
-            enemy_projectiles.append(Projectile(
-                self.x, self.y, dx, dy, self.damage * 0.9, self.settings,
-                color=(100, 100, 255), radius=7
-            ))
-    
-    # ===== IMPLÉMENTATIONS DES MOUVEMENTS =====
-    
-    def _stationary_movement(self, player):
-        """Ne bouge pas (stationnaire)"""
-        pass
-    
-    def _linear_pursuit_movement(self, player):
-        """Poursuite linéaire simple du joueur"""
+    def _adaptive_movement(self, player):
+        """Mouvement adaptatif basé sur le comportement du joueur"""
         dx = player.x - self.x
         dy = player.y - self.y
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
         
-        # Vitesse adaptative selon la phase
-        speed = self.speed * (1 + (self.phase * 0.15))
-        self.x += (dx / distance) * speed
-        self.y += (dy / distance) * speed
+        # Historique des distances
+        self.player_distance_history.append(distance)
+        if len(self.player_distance_history) > 20:
+            self.player_distance_history.pop(0)
+        
+        # Calcul distance moyenne
+        avg_distance = sum(self.player_distance_history) / len(self.player_distance_history)
+        
+        # Ajustement de la distance préférée
+        if avg_distance > self.preferred_distance * 1.5:
+            self.preferred_distance *= 0.98
+        elif avg_distance < self.preferred_distance * 0.5:
+            self.preferred_distance *= 1.02
+        
+        # Mouvement pour maintenir la distance optimale
+        target_ratio = distance / self.preferred_distance
+        
+        if target_ratio > 1.2:
+            # Trop loin, se rapprocher
+            move_speed = self.speed * self.adaptive_multipliers['speed']
+            self.x += (dx / distance) * move_speed
+            self.y += (dy / distance) * move_speed
+        elif target_ratio < 0.8:
+            # Trop proche, s'éloigner
+            move_speed = self.speed * self.adaptive_multipliers['speed'] * 0.8
+            self.x -= (dx / distance) * move_speed
+            self.y -= (dy / distance) * move_speed
+        
+        # Mouvement orbital occasionnel
+        if self.movement_timer % 180 == 0:
+            orbit_angle = random.random() * 2 * math.pi
+            orbit_distance = self.preferred_distance * 0.7
+            self.x = player.x + math.cos(orbit_angle) * orbit_distance
+            self.y = player.y + math.sin(orbit_angle) * orbit_distance
     
-    def _circular_orbit_movement(self, player):
-        """Orbite autour du joueur"""
-        orbit_radius = 200 + (self.phase * 50)
-        orbit_speed = 0.03 + (self.phase * 0.01)
+    def _execute_attack_pattern(self, enemy_projectiles):
+        """Exécute un pattern d'attaque récursif"""
+        if self.active_pattern is None:
+            self._select_new_pattern()
         
-        angle = math.atan2(self.y - player.y, self.x - player.x)
-        angle += orbit_speed
+        # Calcul de la profondeur basée sur la phase
+        attack_depth = min(3, self.current_phase + 1)
         
-        target_x = player.x + math.cos(angle) * orbit_radius
-        target_y = player.y + math.sin(angle) * orbit_radius
+        # Exécution récursive du pattern
+        RecursiveBossCore.recursive_attack_pattern(
+            position=(self.x, self.y),
+            depth=attack_depth,
+            pattern_tree=self.active_pattern,
+            projectiles_list=enemy_projectiles,
+            damage_base=self.damage * self.adaptive_multipliers['damage'],
+            speed_base=3.0 + (self.current_phase * 0.5),
+            angle_offset=self.rotation_angle * 50,
+            settings=self.settings
+        )
         
-        # Mouvement progressif
-        self.x += (target_x - self.x) * 0.05
-        self.y += (target_y - self.y) * 0.05
+        # Historique des patterns
+        pattern_name = self.active_pattern.get('attack_pattern', 'node') if self.active_pattern['type'] == 'leaf' else 'complex_node'
+        self.attack_pattern_history.append(pattern_name)
+        if len(self.attack_pattern_history) > 10:
+            self.attack_pattern_history.pop(0)
+        
+        # Réinitialiser le cooldown
+        self.pattern_cooldown = max(10, self.base_stats['attack_cooldown'] / self.adaptive_multipliers['attack_rate'])
+        self.pattern_duration -= 1
+        
+        # Changer de pattern si durée écoulée
+        if self.pattern_duration <= 0:
+            self.active_pattern = None
+            print(f"[BOSS] Pattern terminé, prochain dans {self.pattern_cooldown} frames")
     
-    def _teleport_dodge_movement(self, player):
-        """Téléportation pour esquiver"""
-        if self.phase_timer % 100 == 0:  # Téléporte toutes les 100 frames
-            angle = self.local_random.uniform(0, 2 * math.pi)
-            distance = self.local_random.uniform(150, 300)
+    def _select_new_pattern(self):
+        """Sélectionne un nouveau pattern d'attaque dans l'arbre de comportement"""
+        # Sélection récursive dans l'arbre
+        current_node = self.behavior_tree
+        depth = 0
+        
+        while current_node['type'] == 'node' and depth < self.current_phase:
+            # Choix intelligent basé sur l'historique
+            available_branches = len(current_node['branches'])
             
-            self.x = player.x + math.cos(angle) * distance
-            self.y = player.y + math.sin(angle) * distance
+            # Éviter de répéter le même pattern
+            recent_patterns = self.attack_pattern_history[-3:] if len(self.attack_pattern_history) >= 3 else []
             
-            # Limites
-            self._constrain_to_screen()
-    
-    def _phase_shift_movement(self, player):
-        """Se déplace par téléportation périodique"""
-        if self.phase_timer % 150 == 0:  # Téléporte toutes les 150 frames
-            # Choisir une position aléatoire mais pas trop proche du joueur
-            angle = self.local_random.uniform(0, 2 * math.pi)
-            distance = self.local_random.uniform(200, 350)
+            # Sélectionner une branche moins utilisée récemment
+            branch_weights = [1.0] * available_branches
+            for i, branch in enumerate(current_node['branches']):
+                branch_name = branch.get('attack_pattern', f'node_{i}') if branch['type'] == 'leaf' else f'complex_{i}'
+                if branch_name in recent_patterns:
+                    branch_weights[i] *= 0.5  # Réduire le poids des patterns récents
             
-            self.x = player.x + math.cos(angle) * distance
-            self.y = player.y + math.sin(angle) * distance
+            # Choix pondéré
+            total_weight = sum(branch_weights)
+            if total_weight > 0:
+                choice = random.choices(range(available_branches), weights=branch_weights, k=1)[0]
+            else:
+                choice = random.randint(0, available_branches - 1)
             
-            self._constrain_to_screen()
-    
-    def _predictive_movement(self, player):
-        """Se déplace vers la position prédite du joueur"""
-        # Simple prédiction basée sur la vitesse du joueur
-        predicted_x = player.x + player.last_dx * 30  # 30 frames d'avance
-        predicted_y = player.y + player.last_dy * 30
+            current_node = current_node['branches'][choice]
+            depth += 1
         
-        dx = predicted_x - self.x
-        dy = predicted_y - self.y
-        distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
+        self.active_pattern = current_node
+        self.pattern_duration = 60 + (self.current_phase * 30)
         
-        speed = self.speed * (1 + (self.phase * 0.2))
-        self.x += (dx / distance) * speed
-        self.y += (dy / distance) * speed
+        pattern_type = self.active_pattern['type']
+        pattern_name = self.active_pattern.get('attack_pattern', 'complex') if pattern_type == 'leaf' else 'composite'
+        print(f"[BOSS] Nouveau pattern: {pattern_name} (durée: {self.pattern_duration} frames)")
     
-    # ===== IMPLÉMENTATIONS DES EFFETS SPÉCIAUX =====
+    def _adapt_to_player(self, player):
+        """Adapte le comportement basé sur les actions du joueur"""
+        # Analyser la vitesse du joueur
+        player_speed = math.sqrt(player.last_dx**2 + player.last_dy**2)
+        
+        if player_speed > 3:
+            # Joueur rapide : augmenter la fréquence d'attaque
+            self.adaptive_multipliers['attack_rate'] = min(2.0, self.adaptive_multipliers['attack_rate'] * 1.02)
+            self.adaptive_multipliers['speed'] = min(1.5, self.adaptive_multipliers['speed'] * 1.01)
+        else:
+            # Joueur lent : augmenter les dégâts
+            self.adaptive_multipliers['damage'] = min(2.5, self.adaptive_multipliers['damage'] * 1.02)
+        
+        # Ajustement périodique
+        if self.phase_timer % 300 == 0:  # Toutes les 5 secondes
+            self._rebalance_multipliers()
     
-    def _shield_phases_effect(self, player):
-        """Bouclier qui s'active par phases"""
-        if not self.shield_active and self.phase_timer % 200 < 50:
-            # Active le bouclier pendant 50 frames toutes les 200 frames
-            self.shield_active = True
-            self.shield_health = self.max_health * 0.1 * self.phase
-            self.color = (100, 100, 255)  # Bleu pour le bouclier
-        elif self.shield_active and (self.phase_timer % 200 >= 50 or self.shield_health <= 0):
-            self.shield_active = False
-            self.color = self.specs["color"]
+    def _rebalance_multipliers(self):
+        """Rééquilibre les multiplicateurs pour éviter les déséquilibres"""
+        avg = sum(self.adaptive_multipliers.values()) / len(self.adaptive_multipliers)
+        
+        for key in self.adaptive_multipliers:
+            # Ramener vers la moyenne si trop extrême
+            if self.adaptive_multipliers[key] > avg * 1.5:
+                self.adaptive_multipliers[key] *= 0.95
+            elif self.adaptive_multipliers[key] < avg * 0.5:
+                self.adaptive_multipliers[key] *= 1.05
     
-    def _summon_minions_effect(self, player):
-        """Invoque des minions"""
-        if self.phase_timer % 300 == 0 and len(self.summoned_minions) < (2 + self.phase):
-            # Crée un effet de spawn (serait géré par GameScene)
-            pass
-    
-    def _damage_auras_effect(self, player):
-        """Aura de dégâts autour du boss"""
-        distance = math.sqrt((self.x - player.x)**2 + (self.y - player.y)**2)
-        if distance < self.radius * 2:  # Zone d'aura
-            player.take_damage(self.damage * 0.1)  # Dégâts continus faibles
-
-    def _debuff_projectiles_effect(self, player):
-        """Projectiles qui appliquent des débuffs"""
-        # À implémenter si le temps le permet
-        pass
-
-    def _arena_hazards_effect(self, player):
-        """Crée des dangers dans l'arène"""
-        # À implémenter si le temps le permet
-        pass
-    
-    # ===== MÉTHODES AUXILIAIRES =====
+    def _update_special_effects(self):
+        """Met à jour les effets spéciaux"""
+        for effect in self.special_effects[:]:
+            effect['timer'] -= 1
+            
+            # Animation de l'effet
+            if effect['type'] == 'phase_transition':
+                effect['intensity'] *= 0.95
+                effect['radius'] += 0.5
+            
+            if effect['timer'] <= 0:
+                self.special_effects.remove(effect)
     
     def _constrain_to_screen(self):
-        """Maintient le boss dans l'écran"""
-        margin = self.radius + 20
+        """Maintient le boss dans l'écran avec une marge"""
+        margin = self.radius + 50
         self.x = max(margin, min(self.x, self.settings.screen_width - margin))
         self.y = max(margin, min(self.y, self.settings.screen_height - margin))
     
     def take_damage(self, amount):
-        """Gère les dégâts avec bouclier"""
-        if self.shield_active:
-            self.shield_health -= amount
-            if self.shield_health <= 0:
-                self.shield_active = False
-                self.color = self.specs["color"]
-            return False
+        """
+        Gère les dégâts avec adaptation
+        
+        Args:
+            amount (float): Montant des dégâts
+        
+        Returns:
+            bool: True si le boss est mort
+        """
+        # Réduction de dégâts en phase finale
+        if self.current_phase == self.phase_depth:
+            amount *= 0.7 * self.adaptive_multipliers['defense']
         else:
-            return super().take_damage(amount)
+            amount *= self.adaptive_multipliers['defense']
+        
+        # Adaptation défensive après avoir pris des dégâts importants
+        if amount > self.max_health * 0.1:
+            self.adaptive_multipliers['speed'] = min(1.5, self.adaptive_multipliers['speed'] * 1.05)
+            self.adaptive_multipliers['defense'] = min(1.3, self.adaptive_multipliers['defense'] * 1.02)
+            
+            # Effet visuel de dégâts
+            self.special_effects.append({
+                'type': 'damage_flash',
+                'timer': 15,
+                'color': (255, 50, 50),
+                'intensity': 1.0
+            })
+        
+        # Appliquer les dégâts
+        self.health -= amount
+        
+        # Vérifier la mort
+        if self.health <= 0:
+            print(f"[BOSS] {self.name} vaincu!")
+            return True
+        
+        return False
     
     def draw(self, screen):
-        """Dessine le boss avec effets spéciaux"""
-        # Effet de pulsation
-        pulse = math.sin(self.pulse_timer) * 4
-        current_radius = self.radius + pulse
+        """Dessine le boss avec effets visuels avancés"""
+        current_time = pygame.time.get_ticks() * 0.001
         
-        # Bouclier visuel
-        if self.shield_active:
-            shield_radius = current_radius + 15
-            shield_surface = pygame.Surface((shield_radius*2, shield_radius*2), pygame.SRCALPHA)
-            shield_alpha = 100 + int(50 * math.sin(self.pulse_timer * 3))
-            pygame.draw.circle(shield_surface, (100, 100, 255, shield_alpha),
-                             (shield_radius, shield_radius), shield_radius, 5)
-            screen.blit(shield_surface, (int(self.x - shield_radius), int(self.y - shield_radius)))
-        
-        # Corps du boss
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), int(current_radius))
-        
-        # Détails selon la phase
-        if self.phase >= self.phases - 1:
-            # Phase finale : yeux menaçants
-            eye_radius = current_radius * 0.25
-            for i in range(2):
-                eye_x = self.x + (current_radius * 0.4) * (1 if i == 0 else -1)
-                eye_y = self.y - current_radius * 0.2
+        # Effets spéciaux en premier (pour qu'ils soient en arrière-plan)
+        for effect in self.special_effects:
+            if effect['type'] == 'phase_transition':
+                alpha = int(150 * effect['intensity'] * (effect['timer'] / 60))
+                pulse = math.sin(current_time * 10) * 10 * effect['intensity']
                 
-                pygame.draw.circle(screen, (255, 255, 255), (int(eye_x), int(eye_y)), int(eye_radius))
-                pygame.draw.circle(screen, (0, 0, 0), (int(eye_x), int(eye_y)), int(eye_radius * 0.5))
+                # Cercle d'énergie
+                effect_surface = pygame.Surface(
+                    (int(effect['radius']*2), int(effect['radius']*2)), 
+                    pygame.SRCALPHA
+                )
+                pygame.draw.circle(
+                    effect_surface, 
+                    (*effect['color'], alpha),
+                    (int(effect['radius']), int(effect['radius'])),
+                    int(effect['radius'] + pulse),
+                    5
+                )
+                screen.blit(effect_surface, 
+                          (int(self.x - effect['radius']), 
+                           int(self.y - effect['radius'])))
+            
+            elif effect['type'] == 'damage_flash':
+                alpha = int(100 * effect['intensity'] * (effect['timer'] / 15))
+                flash_surface = pygame.Surface(
+                    (int(self.radius*4), int(self.radius*4)), 
+                    pygame.SRCALPHA
+                )
+                pygame.draw.circle(
+                    flash_surface,
+                    (*effect['color'], alpha),
+                    (int(self.radius*2), int(self.radius*2)),
+                    int(self.radius * 1.5)
+                )
+                screen.blit(flash_surface,
+                          (int(self.x - self.radius*2),
+                           int(self.y - self.radius*2)))
+        
+        # Corps principal avec pulsation
+        pulse = math.sin(self.pulse_timer) * 3
+        main_radius = self.radius + pulse
+        
+        # Gradient radial (de l'intérieur vers l'extérieur)
+        for i in range(5, 0, -1):
+            radius = main_radius * (i / 5)
+            alpha = 50 + (i * 40)
+            color = (
+                int(self.color[0] * (i / 5)),
+                int(self.color[1] * (i / 5)),
+                int(self.color[2] * (i / 5))
+            )
+            
+            surf = pygame.Surface((int(radius*2), int(radius*2)), pygame.SRCALPHA)
+            pygame.draw.circle(surf, (*color, alpha), 
+                             (int(radius), int(radius)), int(radius))
+            screen.blit(surf, (int(self.x - radius), int(self.y - radius)))
+        
+        # Motif de phase (orbites)
+        phase_indicator_radius = main_radius * 0.8
+        for i in range(self.current_phase):
+            angle = (2 * math.pi * i / self.current_phase) + self.rotation_angle
+            indicator_x = self.x + math.cos(angle) * phase_indicator_radius
+            indicator_y = self.y + math.sin(angle) * phase_indicator_radius
+            
+            # Orbite pulsante
+            orbit_pulse = math.sin(current_time * 3 + i) * 3
+            pygame.draw.circle(
+                screen, self.secondary_color,
+                (int(indicator_x), int(indicator_y)),
+                main_radius * 0.15 + orbit_pulse
+            )
+        
+        # Nom et info
+        if hasattr(self.settings, 'font') and self.settings.font and 'h3' in self.settings.font:
+            # Nom du boss
+            name_text = self.settings.font["h3"].render(self.name, True, (255, 255, 255))
+            name_rect = name_text.get_rect(center=(self.x, self.y - self.radius - 30))
+            
+            # Phase actuelle
+            phase_text = self.settings.font["h4"].render(
+                f"Phase {self.current_phase}/{self.phase_depth}", 
+                True, (200, 200, 255)
+            )
+            phase_rect = phase_text.get_rect(center=(self.x, self.y - self.radius - 50))
+            
+            # Indicateur de difficulté
+            difficulty = "★" * self.current_phase + "☆" * (self.phase_depth - self.current_phase)
+            diff_text = self.settings.font["h4"].render(difficulty, True, (255, 255, 0))
+            diff_rect = diff_text.get_rect(center=(self.x, self.y - self.radius - 70))
+            
+            screen.blit(name_text, name_rect)
+            screen.blit(phase_text, phase_rect)
+            screen.blit(diff_text, diff_rect)
         
         # Barre de vie détaillée
-        self._draw_detailed_health_bar(screen)
-        
-        # Nom du boss
-        if hasattr(self.settings, 'font') and self.settings.font:
-            name_text = self.settings.font["h3"].render(self.name, True, (255, 255, 255))
-            name_rect = name_text.get_rect(center=(self.x, self.y - self.radius - 40))
-            screen.blit(name_text, name_rect)
+        self._draw_advanced_health_bar(screen)
     
-    def _draw_detailed_health_bar(self, screen, width=160, height=15):
-        """Barre de vie détaillée avec phases"""
+    def _draw_advanced_health_bar(self, screen, width=200, height=12):
+        """Barre de vie avancée avec indicateurs de phase"""
         # Position
         bar_x = self.x - width // 2
-        bar_y = self.y - self.radius - 25
+        bar_y = self.y - self.radius - 90
         
-        # Fond
-        pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, width, height), border_radius=3)
+        # Fond de la barre
+        pygame.draw.rect(screen, (30, 30, 30), 
+                        (bar_x, bar_y, width, height), 
+                        border_radius=3)
         
         # Santé actuelle
-        health_ratio = self.health / self.max_health
+        health_ratio = max(0, self.health / self.max_health)
         health_width = int(width * health_ratio)
         
-        # Couleur par phase
-        phase_colors = [
-            (100, 200, 100),   # Phase 1 : Vert
-            (200, 200, 100),   # Phase 2 : Jaune
-            (200, 100, 100),   # Phase 3 : Rouge
-            (150, 50, 200),    # Phase 4 : Violet
-        ]
-        
-        color = phase_colors[min(self.phase - 1, len(phase_colors) - 1)]
-        
-        # Barre de santé
+        # Gradient de couleur (vert → jaune → rouge)
         if health_width > 0:
-            pygame.draw.rect(screen, color, (bar_x, bar_y, health_width, height), border_radius=3)
+            health_surface = pygame.Surface((health_width, height), pygame.SRCALPHA)
+            for i in range(health_width):
+                pos_ratio = i / width
+                if health_ratio > 0.6:
+                    r = int(255 * (1 - pos_ratio * 0.7))
+                    g = 255
+                    b = int(100 * (1 - pos_ratio * 0.5))
+                elif health_ratio > 0.3:
+                    r = 255
+                    g = int(255 * pos_ratio * 0.8)
+                    b = 100
+                else:
+                    r = 255
+                    g = int(255 * pos_ratio * 0.5)
+                    b = 100
+                
+                pygame.draw.line(health_surface, (r, g, b, 200), 
+                               (i, 0), (i, height))
+            screen.blit(health_surface, (bar_x, bar_y))
         
         # Indicateurs de phase
-        for i in range(1, self.phases):
-            phase_marker = bar_x + int(width * (i / self.phases))
-            pygame.draw.line(screen, (255, 255, 255), 
-                           (phase_marker, bar_y), (phase_marker, bar_y + height), 2)
+        for i in range(1, self.phase_depth):
+            phase_marker = bar_x + int(width * (i / self.phase_depth))
+            marker_color = (255, 255, 255, 150) if i < self.current_phase else (100, 100, 100, 100)
+            pygame.draw.line(screen, marker_color, 
+                           (phase_marker, bar_y - 3), 
+                           (phase_marker, bar_y + height + 3), 2)
         
         # Bordure
-        pygame.draw.rect(screen, (200, 200, 200), (bar_x, bar_y, width, height), 2, border_radius=3)
+        pygame.draw.rect(screen, (200, 200, 200), 
+                        (bar_x, bar_y, width, height), 
+                        2, border_radius=3)
         
-        # Texte de phase
-        if hasattr(self.settings, 'font') and self.settings.font:
-            phase_text = self.settings.font["h4"].render(f"Phase {self.phase}/{self.phases}", True, (255, 255, 255))
-            phase_rect = phase_text.get_rect(center=(self.x, bar_y - 10))
-            screen.blit(phase_text, phase_rect)
+        # Texte de santé
+        if hasattr(self.settings, 'font') and self.settings.font and 'h4' in self.settings.font:
+            health_text = self.settings.font["h4"].render(
+                f"{int(self.health)}/{self.max_health}", 
+                True, (255, 255, 255)
+            )
+            health_rect = health_text.get_rect(center=(self.x, bar_y - 15))
+            screen.blit(health_text, health_rect)

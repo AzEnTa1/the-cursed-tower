@@ -1,5 +1,7 @@
 # src/utils/queue.py
 from random import choices
+import pygame
+import random
 
 class Queue:
     """
@@ -38,20 +40,18 @@ class Queue:
 class WaveQueue:
     """Génère des vagues d'ennemis de plus en plus difficiles"""
     
-    # Configuration des vagues
     ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromane']
-
-    # Configuration des vagues
+    
     WAVE_CONFIGS = [
         [35, 15, 15, 5, 10, 20],     # Vague 1
         [25, 20, 15, 10, 10, 20],    # Vague 2
         [15, 20, 20, 15, 10, 20],    # Vague 3
-]
+    ]
     
     def __init__(self, settings=None):
         self.waves = Queue()
         self.wave_count = 0
-        self.enemies_per_wave = 8  # Commence avec 8 ennemis par vague
+        self.enemies_per_wave = 8
         self.settings = settings
     
     def generate_wave(self, floor_number):
@@ -69,7 +69,7 @@ class WaveQueue:
                 population=range(len(self.ENEMY_TYPES)), 
                 weights=weights,
                 k=1
-                )[0]
+            )[0]
             enemies.append(self.ENEMY_TYPES[enemy_type_index])
         
         return enemies
@@ -85,24 +85,29 @@ class WaveQueue:
             self.waves.enqueue(wave_enemies)
         
         self.wave_count = waves_count
-
-    # Dans la classe WaveQueue
-    def setup_boss_floor(self, boss_level=1):
+        print(f"[QUEUE] {waves_count} vagues configurées pour l'étage {floor_number}")
+    
+    def setup_boss_floor(self, floor_number):
         """Configure les vagues pour un étage de boss"""
         self.waves = Queue()
         
-        # Pour un boss, on a seulement 1 vague avec 1 boss
-        # Mais on peut faire plusieurs vagues de boss si on veut
-        self.waves.enqueue(["boss"])  # Une vague avec un seul boss
+        # Seed unique pour le boss basée sur l'étage
+        boss_seed = hash((floor_number, pygame.time.get_ticks())) % (2**32)
         
+        # Une seule vague avec un seul boss
+        self.waves.enqueue([("boss", boss_seed)])
         self.wave_count = 1
         self.enemies_per_wave = 1
+        print(f"[QUEUE] Boss configuré pour l'étage {floor_number}, seed: {boss_seed}")
     
     def get_next_wave(self):
         """Récupère la prochaine vague d'ennemis"""
         if self.waves.is_empty():
             return None
-        return self.waves.dequeue()
+        
+        wave = self.waves.dequeue()
+        print(f"[QUEUE] Nouvelle vague: {wave}")
+        return wave
     
     def has_more_waves(self):
         """Vérifie s'il reste des vagues"""

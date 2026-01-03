@@ -5,7 +5,7 @@ from .suicide import Suicide
 from .destructeur import Destructeur
 from .pyromane import Pyromane
 from .basic import Basic
-from .boss import ProceduralBoss
+from .boss import AdaptiveBoss
 
 __all__ = [
     'Basic',
@@ -14,5 +14,5 @@ __all__ = [
     'Suicide',
     'Destructeur',
     'Pyromane',
-    'ProceduralBoss'
+    'AdaptiveBoss'
 ]
