@@ -12,20 +12,27 @@ class TalentsScene(BaseScene):
         """Initialisation du menu"""
         self.player_data = player_data
         # Rect pour quiter le menu
-        self.exit_button = pygame.Rect(self.settings.screen_width - 60, 10, 50, 50)
+        self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
+        self.exit_menu_rect = pygame.image.load(r"assets/images/cadre.png")
+        self.exit_menu_rect = pygame.transform.scale(self.exit_menu_rect, (200, 50))
+        self.exit_menu_rect = self.exit_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5))
+        # place le bouton en haut a droite
+        self.exit_menu_rect.update(self.settings.screen_width - 60-150, 50, 200, 50)
+        self.exit_menu_text_rect = self.exit_menu_text.get_rect(center=self.exit_menu_rect.center)
+        
         #si quelqu'un veut en rajouter in gam c possible
         self.talent_dict = {
-            "max_health":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "regen_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
+            "max_health":{"img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png")},
+            "regen_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png")},
+            "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Speed_Icon.png")},
+            "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png")},
             "dash_cooldown":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
             "dash_distance":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
+            "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_icon.png")},
+            "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_speed_icon.png")},
             "stationnary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
             "projectil_size":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "projectil_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
+            "projectil_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectil_speed_icon.png")},
         }
         cadre = pygame.image.load(r"assets\images\cadre.png")
         # case en haut a gauche les autres sont généré a partir de ce Rect
@@ -67,14 +74,21 @@ class TalentsScene(BaseScene):
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.exit_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+            if self.exit_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
     
     
     
     def update(self):
         """met a jours les éléments et la logique de la scene"""
-        pass
+        if self.exit_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 255, 255))
+            if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
+                self.exit_hovered = True
+                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+        else:
+            self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
+            self.exit_hovered = False
     
     def draw(self, screen):
         """Dessine la scene"""
@@ -82,7 +96,12 @@ class TalentsScene(BaseScene):
         # Image de fond
         screen.blit(self.bg_image, (0, 0))
 
-        pygame.draw.rect(screen, (255, 255, 0), self.exit_button)
+        # Bouton quitter
+        bg_image = pygame.image.load(r"assets/images/cadre.png")
+        bg_image = pygame.transform.scale(bg_image, (self.exit_menu_rect.width, self.exit_menu_rect.height))
+        screen.blit(bg_image, self.exit_menu_rect)
+        screen.blit(self.exit_menu_text, self.exit_menu_text_rect)
+
         
         i = 0
         for key in list(self.talent_dict.keys()):
@@ -93,12 +112,15 @@ class TalentsScene(BaseScene):
                 screen.blit(txt, txt_rect)
             i += 1
 
-        pygame.draw.rect(screen, (100, 100, 100), self.stats_rect)
+        bg_image1 = pygame.image.load(r"assets/images/cadre.png")
+        bg_image1 = pygame.transform.scale(bg_image1, (self.stats_rect.width, self.stats_rect.height))
+        screen.blit(bg_image1, self.stats_rect)
         i = 0
         for key in self.player_data.keys():
             i += 1
-            txt = self.settings.font["h4"].render(f"{key}: {self.player_data[key]}", True, (0, 0, 0))
-            rect = txt.get_rect(topleft = (self.stats_rect[0] + 5, self.stats_rect[1] + 20*i + 5))
+            txt = self.settings.font["h4"].render(f"{key}: {self.player_data[key]}", True, (255, 255, 255))
+            rect = txt.get_rect(topleft = (self.stats_rect[0] + 135, self.stats_rect[1] + 20*i + 5))
+            rect.center = (self.stats_rect[0] + 135, self.stats_rect[1] + 20*i + 10)
             screen.blit(txt, rect)
     
     def resize(self):
@@ -107,7 +129,7 @@ class TalentsScene(BaseScene):
         Recalcule les positions et la taille des éléments
         """
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
-        self.exit_button.update(self.settings.screen_width - 60, 10, 50, 50)
+        self.exit_menu_rect.update(self.settings.screen_width - 60, 10, 50, 50)
 
         i = 0
         for key in list(self.talent_dict.keys()):
