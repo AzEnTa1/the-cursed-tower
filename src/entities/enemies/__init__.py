@@ -7,7 +7,6 @@ from .pyromane import Pyromane
 from .basic import Basic
 from .boss import ProceduralBoss
 
-
 __all__ = [
     'Basic',
     'Charger',

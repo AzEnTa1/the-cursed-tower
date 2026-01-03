@@ -709,17 +709,18 @@ class ProceduralBoss(Enemy):
     
     def _damage_auras_effect(self, player):
         """Aura de dégâts autour du boss"""
-        # À implémenter avec un système d'aura
-        pass
-    
+        distance = math.sqrt((self.x - player.x)**2 + (self.y - player.y)**2)
+        if distance < self.radius * 2:  # Zone d'aura
+            player.take_damage(self.damage * 0.1)  # Dégâts continus faibles
+
     def _debuff_projectiles_effect(self, player):
         """Projectiles qui appliquent des débuffs"""
-        # À implémenter avec des projectiles spéciaux
+        # À implémenter si le temps le permet
         pass
-    
+
     def _arena_hazards_effect(self, player):
         """Crée des dangers dans l'arène"""
-        # À implémenter avec un système de hazards
+        # À implémenter si le temps le permet
         pass
     
     # ===== MÉTHODES AUXILIAIRES =====

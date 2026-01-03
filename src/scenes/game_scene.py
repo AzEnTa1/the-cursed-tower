@@ -330,7 +330,7 @@ class GameScene(BaseScene):
                 effect.x, effect.y, 
                 self.settings, 
                 self.current_floor,
-                self.game.global_seed  # Passer la seed globale
+                self.global_seed  # Passer la seed globale
             )
         else:
             return Basic(effect.x, effect.y, self.settings)
