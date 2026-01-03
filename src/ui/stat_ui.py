@@ -7,8 +7,7 @@ class StatUI:
         self.game_stats = game_stats
         # Rect des stats et surface qui accepte de modifier l'alpha
         self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2-60, self.settings.screen_height-300)
-
-
+        
 
 
 
@@ -52,4 +51,6 @@ class StatUI:
 
 
     def resize(self):
-        self.stats_rect.update(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
+        self.stats_rect.update(50, 20, self.settings.screen_width//2 - 60, self.settings.screen_height -300)
+        
+       

@@ -54,13 +54,13 @@ class PerksUI:
         
         # Titre
         title = self.title_font.render("CHOISISSEZ UNE AMÉLIORATION", True, (255, 255, 0))
-        title_rect = title.get_rect(center=(self.settings.screen_width // 2, 80))
+        title_rect = title.get_rect(center=(self.settings.screen_width // 2, 500))
         screen.blit(title, title_rect)
         
         # Instructions
         instructions = self.perk_font.render("Cliquez sur une amélioration pour l'équiper", 
-                                           True, (200, 200, 200))
-        instructions_rect = instructions.get_rect(center=(self.settings.screen_width // 2, 120))
+                                           True, (255, 255, 255))
+        instructions_rect = instructions.get_rect(center=(self.settings.screen_width // 2, 550))
         screen.blit(instructions, instructions_rect)
         
         # Dessiner les 3 perks
@@ -75,8 +75,8 @@ class PerksUI:
             
             # Dessiner le cadre
             cadre_scaled = pygame.transform.scale(self.cadre_img, 
-                                                (union_rect.width + 20, union_rect.height + 20))
-            cadre_pos = (union_rect.x - 10, union_rect.y - 10)
+                                                (image_rect.width + 20, image_rect.height))
+            cadre_pos = (image_rect.x - 10, image_rect.y)
             
             # Changer la couleur du cadre si survolé
             if is_hovered:
@@ -93,7 +93,12 @@ class PerksUI:
                 img = self.perks_imgs[perk_name]
                 img_scaled = pygame.transform.smoothscale(img, (image_rect.width, image_rect.height))
                 screen.blit(img_scaled, image_rect)
-            
+
+            #met une image de fond au texte
+            cadre_scaled = pygame.transform.scale(self.cadre_img, 
+                                                (text_rect.width + 20, text_rect.height))
+            screen.blit(cadre_scaled, (text_rect.x - 10, text_rect.y ))
+
             # Dessiner le texte du perk
             text_color = (255, 255, 200) if is_hovered else (255, 255, 255)
             perk_text = self.perk_font.render(perk_name.replace('_', ' ').title(), True, text_color)
@@ -102,6 +107,8 @@ class PerksUI:
             # Ajuster la position du texte pour qu'il soit centré
             text_rect_obj = perk_text.get_rect(center=text_pos)
             screen.blit(perk_text, text_rect_obj)
+
+            
             
             # Description supplémentaire pour certains perks
             if is_hovered:
