@@ -347,7 +347,7 @@ class GameScene(BaseScene):
                 # Vérifie les dégâts au joueur
                 fire_zone.check_damage(self.player)
         # vérifie si le joueur est mort
-        if self.player.take_damage(0):
+        if self.player.health <= 0:
             self._handle_player_death()
     
     def _check_floor_completion(self):
