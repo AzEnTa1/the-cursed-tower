@@ -13,7 +13,7 @@ class PauseSubScene(BaseSubScene):
         """Appelée quand la scène devient active"""
         super().on_enter()
         self.ui = PauseUI(game_stats, self.settings)
-        self.exit_text = self.settings.font["h3"].render("Continuer (echap)", True, (255, 0, 0))
+        self.exit_text = self.settings.font["h3"].render("Continuer", True, (255, 0, 0))
         self.exit_rect = pygame.image.load(r"assets/images/cadre.png")
         self.exit_rect = pygame.transform.scale(self.exit_rect, (200, 50))
         self.exit_rect = self.exit_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 - 75))

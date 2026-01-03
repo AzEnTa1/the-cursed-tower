@@ -24,7 +24,6 @@ class GameOverScene(BaseScene):
         self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
 
         print("Game Over Scene")
-    
 
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
@@ -34,7 +33,6 @@ class GameOverScene(BaseScene):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
-
     
     def update(self):
         """"""
@@ -50,9 +48,7 @@ class GameOverScene(BaseScene):
     def draw(self, screen):
         """Dessine le menu Game Over"""        
         self.ui.draw(screen, self.quit_button, self.quit_rect, self.quit_text)
-        
-        
-
+    
     def resize(self):
         """
         Appelé lorsque la fenêtre change de taille

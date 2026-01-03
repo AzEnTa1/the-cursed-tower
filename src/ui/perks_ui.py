@@ -58,21 +58,18 @@ class PerksUI:
             screen.blit(fd_text, rect[1])
             txt = self.settings.font["h3"].render(perk, True, (255, 255, 255))
             screen.blit(txt, txt.get_rect(center=rect[1].center))
-            #affichage image
             screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
             
-            # fait en sorte que quand la souris passe sur un perk, un cadre apparaisse autour
             if rect[2].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
                 hover_cadre = pygame.image.load(r"assets/images/cadre.png")
                 hover_cadre = pygame.transform.scale(hover_cadre, (rect[0][2]+10, rect[0][3]+10))
                 hover_rect = hover_cadre.get_rect(center=rect[0].center)
                 screen.blit(hover_cadre, hover_rect)
-                # remet l'image du perks a l'interieur
+                # Affiche l'icône agrandie
                 screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2]+10, rect[0][3]+10)), rect[0].move(-5, -5))
-                # affiche la description du perk
+                # Affiche la description du perk
                 desc = self._get_perk_description(perk)
                 if desc:
-                    #rajoute un bg derrière le texte de la taille du texte
                     desc_bg = pygame.image.load(r"assets/images/cadre.png")
                     desc_bg = pygame.transform.scale(desc_bg, (rect[1][2]+200, 40))
                     desc_bg_rect = desc_bg.get_rect(center=(rect[1].center[0], rect[1].center[1] + 40))
@@ -101,15 +98,17 @@ class PerksUI:
         return descriptions.get(perk_name, "")
     
     def _draw_background(self, screen):
-        """dessine le background"""
+        """
+        Dessine le fond de l'interface des perks
+        """
         bg_image = pygame.image.load(r"assets/images/background/perks_scene.png")        
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
-    
-    
 
     def resize(self):
-        """Redimensionne les éléments UI"""
-        #redimentionne les instructions et le titre
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         pass
     

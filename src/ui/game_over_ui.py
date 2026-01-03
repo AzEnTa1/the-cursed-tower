@@ -2,6 +2,9 @@
 import pygame
 
 class GameOverUI:
+    """
+    Interface du menu Game Over
+    """
     def __init__(self, settings, game_stats):
         self.settings = settings
         self.game_stats = game_stats

@@ -15,12 +15,10 @@ class TalentsScene(BaseScene):
         # Rect pour quiter le menu
         self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
         self.cadre = pygame.image.load(r"assets\images\cadre.png")
-        # place le bouton en haut a droite
         self.exit_menu_rect = pygame.Rect(self.settings.screen_width - 210, 50, 200, 50)
         self.quit_button_img = pygame.transform.scale(self.cadre, (self.exit_menu_rect.width, self.exit_menu_rect.height))
         self.exit_menu_text_rect = self.exit_menu_text.get_rect(center=self.exit_menu_rect.center)
         
-        #si quelqu'un veut en rajouter in game c possible
         self.talent_dict = {
             "max_health":{"img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png")},
             "regen_power":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png")},
@@ -35,7 +33,7 @@ class TalentsScene(BaseScene):
             "projectile_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png")},
         }
         
-        # case en haut a gauche les autres sont généré a partir de ce Rect
+        # Calcul des positions et tailles des éléments
         base_talent_rect = pygame.Rect(self.settings.screen_width//16, self.settings.screen_width//6, self.settings.screen_width//8, self.settings.screen_width//8)
         i = 0
         for key in list(self.talent_dict.keys()):
@@ -69,8 +67,6 @@ class TalentsScene(BaseScene):
         bg_img = pygame.image.load("assets/images/background/perks_scene.png")
         self.bg_image = pygame.transform.scale(bg_img, (self.settings.screen_width, self.settings.screen_height))
 
-        
-    
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -85,10 +81,7 @@ class TalentsScene(BaseScene):
                             pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
                         else:
                             pygame.mixer.Sound("assets/sounds/degat_1.mp3").play()
-                        # si la souris est sur un Rect(parmis talent_dict) elle ne peut pas etre sur un autre
-                        break 
-        
-    
+                        break         
     
     def update(self):
         """met a jours les éléments et la logique de la scene"""
@@ -101,7 +94,6 @@ class TalentsScene(BaseScene):
             self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered = False
 
-    
     def draw(self, screen):
         """Dessine la scene"""
 
@@ -112,7 +104,6 @@ class TalentsScene(BaseScene):
         screen.blit(self.quit_button_img, self.exit_menu_rect)
         screen.blit(self.exit_menu_text, self.exit_menu_text_rect)
 
-        
         i = 0
         for key in list(self.talent_dict.keys()):
             screen.blit(self.talent_cadre, self.talent_dict[key]["total_rect"].topleft)
@@ -122,7 +113,6 @@ class TalentsScene(BaseScene):
                 screen.blit(txt, txt_rect)
             i += 1
 
-        
         bg_image1 = pygame.transform.scale(self.cadre, (self.stats_rect.width, self.stats_rect.height))
         screen.blit(bg_image1, self.stats_rect)
         i = 0

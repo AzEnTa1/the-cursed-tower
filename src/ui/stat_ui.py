@@ -17,7 +17,7 @@ class StatUI:
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
 
-        #cree un cadre en fond pour les stats
+        # Crée le cadre des stats
         bg_image1 = pygame.image.load(r"assets/images/cadre.png")
         bg_image1 = pygame.transform.scale(bg_image1, (self.stats_rect.width, self.stats_rect.height))
         screen.blit(bg_image1, self.stats_rect)
@@ -39,5 +39,9 @@ class StatUI:
         screen.blit(exit_text, exit_text_rect)
 
     def resize(self):
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self.stats_rect.update(50, 20, self.settings.screen_width//2 - 60, self.settings.screen_height -300)
         

@@ -70,7 +70,7 @@ class MenuScene(BaseScene):
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
-            if not hasattr(self, 'exit_hovered') or not self.exit_hovered: # pk c pas dans __init__ ou on_enter ?
+            if not hasattr(self, 'exit_hovered') or not self.exit_hovered: 
                 self.exit_hovered = True
                 pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
         else:
@@ -95,7 +95,6 @@ class MenuScene(BaseScene):
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
             self.reset_hovered = False
 
-    
     def draw(self, screen):
         """Dessine le menu"""
         

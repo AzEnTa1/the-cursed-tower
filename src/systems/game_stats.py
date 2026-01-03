@@ -6,10 +6,6 @@ class GameStats:
         self.settings = settings
         self.stats = None
 
-    def on_death(self):
-        """useless"""
-        pass
-
     def update(self, player, weapon)->dict:
         """met a jours les stats du joueur et les retourne"""
         self.stats = {**player.get_stats(), **weapon.get_stats()}

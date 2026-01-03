@@ -48,7 +48,7 @@ class WaveManager:
         return False
     
     def start_next_wave(self):
-        """Démarre la vague suivante - retourne TOUJOURS une liste de tuples (x, y, enemy_type)"""
+        """Démarre la vague suivante"""
         if not self.wave_queue.has_more_waves():
             return []
         

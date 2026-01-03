@@ -11,16 +11,13 @@ class PauseUI:
 
 
     def draw(self, screen, exit_rect, exit_text_rect, exit_text, back_to_menu_rect, back_to_menu_text_rect, back_to_menu_text, stat_rect, stat_text_rect, stat_text):
-        """dessine l'interface complète 
-        importer les rect utils dans la logique de pause_sub_scene et draw ici
+        """
+        Dessine l'interface complète
         """        
-
         # Met une image de fond
         bg_image = pygame.image.load(r"assets/images/background/pause_scene.png")
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
-
-        
 
         # Met le bouton quitter
         bg_image = pygame.image.load(r"assets/images/cadre.png")
@@ -40,6 +37,9 @@ class PauseUI:
         screen.blit(bg_image, stat_rect)
         screen.blit(stat_text, stat_text_rect)     
 
-
     def resize(self):
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self.stats_rect.update(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
