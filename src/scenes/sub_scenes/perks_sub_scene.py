@@ -26,11 +26,6 @@ class PerksSubScene(BaseSubScene):
         
         # Calculer les rectangles une seule fois ici
         self._calculate_rectangles()
-        
-        # Debug
-        print(f"[PERKS] Menu ouvert avec {len(self.perks_list)} perks")
-        for i, perk in enumerate(self.perks_list):
-            print(f"[PERKS] Option {i+1}: {perk}")
     
     def _calculate_rectangles(self):
         """Calcule les rectangles des boutons perks"""
@@ -108,15 +103,12 @@ class PerksSubScene(BaseSubScene):
             mouse_x = event.pos[0] - self.settings.x0
             mouse_y = event.pos[1] - self.settings.y0
             
-            print(f"[PERKS] Clic à: {mouse_x}, {mouse_y}")
-            
-            # Vérifier chaque bouton
+            # Vérifier chaque bouton (Je sais pas trop pourquoi, il y avait un bug ou je pouvais pas cliquer dessus)
             for i, (_, _, union_rect) in enumerate(self.perks_rect):
                 if union_rect.collidepoint(mouse_x, mouse_y):
-                    print(f"[PERKS] Bouton {i+1} cliqué: {self.perks_list[i]}")
                     self.perks_manager.choose_perk(self.perks_list[i])
                     self.on_exit()
-                    return  # Sortir après avoir traité le clic
+                    return 
     
     def update(self):
         """Met à jour la logique de la scène"""
