@@ -1,2 +1,2 @@
-python>=3.12 (ma version, faudrait faire des tests pour vérifier la compatibilité)
+python>=3.12
 pygame>=2.5.0
