@@ -22,6 +22,11 @@ class SpawnEffect:
         self.pulse_phase = 0
         self.warning_color = (255, 100, 0)  # Orange pour avertissement
         
+        # Son d'apparition
+        self.spawn_sound = pygame.mixer.Sound("assets/sounds/spawn.mp3")
+        self.spawn_sound.set_volume(0.5)
+        self.spawn_sound.play()
+
     def update(self, dt):
         """Met à jour l'animation"""
         self.timer += dt
