@@ -251,8 +251,6 @@ class AdaptiveBoss(Enemy):
         self.player_distance_history = []
         self.preferred_distance = 200 + (floor_number * 20)
         self.attack_pattern_history = []
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         
         # Debug et logging
         print(f"[BOSS] Créé: {self.name} (Étage {floor_number}, Seed {self.boss_seed})")
@@ -260,10 +258,6 @@ class AdaptiveBoss(Enemy):
 
         self.shoot_sound = pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
         self.shoot_sound.set_volume(0.3)
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     
     def _calculate_base_stats(self, floor_number):
         """Calcule les statistiques de base selon l'étage"""
