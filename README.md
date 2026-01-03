@@ -36,6 +36,19 @@ src/
 - **WaveQueue** : Implémentation de file (FIFO) pour la séquence des vagues
 - **SpawnEffect** : Effets visuels pour l'apparition des ennemis
 
+#### 5. Page de lancement et manuel utilisateur
+##### **Le menu principal (MenuScene) inclut :**
+
+- Bouton "Jouer" pour démarrer une partie
+- Bouton "Talents" pour accéder à la progression permanente
+- Instructions intégrées dans le HUD pendant le jeu
+
+##### **Le jeu inclut également un système de pause avec :**
+
+- Bouton "Continuer" pour reprendre la partie
+- Bouton "Statistiques" pour voir les données de jeu
+- Bouton "Quitter" pour retourner au menu principal
+
 ### Fonction récursive
 
 #### Localisation
