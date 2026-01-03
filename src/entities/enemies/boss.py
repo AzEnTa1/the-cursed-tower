@@ -301,6 +301,9 @@ class AdaptiveBoss(Enemy):
         # Debug et logging
         print(f"[BOSS] Créé: {self.name} (Étage {floor_number}, Seed {self.boss_seed})")
         print(f"[BOSS] Phases: {self.phase_depth}, PV: {self.health}")
+
+        self.shoot_sound = pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
+        self.shoot_sound.set_volume(0.3)
     
     def _calculate_base_stats(self, floor_number):
         """Calcule les statistiques de base selon l'étage"""
@@ -486,7 +489,7 @@ class AdaptiveBoss(Enemy):
         """Exécute un pattern d'attaque récursif"""
         if self.active_pattern is None:
             self._select_new_pattern()
-        
+        self.shoot_sound.play()
         # Calcul de la profondeur basée sur la phase
         attack_depth = min(3, self.current_phase + 1)
         

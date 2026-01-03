@@ -1,6 +1,6 @@
 {
     "name": "unamed",
-    "master_volume":0.8,
+    "master_volume": 0.8,
     "max_health": 100,
     "regen_power": 1,
     "size": 20,
@@ -15,11 +15,6 @@
     "stationary_threshold": 25,
     "best_score": 0,
     "game_played": 0,
-<<<<<<< Updated upstream
     "coins": 1185,
     "all_time_coins": 1185
-=======
-    "coins": 210,
-    "all_time_coins": 210
->>>>>>> Stashed changes
 }
