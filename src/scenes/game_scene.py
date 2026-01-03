@@ -39,7 +39,6 @@ class GameScene(BaseScene):
         self.pending_fire_zones = []  # Zones en prévisualisation
         self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
         random.seed(self.global_seed)
-        self.hud = HUD(self.player, self.wave_manager, self.weapon, self.settings)
         
     def on_enter(self, player_data):
         """Initialisation du jeu"""
@@ -131,7 +130,6 @@ class GameScene(BaseScene):
         self._update_fire_zones()
         
         self._check_floor_completion()
-        self.hud.update(dt)
     
     def _update_spawn_effects(self, dt):
         """Met à jour les effets d'apparition des ennemis"""
@@ -218,12 +216,6 @@ class GameScene(BaseScene):
             distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
             if distance < enemy.radius + projectile.radius:
                 if enemy.take_damage(projectile.damage):
-                    self.hud.add_damage_number(
-                        projectile.damage, 
-                        enemy.x, 
-                        enemy.y - 20,
-                        'critical' if projectile.damage > self.weapon.damage * 1.5 else 'normal'
-                    )
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
                     # Score différent selon le type d'ennemi
