@@ -63,7 +63,7 @@ class MenuScene(BaseScene):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
-                pygame.mixer.Sound(self.settings.SOUND_START_PATH).play()
+                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
         else:
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
             self.exit_hovered = False
