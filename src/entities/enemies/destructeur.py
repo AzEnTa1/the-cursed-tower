@@ -23,7 +23,8 @@ class Destructeur(Enemy):
         self.projectile_speed = 5
         self.projectile_count = 12  # Nombre de projectiles dans le cercle
         self.last_shot_time = 0
-
+        self.shoot_sound = pygame.mixer.Sound("assets/sounds/Tire_3.mp3")
+        self.shoot_sound.set_volume(0.3)
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
@@ -58,6 +59,8 @@ class Destructeur(Enemy):
     def shoot_circle(self, projectiles):
         """Mini-boss : Tire un cercle complet de projectiles dans toutes les directions"""
         angle_step = 2 * math.pi / self.projectile_count
+        
+        self.shoot_sound.play()
         
         for i in range(self.projectile_count):
             angle = i * angle_step

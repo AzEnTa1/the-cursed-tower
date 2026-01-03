@@ -20,7 +20,8 @@ class Shooter(Enemy):
         self.attack_range = 300  
         self.shoot_cooldown = 0
         self.shoot_rate = 60 
-        
+        self.shoot_sound = pygame.mixer.Sound("assets/sounds/Tire_2.mp3")
+        self.shoot_sound.set_volume(0.3)
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
@@ -52,7 +53,9 @@ class Shooter(Enemy):
         """Tire un projectile vers le joueur (pour shooter)"""
         if projectiles is None:
             return
-            
+
+        self.shoot_sound.play()    
+        
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
         dx /= distance
         dy /= distance
