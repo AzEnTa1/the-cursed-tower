@@ -32,92 +32,56 @@ class PerksUI:
         self.title_font = pygame.font.Font(None, 48)
         self.perk_font = pygame.font.Font(None, 24)
         
-        self.hovered_index = -1
 
     def draw(self, screen, perks_rect, perks_list):
         """Dessine l'interface complète"""
-        # Vérifier la souris pour l'effet hover
-        mouse_pos = pygame.mouse.get_pos()
-        self.hovered_index = -1
         
-        for i, (_, _, union_rect) in enumerate(perks_rect):
-            # Convertir les coordonnées pour la détection de souris
-            rect_in_screen = union_rect.move(self.settings.x0, self.settings.y0)
-            if rect_in_screen.collidepoint(mouse_pos):
-                self.hovered_index = i
-                break
-        
-        # Dessiner le fond
-        scaled_bg = pygame.transform.scale(self.background_img, 
-                                         (self.settings.screen_width, self.settings.screen_height))
-        screen.blit(scaled_bg, (0, 0))
-        
+        self._draw_background(screen)
         # Titre
         title = self.title_font.render("CHOISISSEZ UNE AMÉLIORATION", True, (255, 255, 0))
-        title_rect = title.get_rect(center=(self.settings.screen_width // 2, 500))
+        title_rect = title.get_rect(center=(self.settings.screen_width // 2, screen.get_height() - 130))
         screen.blit(title, title_rect)
         
         # Instructions
         instructions = self.perk_font.render("Cliquez sur une amélioration pour l'équiper", 
                                            True, (255, 255, 255))
-        instructions_rect = instructions.get_rect(center=(self.settings.screen_width // 2, 550))
+        instructions_rect = instructions.get_rect(center=(self.settings.screen_width // 2, screen.get_height()  - 80))
         screen.blit(instructions, instructions_rect)
-        
-        # Dessiner les 3 perks
-        for i, (image_rect, text_rect, union_rect) in enumerate(perks_rect):
-            if i >= len(perks_list):
-                continue
-                
-            perk_name = perks_list[i]
+        # Affichage des perks
+        for rect, perk in zip(perks_rect, perks_list):
+            txt = self.settings.font["h3"].render(perk, True, (0, 0, 0))
+            fd_perks = pygame.image.load(r"assets/images/cadre.png")
+            fd_perks = pygame.transform.scale(fd_perks, (rect[0][2], rect[0][3]))
+            screen.blit(fd_perks, rect[0])
+            fd_text = pygame.image.load(r"assets/images/cadre.png")
+            fd_text = pygame.transform.scale(fd_text, (rect[1][2], rect[1][3]))
+            screen.blit(fd_text, rect[1])
+            txt = self.settings.font["h3"].render(perk, True, (255, 255, 255))
+            screen.blit(txt, txt.get_rect(center=rect[1].center))
+            #affichage image
+            screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
             
-            # Effet de survol
-            is_hovered = (i == self.hovered_index)
-            
-            # Dessiner le cadre
-            cadre_scaled = pygame.transform.scale(self.cadre_img, 
-                                                (image_rect.width + 20, image_rect.height))
-            cadre_pos = (image_rect.x - 10, image_rect.y)
-            
-            # Changer la couleur du cadre si survolé
-            if is_hovered:
-                # Créer une surface colorée pour l'effet de survol
-                overlay = pygame.Surface((union_rect.width + 20, union_rect.height + 20), pygame.SRCALPHA)
-                overlay.fill((255, 255, 200, 50))  # Jaune semi-transparent
-                screen.blit(cadre_scaled, cadre_pos)
-                screen.blit(overlay, cadre_pos)
-            else:
-                screen.blit(cadre_scaled, cadre_pos)
-            
-            # Dessiner l'image du perk
-            if perk_name in self.perks_imgs:
-                img = self.perks_imgs[perk_name]
-                img_scaled = pygame.transform.smoothscale(img, (image_rect.width, image_rect.height))
-                screen.blit(img_scaled, image_rect)
-
-            #met une image de fond au texte
-            cadre_scaled = pygame.transform.scale(self.cadre_img, 
-                                                (text_rect.width + 20, text_rect.height))
-            screen.blit(cadre_scaled, (text_rect.x - 10, text_rect.y ))
-
-            # Dessiner le texte du perk
-            text_color = (255, 255, 200) if is_hovered else (255, 255, 255)
-            perk_text = self.perk_font.render(perk_name.replace('_', ' ').title(), True, text_color)
-            text_pos = text_rect.center
-            
-            # Ajuster la position du texte pour qu'il soit centré
-            text_rect_obj = perk_text.get_rect(center=text_pos)
-            screen.blit(perk_text, text_rect_obj)
-
-            
-            
-            # Description supplémentaire pour certains perks
-            if is_hovered:
-                desc = self._get_perk_description(perk_name)
+            # fait en sorte que quand la souris passe sur un perk, un cadre apparaisse autour
+            if rect[0].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+                hover_cadre = pygame.image.load(r"assets/images/cadre.png")
+                hover_cadre = pygame.transform.scale(hover_cadre, (rect[0][2]+10, rect[0][3]+10))
+                hover_rect = hover_cadre.get_rect(center=rect[0].center)
+                screen.blit(hover_cadre, hover_rect)
+                # remet l'image du perks a l'interieur
+                screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2]+10, rect[0][3]+10)), rect[0].move(-5, -5))
+                # affiche la description du perk
+                desc = self._get_perk_description(perk)
                 if desc:
-                    desc_surface = self.perk_font.render(desc, True, (200, 255, 200))
-                    desc_rect = desc_surface.get_rect(center=(text_pos[0], text_pos[1] + 30))
+                    #rajoute un bg derrière le texte de la taille du texte
+                    desc_bg = pygame.image.load(r"assets/images/cadre.png")
+                    desc_bg = pygame.transform.scale(desc_bg, (rect[1][2]+200, 40))
+                    desc_bg_rect = desc_bg.get_rect(center=(rect[1].center[0], rect[1].center[1] + 40))
+                    screen.blit(desc_bg, desc_bg_rect)
+                    
+                    desc_surface = self.perk_font.render(desc, True, (255, 255, 255))
+                    desc_rect = desc_surface.get_rect(center=(rect[1].center[0], rect[1].center[1] + 40))
                     screen.blit(desc_surface, desc_rect)
-
+            
     def _get_perk_description(self, perk_name):
         """Retourne la description d'un perk"""
         descriptions = {
@@ -128,13 +92,24 @@ class PerksUI:
             "player_size_up": "+10% taille (meilleure visibilité)",
             "player_size_down": "-10% taille (plus difficile à toucher)",
             "player_regen": "Soigne 20% de vos PV",
-            "projectile_speed": "+10% vitesse des projectiles",
+            "projectil_speed": "+10% vitesse des projectiles",
             "multishot": "Tire +1 projectile supplémentaire",
             "infinite life": "INVINCIBILITÉ (debug)",
             "arc_shot": "Tire 3 projectiles en éventail",
         }
+
         return descriptions.get(perk_name, "")
+    
+    def _draw_background(self, screen):
+        """dessine le background"""
+        bg_image = pygame.image.load(r"assets/images/background/perks_scene.png")        
+        bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
+        screen.blit(bg_image, (0, 0))
+    
+    
 
     def resize(self):
         """Redimensionne les éléments UI"""
-        pass  # Les rectangles sont recalculés dans la scène
+        #redimentionne les instructions et le titre
+        pass
+    
