@@ -63,7 +63,7 @@ class TalentsScene(BaseScene):
             self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
-        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2)
+        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
         
         # Charger l'image de fond
         bg_img = pygame.image.load("assets/images/background/perks_scene.png")
@@ -129,8 +129,7 @@ class TalentsScene(BaseScene):
         for key in self.player_data.keys():
             i += 1
             txt = self.settings.font["h4"].render(f"{key.replace("_", " ")}: {self.player_data[key]}", True, (255, 255, 255))
-            rect = txt.get_rect(topleft = (self.stats_rect[0] + 135, self.stats_rect[1] + 20*i + 5))
-            rect.center = (self.stats_rect[0] + 135, self.stats_rect[1] + 20*i + 10)
+            rect = txt.get_rect(midtop = (self.stats_rect.midtop)).move(0, 20*i)
             screen.blit(txt, rect)
     
     def resize(self):
@@ -166,5 +165,6 @@ class TalentsScene(BaseScene):
             if i == 0:
                 self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
+
+        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
         
-        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2)
