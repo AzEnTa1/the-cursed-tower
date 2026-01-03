@@ -147,6 +147,7 @@ class Game:
 
     def save(self):
         """MAJ du JSON associé au joueur"""
+        self.player_data["master_volume"] = self.settings.master_volume
         with open(self.settings.PLAYER_DATA_PATH, 'w', encoding='utf-8') as f:
             json.dump(self.player_data, f, indent=4, ensure_ascii=False)
 

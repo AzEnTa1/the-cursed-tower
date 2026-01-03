@@ -70,6 +70,8 @@ class Settings:
         self.BORDER_COLOR = (50, 50, 50)
         self.ASPECT_RATIO = (4, 3)
         self.BORDER_WIDTH = 2
+
+        self.master_volume = player_data["master_volume"]
     
     def initialize_fonts(self):
         """Initialise les fonts"""

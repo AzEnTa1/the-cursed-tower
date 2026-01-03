@@ -36,7 +36,6 @@ class MenuScene(BaseScene):
         self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
-
     
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
@@ -63,7 +62,7 @@ class MenuScene(BaseScene):
         self.game.change_scene(self.settings.SCENE_GAME)
 
     def update_sound(self, val):
-        self.player_data["master_volume"] = max(0, self.player_data["master_volume"] + val)
+        self.settings.master_volume = max(0, self.settings.master_volume + val*0.1)
         pygame.mixer.music.set_volume(self.player_data["master_volume"])
     
     def update(self):
@@ -96,7 +95,6 @@ class MenuScene(BaseScene):
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
             self.reset_hovered = False
 
-        
     
     def draw(self, screen):
         """Dessine le menu"""
