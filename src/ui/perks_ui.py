@@ -92,7 +92,7 @@ class PerksUI:
             "player_size_up": "+10% taille (meilleure visibilité)",
             "player_size_down": "-10% taille (plus difficile à toucher)",
             "player_regen": "Soigne 20% de vos PV",
-            "projectil_speed": "+10% vitesse des projectiles",
+            "projectile_speed": "+10% vitesse des projectiles",
             "multishot": "Tire +1 projectile supplémentaire",
             "infinite life": "INVINCIBILITÉ (debug)",
             "arc_shot": "Tire 3 projectiles en éventail",
