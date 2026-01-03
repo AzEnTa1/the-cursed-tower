@@ -2,15 +2,17 @@
 import math
 import random
 from .projectiles import Projectile
+import os 
+import pygame
 
 class Weapon:
     """
     Gère le système d'armes du joueur.
     Inclut le tir automatique, multishot et tir en arc.
     """
-    def __init__(self, settings, player_data):
+    def __init__(self, settings, player_data, damage=30):
         self.fire_rate = player_data["fire_rate"]  # tirs par seconde
-        self.damage = random.randint(player_data["base_damages"] - 5, player_data["base_damages"] + 5)
+        self.damage = random.randint(damage - 5, damage + 5)
         self.projectile_speed = player_data["projectile_speed"]
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)
@@ -28,6 +30,47 @@ class Weapon:
         self.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
         
         self.settings = settings
+        
+        # Chargement des sons de tir
+        self.shoot_sounds = self._load_shoot_sounds()
+
+    def _load_shoot_sounds(self):
+        """Charge les sons de tir depuis le dossier assets/sounds"""
+        sounds = []
+        try:
+            # Liste des fichiers de son de tir disponibles
+            shoot_files = [
+                "assets/sounds/Tire_1.mp3",
+                "assets/sounds/Tire_2.mp3", 
+                "assets/sounds/Tire_3.mp3",
+                "assets/sounds/Tire_4.mp3",
+                "assets/sounds/Tire_5.mp3",
+                "assets/sounds/Tire_6.mp3"
+            ]
+            
+            for sound_file in shoot_files:
+                if os.path.exists(sound_file):
+                    sound = pygame.mixer.Sound(sound_file)
+                    # Réduire le volume pour ne pas être trop fort
+                    sound.set_volume(0.3)
+                    sounds.append(sound)
+                else:
+                    print(f"Avertissement: Fichier son {sound_file} introuvable")
+            
+            if not sounds:
+                print("Avertissement: Aucun son de tir trouvé")
+                
+        except Exception as e:
+            print(f"Erreur lors du chargement des sons: {e}")
+        
+        return sounds
+    
+    def _play_shoot_sound(self):
+        """Joue un son de tir aléatoire"""
+        if self.shoot_sounds:
+            # Choisir un son au hasard
+            random.choice(self.shoot_sounds).play()
+        # Si aucun son n'est chargé, ne rien faire (jeu silencieux)
     
     def update(self, player, current_time, projectiles, enemies, dt):
         """Gère le tir automatique et le multishot"""
@@ -204,6 +247,8 @@ class Weapon:
             color = (255, 255, 0)  # Jaune pour les tirs normaux
             radius = 5
             is_multishot = False
+        
+        self._play_shoot_sound()
         
         projectiles.append(Projectile(
             data['x'], data['y'],
