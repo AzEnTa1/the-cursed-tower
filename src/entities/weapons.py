@@ -37,26 +37,12 @@ class Weapon:
     def _load_shoot_sounds(self):
         """Charge les sons de tir depuis le dossier assets/sounds"""
         sounds = []
-        try:
-            # Liste des fichiers de son de tir disponibles
-            shoot_files = [
-                "assets/sounds/Tire_1.mp3" 
-            ]
-            
-            for sound_file in shoot_files:
-                if os.path.exists(sound_file):
-                    sound = pygame.mixer.Sound(sound_file)
-                    # Réduire le volume pour ne pas être trop fort
-                    sound.set_volume(0.3)
-                    sounds.append(sound)
-                else:
-                    print(f"Avertissement: Fichier son {sound_file} introuvable")
-            
-            if not sounds:
-                print("Avertissement: Aucun son de tir trouvé")
-                
-        except Exception as e:
-            print(f"Erreur lors du chargement des sons: {e}")
+        # Liste des fichiers de son de tir disponibles
+        shoot_files = "assets/sounds/Tire_1.mp3" 
+        sound = pygame.mixer.Sound(shoot_files)
+        # Réduire le volume pour ne pas être trop fort
+        sound.set_volume(0.3)
+        sounds.append(sound)
         
         return sounds
     

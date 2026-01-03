@@ -1,6 +1,4 @@
 import pygame
-import json
-import os
 
 class Settings:
     def __init__(self, player_data):

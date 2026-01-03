@@ -53,7 +53,6 @@ class Game:
         # Commencer par le menu
         self.change_scene(self.settings.SCENE_MENU)
     
-
     def change_scene(self, scene_name):
         """Change la scène actuelle"""
         if scene_name in self.scenes:
