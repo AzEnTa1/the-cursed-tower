@@ -123,3 +123,5 @@ class PerksSubScene(BaseSubScene):
         self._calculate_rectangles()
         if self.ui:
             self.ui.resize()
+        
+        
