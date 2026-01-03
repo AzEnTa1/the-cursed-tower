@@ -1,7 +1,6 @@
 # src/game.py 
 import pygame
 import sys
-import random
 import json
 from config.settings import Settings
 from src.scenes import *
