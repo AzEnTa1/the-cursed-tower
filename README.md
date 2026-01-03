@@ -114,6 +114,7 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Système de collisions** : Détection et résolution
 - **Système de scènes** : Implémentation du pattern Scene
+- **Audio** : Gestion de son de tir
 
 
 #### Julien - Développeur systèmes & Développeur principal
