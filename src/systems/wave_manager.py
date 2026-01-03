@@ -26,14 +26,8 @@ class WaveManager:
         self.wave_number = 0
         
         # Vérifier si c'est un étage de boss (tous les 4 étages)
-        # Modifier pour que le boss apparaisse après chaque groupe de 4 étages normaux
         self.is_boss_floor = (floor_number > 1 and floor_number % 4 == 1)
         # Étages boss : 5, 9, 13, 17... (après 4 étages normaux)
-
-
-        # self.is_boss_floor = True  # Toujours vrai pour debug ====================================================
-
-
         if self.is_boss_floor:
             # Pour un étage de boss
             boss_level = (floor_number - 1) // 4  # Niveau du boss

@@ -19,6 +19,10 @@ class Settings:
         self.BLUE = (0, 0, 255)
         self.YELLOW = (255, 255, 0)
 
+        self.ICON_PATH = "assets/images/icon.png"
+        self.PLAYER_DATA_PATH = "data/player_data.json"
+        self.SOUND_START_PATH = "assets/sounds/game_start.mp3"
+
         # Joueur
         self.player_speed = player_data["speed"] # 5
         self.player_size = player_data["size"] # 20
@@ -33,7 +37,7 @@ class Settings:
         # Armes
         self.WEAPON_DAMAGE = player_data["base_damages"] # 30
         self.WEAPON_FIRE_RATE = player_data["fire_rate"] # 2  # tirs par seconde
-        self.WEAPON_PROJECTILE_SPEED = player_data["projectil_speed"] # 10
+        self.WEAPON_PROJECTILE_SPEED = player_data["projectile_speed"] # 10
         self.WEAPON_DAMAGE_VARIANCE = player_data["damage_variance"] # 5  # ± pour les dégâts aléatoires
         
         # Multishot

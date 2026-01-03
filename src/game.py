@@ -12,9 +12,7 @@ class Game:
     Gère l'initialisation, la boucle principale, les scènes, et les événements
     """
     def __init__(self):
-
-        self.global_seed = random.randrange(2**32)  # Seed unique par partie
-        random.seed(self.global_seed)
+        
         # Initialisation des paramètres
         self.player_data = self.get_player_data()
 
@@ -27,7 +25,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height), pygame.RESIZABLE)
         self.full_screen = False
         pygame.display.set_caption(self.settings.title)
-        icon = pygame.image.load(r"TheCursedTower.png")
+        icon = pygame.image.load(self.settings.ICON_PATH)
         pygame.display.set_icon(icon)
 
         # Initialiser les fonts
@@ -106,7 +104,6 @@ class Game:
         if self.current_scene:
             self.current_scene.update()
     
-
     def draw(self):
         """Rendu graphique"""
         # Efface l'écran
@@ -115,8 +112,6 @@ class Game:
         # Dessine la scène actuelle
         if self.current_scene:
             self.current_scene.draw(self.used_screen)
-
-
 
         # Dessiner les bordures
         pygame.draw.rect(self.screen, self.settings.BORDER_COLOR, (0, 0, self.settings.x0, self.settings.screen_height))
@@ -127,7 +122,6 @@ class Game:
         # Met à jour l'affichage
         self.screen.blit(self.used_screen, (self.settings.x0, self.settings.y0))
         pygame.display.flip()
-    
 
     def resize(self, width, height):
         if height/self.settings.ASPECT_RATIO[1]*self.settings.ASPECT_RATIO[0] > width : # largeur limitante 
@@ -142,8 +136,6 @@ class Game:
             self.settings.x0 = (width - self.settings.screen_width)//self.settings.BORDER_WIDTH
         self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
         self.current_scene.resize()
-        print(self.settings.screen_width, self.settings.screen_height)
-
 
     def get_player_data(self):
         with open(r"data/player_data.json", 'r', encoding='utf-8') as f:
@@ -151,12 +143,10 @@ class Game:
 
         return player_data
 
-
     def save(self):
         """MAJ du JSON associé au joueur"""
-        with open(r"data/player_data.json", 'w', encoding='utf-8') as f:
+        with open(self.settings.PLAYER_DATA_PATH, 'w', encoding='utf-8') as f:
             json.dump(self.player_data, f, indent=4, ensure_ascii=False)
-
 
     def run(self):
         """Boucle principale du jeu"""

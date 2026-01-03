@@ -34,8 +34,6 @@ class MenuScene(BaseScene):
                 self.start_game()
             elif self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                         self.game.change_scene(self.settings.SCENE_TALENTS)
-
-        
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:  # Touche ENTER
                 pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
@@ -52,7 +50,7 @@ class MenuScene(BaseScene):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                pygame.mixer.Sound(self.settings.SOUND_START_PATH).play()
         else:
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
             self.exit_hovered = False
@@ -64,7 +62,6 @@ class MenuScene(BaseScene):
         screen.blit(self.bg_image, (0, 0))
 
         # Bouton Jouer avec effet hover
-        
         screen.blit(self.text, self.button_rect)
         pygame.draw.rect(screen, (255, 255, 0), self.talents_button)
     
