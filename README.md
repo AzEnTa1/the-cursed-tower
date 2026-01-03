@@ -98,6 +98,7 @@ tests/
 - **Système de Vague** : Implémentation de Wave_manager
 - **Structure de données personnalisée** : Implémentation d'une file pour l'apparition des ennemies
 
+
 #### Hugo - Chef de projet & Développeur principal
 - **Architecture globale** : Conception de l'architecture POO
 - **Système de combat** : Armes, projectiles, dégâts
@@ -113,7 +114,6 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Système de collisions** : Détection et résolution
 - **Système de scènes** : Implémentation du pattern Scene
-
 
 
 #### Julien - Développeur systèmes & Développeur principal
@@ -146,7 +146,7 @@ tests/
 
 #### 1. Gestion du redimensionnement
 **Problème** : Maintenir le ratio 4:3 tout en permettant le plein écran
-**Solution** : Système de bordures dynamiques dans `Game.resize()`
+**Solution** : Système de bordures dynamiques dans `Game.resize()` et des fonctions resize dans un grand nombre de scène du jeu
 
 #### 2. Fonction récursive du boss
 **Problème** : Risque d'explosion exponentielle de la complexité
