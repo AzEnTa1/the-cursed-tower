@@ -1,7 +1,7 @@
 # src/scenes/sub_scenes/base_sub_scene.py
 
 class BaseSubScene:
-    """Classe de base pour toutes les sub-scènes du jeu""" # Perks et Pause
+    """Classe de base pour toutes les sub-scènes du jeu""" 
     
     def __init__(self, game, game_scene, settings):
         self.game_scene = game_scene
@@ -28,10 +28,9 @@ class BaseSubScene:
         """Dessine la scène"""
 
     def resize(sel):
-        """appelé lorsque la fenêtre change de taille"""
-        #height et width sont les vraie dimension de la fenetre
-        #!= self.settings.screen_height/width qui sont les dimension de la fenetre interne 4:3
-        #permet de diminué les calcules fait en permanance pour dessiner les élements
-        #|-> surement inutils
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         pass
         

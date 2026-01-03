@@ -12,22 +12,12 @@ class RecursiveBossCore:
     Utilise une approche fractale pour générer des comportements uniques
     """
     
-    @staticmethod
     def generate_behavior_tree(floor_number, seed, depth=0, max_depth=4):
         """
         Génère un arbre de comportement récursif pour le boss
         
         Complexité : O(branches^depth) où branches = floor_number % 3 + 2
         Cette complexité est contrôlée par max_depth pour éviter l'explosion exponentielle
-        
-        Args:
-            floor_number (int): Niveau actuel (influence complexité)
-            seed (int): Graine unique pour la génération
-            depth (int): Profondeur actuelle (0 pour la racine)
-            max_depth (int): Profondeur maximale basée sur l'étage
-        
-        Returns:
-            dict: Arbre de comportement avec branches récursives
         """
         # Initialisation aléatoire déterministe basée sur la seed
         local_random = random.Random(seed + depth * 1000 + floor_number * 10000)
@@ -63,7 +53,6 @@ class RecursiveBossCore:
                 max_depth=max_depth
             )
             
-            # Ajout de métadonnées pour la branche
             branch['phase_modifier'] = i / branch_count
             branch['activation_threshold'] = 1.0 - (depth * 0.2)
             branches.append(branch)
@@ -85,23 +74,11 @@ class RecursiveBossCore:
             'complexity': depth
         }
 
-    @staticmethod
     def recursive_attack_pattern(position, depth, pattern_tree, projectiles_list, 
                                 damage_base, speed_base, angle_offset=0, settings=None):
         """
         Exécute un pattern d'attaque récursif
-        
-        Complexité contrôlée par la profondeur - s'arrête quand depth <= 0
-        
-        Args:
-            position (tuple): (x, y) position de départ
-            depth (int): Profondeur actuelle (0 = premier niveau)
-            pattern_tree (dict): Arbre de comportement généré
-            projectiles_list (list): Liste pour ajouter les projectiles
-            damage_base (float): Dégâts de base
-            speed_base (float): Vitesse de base
-            angle_offset (float): Offset angulaire pour rotation
-            settings: Paramètres du jeu
+        Complexité par la profondeur - s'arrête quand depth <= 0
         """
         if depth <= 0:
             return
@@ -147,20 +124,10 @@ class RecursiveBossCore:
                     settings=settings
                 )
     
-    @staticmethod
     def _generate_leaf_attack(x, y, leaf_data, projectiles_list, damage_base, 
                              speed_base, angle_offset, settings):
         """
         Génère les projectiles pour une feuille de l'arbre
-        
-        Args:
-            x, y (float): Position de départ
-            leaf_data (dict): Données de la feuille
-            projectiles_list (list): Liste pour ajouter les projectiles
-            damage_base (float): Dégâts de base
-            speed_base (float): Vitesse de base
-            angle_offset (float): Offset angulaire
-            settings: Paramètres du jeu
         """
         current_time = pygame.time.get_ticks() * 0.001
         
@@ -211,17 +178,10 @@ class RecursiveBossCore:
                         radius=2 + ring
                     ))
 
-
 class AdaptiveBoss(Enemy):
     """
     Boss adaptatif avec comportement généré récursivement
-    
-    Caractéristiques :
-    - Unique à chaque apparition
-    - Évolue avec les étages
-    - Système de phases adaptatif
-    - Comportement généré procéduralement
-    - Utilise une fonction récursive pour les patterns d'attaque
+    Utilise RecursiveBossCore pour des patterns d'attaque uniques
     """
     
     # Cache pour les comportements générés (optimisation)
@@ -230,12 +190,6 @@ class AdaptiveBoss(Enemy):
     def __init__(self, x, y, settings, floor_number, global_seed):
         """
         Initialise un boss unique basé sur l'étage et la seed
-        
-        Args:
-            x, y (float): Position initiale
-            settings: Configuration du jeu
-            floor_number (int): Numéro de l'étage (influence complexité)
-            global_seed (int): Seed unique pour la génération procédurale
         """
         super().__init__(x, y, settings)
         
@@ -297,6 +251,7 @@ class AdaptiveBoss(Enemy):
         self.player_distance_history = []
         self.preferred_distance = 200 + (floor_number * 20)
         self.attack_pattern_history = []
+<<<<<<< Updated upstream
         
         # Debug et logging
         print(f"[BOSS] Créé: {self.name} (Étage {floor_number}, Seed {self.boss_seed})")
@@ -304,6 +259,8 @@ class AdaptiveBoss(Enemy):
 
         self.shoot_sound = pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
         self.shoot_sound.set_volume(0.3)
+=======
+>>>>>>> Stashed changes
     
     def _calculate_base_stats(self, floor_number):
         """Calcule les statistiques de base selon l'étage"""
@@ -318,7 +275,7 @@ class AdaptiveBoss(Enemy):
         }
     
     def _generate_boss_name(self):
-        """Retourne toujours 'Boss' pour l'instant"""
+        """Retourne toujours 'Boss'"""
         return "Boss"
     
     def _generate_unique_color(self, floor_number):
@@ -363,7 +320,6 @@ class AdaptiveBoss(Enemy):
                 depth=0,
                 max_depth=max_depth
             )
-            print(f"[BOSS] Arbre généré - Profondeur: {max_depth}")
         
         return AdaptiveBoss._behavior_cache[cache_key]
     
@@ -377,10 +333,6 @@ class AdaptiveBoss(Enemy):
     def update(self, player, enemy_projectiles=None):
         """
         Met à jour le boss avec comportement adaptatif
-        
-        Args:
-            player: Instance du joueur
-            enemy_projectiles: Liste des projectiles ennemis
         """
         # Vérifier transition de phase
         self._check_phase_transition()
@@ -440,9 +392,6 @@ class AdaptiveBoss(Enemy):
             'color': self.secondary_color,
             'intensity': 1.0
         })
-        
-        print(f"[BOSS] Phase {self.current_phase}/{self.phase_depth} activée")
-        print(f"[BOSS] Multiplicateurs: {self.adaptive_multipliers}")
     
     def _adaptive_movement(self, player):
         """Mouvement adaptatif basé sur le comportement du joueur"""
@@ -518,7 +467,6 @@ class AdaptiveBoss(Enemy):
         # Changer de pattern si durée écoulée
         if self.pattern_duration <= 0:
             self.active_pattern = None
-            print(f"[BOSS] Pattern terminé, prochain dans {self.pattern_cooldown} frames")
     
     def _select_new_pattern(self):
         """Sélectionne un nouveau pattern d'attaque dans l'arbre de comportement"""
@@ -527,7 +475,6 @@ class AdaptiveBoss(Enemy):
         depth = 0
         
         while current_node['type'] == 'node' and depth < self.current_phase:
-            # Choix intelligent basé sur l'historique
             available_branches = len(current_node['branches'])
             
             # Éviter de répéter le même pattern
@@ -555,7 +502,6 @@ class AdaptiveBoss(Enemy):
         
         pattern_type = self.active_pattern['type']
         pattern_name = self.active_pattern.get('attack_pattern', 'complex') if pattern_type == 'leaf' else 'composite'
-        print(f"[BOSS] Nouveau pattern: {pattern_name} (durée: {self.pattern_duration} frames)")
     
     def _adapt_to_player(self, player):
         """Adapte le comportement basé sur les actions du joueur"""
@@ -607,12 +553,6 @@ class AdaptiveBoss(Enemy):
     def take_damage(self, amount):
         """
         Gère les dégâts avec adaptation
-        
-        Args:
-            amount (float): Montant des dégâts
-        
-        Returns:
-            bool: True si le boss est mort
         """
         # Réduction de dégâts en phase finale
         if self.current_phase == self.phase_depth:
@@ -638,7 +578,6 @@ class AdaptiveBoss(Enemy):
         
         # Vérifier la mort
         if self.health <= 0:
-            print(f"[BOSS] {self.name} vaincu!")
             return True
         
         return False

@@ -6,7 +6,7 @@ from src.ui.perks_ui import PerksUI
 
 
 class PerksSubScene(BaseSubScene):
-    """Gère le menu de sélection d'améliorations"""
+    """Gère le menu de sélection des perks"""
     
     def __init__(self, game, game_scene, settings, player, weapon):
         super().__init__(game, game_scene, settings)
@@ -109,7 +109,7 @@ class PerksSubScene(BaseSubScene):
                     self.perks_manager.choose_perk(self.perks_list[i])
                     self.on_exit()
                     return 
-    
+                
     def update(self):
         """Met à jour la logique de la scène"""
         pass
@@ -119,7 +119,10 @@ class PerksSubScene(BaseSubScene):
         self.ui.draw(screen, self.perks_rect, self.perks_list)
     
     def resize(self):
-        """Appelé lorsque la fenêtre change de taille"""
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self._calculate_rectangles()
         if self.ui:
             self.ui.resize()

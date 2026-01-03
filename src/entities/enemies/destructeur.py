@@ -31,7 +31,6 @@ class Destructeur(Enemy):
         if projectiles is None:
             return
             
-        # 1. DÉPLACEMENT vers le joueur
         dx = player.x - self.x
         dy = player.y - self.y
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
@@ -44,7 +43,6 @@ class Destructeur(Enemy):
             self.x += norm_dx * self.speed
             self.y += norm_dy * self.speed
         
-        # 2. GESTION DES TIRS
         # Cooldown entre les tirs
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
@@ -83,7 +81,6 @@ class Destructeur(Enemy):
                 radius=7  # Projectile légèrement plus gros
             ))
     
-
     def draw(self, screen):
         """Dessine l'ennemi avec sa barre de vie"""
         super().draw(screen)
@@ -101,7 +98,6 @@ class Destructeur(Enemy):
             ))
         pygame.draw.polygon(screen, (255, 200, 200), points)
         
-    
     def _draw_health_bar(self, screen):
         """Dessine la barre de vie de l'ennemi"""
         super()._draw_health_bar(screen, 50, 8, -15)

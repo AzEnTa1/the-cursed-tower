@@ -13,7 +13,7 @@ from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes.perks_sub_scene import PerksSubScene
 from .sub_scenes.pause_sub_scene import PauseSubScene
-from .sub_scenes.stat_sub_scene import StatSubScene
+from .sub_scenes.stats_sub_scene import StatSubScene
 from src.entities.projectiles import FireZone
 
 
@@ -166,7 +166,7 @@ class GameScene(BaseScene):
                         effect = SpawnEffect(x, y, self.settings, enemy_type)
                         self.spawn_effects.append(effect)
                     else:
-                        # Format inattendu
+                        # Format inattendu (j'ai eu un problème ici une fois)
                         print(f"Format de spawn : {spawn_data}")
 
     def _update_player_and_weapon(self, dt):
@@ -226,37 +226,29 @@ class GameScene(BaseScene):
     def _check_player_projectile_collisions(self, enemy):
         """Vérifie les collisions entre projectiles joueur et ennemi"""
         for projectile in self.projectiles[:]:
-            if enemy.type == "ascension_tree":
-                # Utiliser la méthode spéciale pour le boss arborescent
-                if self._check_boss_projectile_collisions(enemy, projectile):
-                    self.projectiles.remove(projectile)
-                    break
-            else:
-                # Méthode normale pour les autres ennemis
-                distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
-                if distance < enemy.radius + projectile.radius:
-                    if enemy.take_damage(projectile.damage):
-                        self.enemies.remove(enemy)
-                        self.wave_manager.on_enemy_died(enemy)
-                        # Score différent selon le type d'ennemi
-                        if enemy.type == "destructeur":
-                            self.player.add_score(50)
-                        elif enemy.type == "suicide":
-                            self.player.add_score(20)
-                        else:
-                            self.player.add_score(10)
-                        
-                        self._check_for_level_up()
+            # Méthode normale pour les autres ennemis
+            distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
+            if distance < enemy.radius + projectile.radius:
+                if enemy.take_damage(projectile.damage):
+                    self.enemies.remove(enemy)
+                    self.wave_manager.on_enemy_died(enemy)
+                    # Score différent selon le type d'ennemi
+                    if enemy.type == "destructeur":
+                        self.player.add_score(50)
+                    elif enemy.type == "suicide":
+                        self.player.add_score(20)
+                    else:
+                        self.player.add_score(10)
+                    
+                    self._check_for_level_up()
 
-                    if projectile in self.projectiles:
-                        self.projectiles.remove(projectile)
-                    break
+                if projectile in self.projectiles:
+                    self.projectiles.remove(projectile)
+                break
     
     def _check_melee_collision(self, enemy):
         """Vérifie les collisions en mêlée entre ennemi et joueur"""
         # Exclure le boss arborescent des collisions de mêlée
-        if enemy.type == "ascension_tree":
-            return  # Le boss n'a pas d'attaque de mêlée
             
         distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
         if distance < enemy.radius + self.player.size:
@@ -525,7 +517,10 @@ class GameScene(BaseScene):
                 screen.blit(countdown_text, (pending['x'] - 15, pending['y'] - 60))
 
     def resize(self):
-        """Appelé lorsque la fenêtre change de taille"""
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self.fond = pygame.transform.scale(self.fond, (self.settings.screen_width, self.settings.screen_height))
         
         if self.game_paused:

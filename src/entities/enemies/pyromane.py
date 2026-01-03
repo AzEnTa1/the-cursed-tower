@@ -52,7 +52,7 @@ class Pyromane(Enemy):
             self.x += norm_dx * self.speed
             self.y += norm_dy * self.speed
         else:
-            # Se déplacer en cercle AUTOUR du joueur
+            # Se déplacer en cercle autour du joueur
             self.circle_angle += self.circle_speed
             target_x = player.x + math.cos(self.circle_angle) * self.circle_radius
             target_y = player.y + math.sin(self.circle_angle) * self.circle_radius
@@ -67,7 +67,6 @@ class Pyromane(Enemy):
                 self.x += move_x
                 self.y += move_y
         
-        # 2. GESTION DES PRÉVISUALISATIONS ACTIVES
         for preview in self.active_previews[:]:
             preview[2] -= 1  # Décrémente le timer
             if preview[2] <= 0:
@@ -76,12 +75,11 @@ class Pyromane(Enemy):
                     fire_zones.append(FireZone(preview[0], preview[1], self.settings))
                 self.active_previews.remove(preview)
         
-        # 3. DÉCLENCHEMENT D'UNE NOUVELLE ATTAQUE (2 flaques)
         if (self.fire_zone_cooldown <= 0 and 
             fire_zones is not None and
             pending_zones is not None):
             
-            # Calculer DEUX positions différentes pour les flaques
+            # Calculer 2 positions différentes pour les flaques
             flame_positions = []
             for i in range(2):
                 # Position autour du joueur (éviter les positions trop proches)
@@ -107,7 +105,7 @@ class Pyromane(Enemy):
                     'x': fx,
                     'y': fy,
                     'timer': self.preview_duration + (i * self.preview_duration),  # Décalage de 0.75s
-                    'source': self  # Référence au Pyromante
+                    'source': self  # Référence au Pyromane
                 })
             
             self.fire_zone_cooldown = self.fire_zone_rate
@@ -115,7 +113,7 @@ class Pyromane(Enemy):
         elif self.fire_zone_cooldown > 0:
             self.fire_zone_cooldown -= 1
         
-        # Garde le Pyromante dans l'écran
+        # Garde le Pyromane dans l'écran
         self.x = max(self.radius, 
                     min(self.x, self.settings.screen_width - self.radius))
         self.y = max(self.radius, 

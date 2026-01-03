@@ -4,7 +4,6 @@ import math
 
 class SpawnEffect:
     """Effet visuel pour l'apparition d'un ennemi"""
-    
     def __init__(self, x, y, settings, enemy_type="basic"):
         self.x = x
         self.y = y

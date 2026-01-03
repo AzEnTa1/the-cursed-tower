@@ -54,7 +54,10 @@ class GameOverScene(BaseScene):
         
 
     def resize(self):
-
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions des éléments
+        """
         self.quit_button.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2, 200, 50)
         self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
         self.ui.resize()

@@ -17,7 +17,6 @@ class Charger(Enemy):
         self.color = (255, 255, 0)  # Jaune
         self.radius = 22
         self.attack_range = 0
-           
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
@@ -30,9 +29,7 @@ class Charger(Enemy):
         self.x += dx * self.speed
         self.y += dy * self.speed
     
-
-    
-    def draw(self, screen): #global pour enemies
+    def draw(self, screen): 
         """Dessine l'ennemi avec sa barre de vie"""
         super().draw(screen)
 

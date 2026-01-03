@@ -214,12 +214,12 @@ class Weapon:
             color = colors[color_idx]
             radius = 4 if data['index'] == 0 else 3
             is_multishot = True
-        elif 'arc_index' in data:  # NOUVEAU : pour les projectiles en arc
+        elif 'arc_index' in data: 
             # Couleurs spéciales pour l'arc
             arc_colors = [
                 (255, 255, 0),    # Jaune pour le centre
-                (255, 150, 0),    # Orange pour la gauche
-                (255, 200, 0)     # Jaune-orange pour la droite
+                (255, 150, 0),    # Orange pour la gauche et la droites
+                (255, 150, 0)     
             ]
             color = arc_colors[data['arc_index'] % len(arc_colors)]
             radius = 4
@@ -246,7 +246,7 @@ class Weapon:
         if dx != 0 or dy != 0:
             self.last_direction = (dx, dy)
 
-    def get_stats(self)->dict:
+    def get_stats(self):
         """renvoi les donnés associé a l'arme du joueur (pour le menu pause)"""
         return {
             "fire_rate":self.fire_rate,

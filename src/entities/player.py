@@ -105,7 +105,6 @@ class Player:
 
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
-        # le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk) ======================
         if self.infinite_life:
             self.health = self.max_health
 
@@ -399,12 +398,12 @@ class Player:
                 screen.blit(glow_surf, (int(self.x - glow_size), 
                                       int(self.y - glow_size)))
         
-        # Dessiner le joueur (couleur RGB normale)
+        # Dessiner le joueur
         pygame.draw.circle(screen, current_color, 
                           (int(self.x), int(self.y)), 
                           self.size)
         
-        # Contour pendant le dash (RGB seulement)
+        # Contour pendant le dash
         if self.is_dashing:
             pygame.draw.circle(screen, (255, 255, 255), 
                              (int(self.x), int(self.y)), 

@@ -142,7 +142,7 @@ class TalentsScene(BaseScene):
         self.quit_button_img = pygame.transform.scale(self.cadre, (self.exit_menu_rect.width, self.exit_menu_rect.height))
         self.exit_menu_text_rect.center = self.exit_menu_rect.center
 
-        #parcours tout les talents
+        # On recalcule tout les talents
         i = 0
         for key in list(self.talent_dict.keys()):
             self.talent_dict[key]["rect"].update(
@@ -151,7 +151,7 @@ class TalentsScene(BaseScene):
                 self.settings.screen_width//8,
                 self.settings.screen_width//8
                 )
-            # ça baisse la qualité des images quand on passe à une taille plus petite mais flem (image redéfini a partir des précedents)
+            # Redimensionne l'image
             self.talent_dict[key]["img"] = pygame.transform.scale(self.talent_dict[key]["img"], self.talent_dict[key]["rect"].size)
             ligne = 0
             for rect in self.talent_dict[key]["txt_rect"]:
@@ -161,7 +161,7 @@ class TalentsScene(BaseScene):
             self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"].copy()
             self.talent_dict[key]["total_rect"].union_ip(self.talent_dict[key]["txt_rect"][0].move(0, 25))
             self.talent_dict[key]["total_rect"].inflate_ip(5, 5)
-            # identique pour tous
+            # Redimensionne le cadre
             if i == 0:
                 self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1

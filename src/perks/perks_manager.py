@@ -58,8 +58,7 @@ class PerksManager:
             # reflect projectil
             # time slow
             # invincibility
-            # double damage
-            # 
+            # double damage 
         }
         
         perks_list = list(self.perks_dict.keys())
