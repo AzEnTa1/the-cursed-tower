@@ -7,8 +7,7 @@ class HUD:
         self.wave_manager = wave_manager
         self.weapon = weapon
         self.settings = settings
-        
-        
+
         # Positions
         self.margin = 10
         self.bar_height = 8
@@ -65,7 +64,7 @@ class HUD:
             f"VAGUE {wave_info['current_wave']}/3", 
             True, self.settings.WHITE
         )
-        screen.blit(wave_text, (self.settings.screen_height - 150, self.margin + 35))
+        screen.blit(wave_text, (self.settings.screen_width - 150, self.margin + 35))
         
         # État de la vague avec couleur
         state_text = ""

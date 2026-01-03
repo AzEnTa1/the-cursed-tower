@@ -1,5 +1,6 @@
-# config/settings.py
 import pygame
+import json
+import os
 
 class Settings:
     def __init__(self, player_data):
@@ -19,10 +20,14 @@ class Settings:
         self.BLUE = (0, 0, 255)
         self.YELLOW = (255, 255, 0)
 
+        self.ICON_PATH = "assets/images/icon.png"
+        self.PLAYER_DATA_PATH = "data/player_data.json"
+        self.SOUND_START_PATH = "assets/sounds/game_start.mp3"
+
         # Joueur
-        self.player_speed = player_data["speed"] # 5
-        self.player_size = player_data["size"] # 20
-        self.player_health = player_data["max_health"] # 100
+        self.player_speed = player_data.get("speed", 5)
+        self.player_size = player_data.get("size", 20)
+        self.player_health = player_data.get("max_health", 100)
         
         # Scènes
         self.SCENE_MENU = "menu"
@@ -31,16 +36,16 @@ class Settings:
         self.SCENE_TALENTS = "talents"
 
         # Armes
-        self.WEAPON_DAMAGE = player_data["base_damages"] # 30
-        self.WEAPON_FIRE_RATE = player_data["fire_rate"] # 2  # tirs par seconde
-        self.WEAPON_PROJECTILE_SPEED = player_data["projectil_speed"] # 10
-        self.WEAPON_DAMAGE_VARIANCE = player_data["damage_variance"] # 5  # ± pour les dégâts aléatoires
+        self.WEAPON_DAMAGE = player_data.get("base_damages", 30)
+        self.WEAPON_FIRE_RATE = player_data.get("fire_rate", 2)
+        self.WEAPON_PROJECTILE_SPEED = player_data.get("projectile_speed", 10)
+        self.WEAPON_DAMAGE_VARIANCE = player_data.get("damage_variance", 5)
         
         # Multishot
-        self.WEAPON_SHOT_INTERVAL = 100  # ms entre chaque projectile du multishot
-        self.WEAPON_STATIONARY_THRESHOLD = player_data["stationary_threshold"] # 25  # frames d'immobilité avant tir
-        self.WEAPON_TARGETING_RANGE = 500  # distance maximale pour cibler un ennemi
-        self.WEAPON_ARC_ANGLE = 15  # degrés pour le tir en arc
+        self.WEAPON_SHOT_INTERVAL = 100
+        self.WEAPON_STATIONARY_THRESHOLD = player_data.get("stationary_threshold", 25)
+        self.WEAPON_TARGETING_RANGE = 500
+        self.WEAPON_ARC_ANGLE = 15
         
         # Couleurs pour les multishots
         self.WEAPON_MULTISHOT_COLORS = [
@@ -63,9 +68,9 @@ class Settings:
         self.font = None
 
         # Bordures et ratio
-        self.BORDER_COLOR = (50, 50, 50)  # Couleur de la bordure
-        self.ASPECT_RATIO = (4, 3)        # Ratio largeur:hauteur
-        self.BORDER_WIDTH = 2             # Largeur de la bordure
+        self.BORDER_COLOR = (50, 50, 50)
+        self.ASPECT_RATIO = (4, 3)
+        self.BORDER_WIDTH = 2
     
     def initialize_fonts(self):
         """Initialise les fonts"""

@@ -5,7 +5,7 @@
     "speed": 5,
     "base_damages": 200,
     "fire_rate": 2,
-    "projectil_speed": 10,
+    "projectile_speed": 10,
     "damage_variance": 5,
     "stationary_threshold": 25,
     "best_score": 0,
