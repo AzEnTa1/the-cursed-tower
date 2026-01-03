@@ -12,7 +12,7 @@ class StatSubScene(BaseSubScene):
     
     def on_enter(self, game_stats:dict):
         """Appelée quand la scène devient active"""
-
+        super().on_enter()
         self.ui = StatUI(game_stats, self.settings)
 
         #met un fond d'écran au stat

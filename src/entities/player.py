@@ -94,6 +94,15 @@ class Player:
                 if self.last_vertical_key == 'down':
                     self.last_vertical_key = 'up' if self.keys_pressed['up'] else None
     
+
+    def reset_player_movements(self):
+        self.keys_pressed['left'] = False
+        self.keys_pressed['right'] = False
+        self.keys_pressed['up'] = False
+        self.keys_pressed['down'] = False
+        self.last_horizontal_key = None
+        self.last_vertical_key = None
+
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
         # le jeu est trop dur donc je met ca pour faire des tests (c'est 1 perk) ======================
