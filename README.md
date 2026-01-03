@@ -145,7 +145,7 @@ tests/
 - **Design UI** : Boutons, menus, feedback visuel
 - **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
 - **Tests unitaires** : Développement et exécution
-- **Menu Menu** : 
+- **Menu Menu** : Gère comment 
 
 ### Méthodologie de travail
 
