@@ -53,7 +53,7 @@ class PerksSubScene(BaseSubScene):
         
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
-        pass
+        self.game_scene.game_paused = False
         
     def handle_event(self, event):
         """Gère les événements pygame"""

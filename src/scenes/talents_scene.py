@@ -1,7 +1,7 @@
 # src/scenes/talents_scene.py
 import pygame
 from .base_scene import BaseScene
-from src.systems.talents import Talents
+from src.perks.talents import Talents
 
 
 class TalentsScene(BaseScene):
@@ -11,6 +11,7 @@ class TalentsScene(BaseScene):
     def on_enter(self, player_data):
         """Initialisation du menu"""
         self.player_data = player_data
+        self.talents = Talents(self.game, self.settings, player_data)
         # Rect pour quiter le menu
         self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
         self.cadre = pygame.image.load(r"assets\images\cadre.png")
@@ -22,7 +23,7 @@ class TalentsScene(BaseScene):
         #si quelqu'un veut en rajouter in game c possible
         self.talent_dict = {
             "max_health":{"img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png")},
-            "regen_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png")},
+            "regen_power":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png")},
             "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Speed_Icon.png")},
             "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png")},
             "dash_cooldown":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
@@ -30,8 +31,8 @@ class TalentsScene(BaseScene):
             "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_icon.png")},
             "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_speed_icon.png")},
             "stationnary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "projectil_size":{"img":pygame.image.load(r"assets\images\perks_icons\Blank_Icon.png")},
-            "projectil_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectil_speed_icon.png")},
+            "projectile_size":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_size_up_icon.png")},
+            "projectile_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png")},
         }
         
         # case en haut a gauche les autres sont généré a partir de ce Rect
@@ -75,7 +76,18 @@ class TalentsScene(BaseScene):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.exit_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_MENU)
-    
+            else:
+                for key in list(self.talent_dict.keys()):
+                    if self.talent_dict[key]["rect"].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                        if self.player_data["coins"] >= 10:
+                            getattr(self.talents, key)()
+                            self.player_data["coins"] -= 10
+                            pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
+                        else:
+                            pygame.mixer.Sound("assets/sounds/degat_1.mp3").play()
+                        # si la souris est sur un Rect(parmis talent_dict) elle ne peut pas etre sur un autre
+                        break 
+        
     
     
     def update(self):
@@ -88,6 +100,7 @@ class TalentsScene(BaseScene):
         else:
             self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered = False
+
     
     def draw(self, screen):
         """Dessine la scene"""

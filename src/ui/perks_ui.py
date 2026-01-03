@@ -13,7 +13,7 @@ class PerksUI:
                            "player_size_up":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png"),
                            "player_size_down":pygame.image.load(r"assets\images\perks_icons\Player_size_down_icon.png"),
                            "player_regen":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png"),
-                           "projectil_speed":pygame.image.load(r"assets\images\perks_icons\Projectil_speed_icon.png"), 
+                           "projectile_speed":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png"), 
                            "multishot":pygame.image.load(r"assets\images\perks_icons\Multishot_icon.png"),
                            "infinite life":pygame.image.load(r"assets\images\perks_icons\Shield_icon.png"),
                            "arc_shot":pygame.image.load(r"assets\images\perks_icons\Arc_shoot_icon.png"),

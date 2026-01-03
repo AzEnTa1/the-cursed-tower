@@ -11,6 +11,11 @@ class GameOverScene(BaseScene):
         
     def on_enter(self, player_data, game_stats):
         """Initialisation du Game Over"""
+        # Transforme le score en coins
+        player_data["coins"] += game_stats["score"]
+        player_data["all_time_coins"] += game_stats["score"]
+        self.game.save()
+        
         self.ui = GameOverUI(self.settings, game_stats)
         self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 0, 0))
         self.quit_button = pygame.image.load(r"assets/images/cadre.png")
@@ -20,6 +25,7 @@ class GameOverScene(BaseScene):
 
         print("Game Over Scene")
     
+
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.KEYDOWN:
@@ -31,7 +37,7 @@ class GameOverScene(BaseScene):
 
     
     def update(self):
-        """Pas de logique à mettre à jour pour l'instant"""
+        """"""
         if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:

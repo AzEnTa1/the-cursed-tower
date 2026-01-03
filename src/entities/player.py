@@ -12,14 +12,14 @@ class Player:
         self.settings = settings
         self.x = x
         self.y = y
-        self.speed = settings.player_speed
-        self.size = settings.player_size
+        self.speed = player_data["speed"]
+        self.size = player_data["size"]
         self.color = self.settings.GREEN
         self.infinite_life = False
 
         # Points de vie
-        self.health = settings.player_health
-        self.max_health = settings.player_health
+        self.health = player_data["max_health"]
+        self.max_health = player_data["max_health"]
         
         # Score
         self.score = 0
