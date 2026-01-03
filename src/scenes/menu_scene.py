@@ -9,10 +9,18 @@ class MenuScene(BaseScene):
         
     def on_enter(self, player_data):
         """Initialisation du menu"""
+        self.player_data = player_data
+
         # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2-50, 200, 50)
         self.talents_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 20, 200, 50)
         self.reset_button = pygame.Rect(0, self.settings.screen_height - 50, 200, 50)
+        self.volume_plus = pygame.Rect(self.settings.screen_width - 50, 0, 50, 50)
+        self.plus_hori = pygame.Rect(self.settings.screen_width - 50, 15, 50, 20)
+        self.plus_vert = pygame.Rect(self.settings.screen_width - 35, 0, 20, 50)
+        self.volume_moins = pygame.Rect(self.settings.screen_width - 190, 0, 50, 50)
+        self.moins = pygame.Rect(self.settings.screen_width - 190, 15, 50, 20)
+        self.val_volume = pygame.Rect(self.settings.screen_width - 120, 0, 50, 50)
 
         # Charger l'image de fond
 
@@ -28,7 +36,6 @@ class MenuScene(BaseScene):
         self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
-        
 
     
     def handle_event(self, event):
@@ -41,6 +48,10 @@ class MenuScene(BaseScene):
             elif self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.reset_player_data()
                 pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
+            elif self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                self.update_sound(1)
+            elif self.volume_moins.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                self.update_sound(-1)
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:  # Touche ENTER
@@ -50,6 +61,10 @@ class MenuScene(BaseScene):
         """Démarre le jeu"""
         pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
         self.game.change_scene(self.settings.SCENE_GAME)
+
+    def update_sound(self, val):
+        self.player_data["master_volume"] = max(0, self.player_data["master_volume"] + val)
+        pygame.Sound.set_volume(self.player_data["master_volume"])
     
     def update(self):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
@@ -80,6 +95,8 @@ class MenuScene(BaseScene):
         else:
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
             self.reset_hovered = False
+
+        
     
     def draw(self, screen):
         """Dessine le menu"""
@@ -95,6 +112,12 @@ class MenuScene(BaseScene):
 
         # Bouton reset avec effet hover
         screen.blit(self.text_reset, self.reset_button)
+        pygame.draw.rect(screen, (255, 255, 255), self.volume_plus)
+        pygame.draw.rect(screen, (0, 0, 0), self.plus_hori)
+        pygame.draw.rect(screen, (0, 0, 0), self.plus_vert)
+        pygame.draw.rect(screen, (255, 255, 255), self.volume_moins)
+        pygame.draw.rect(screen, (0, 0, 0), self.moins)
+        pygame.draw.rect(screen, (255, 255, 255), self.val_volume)
 
     
     def resize(self):
