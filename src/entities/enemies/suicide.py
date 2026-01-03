@@ -48,10 +48,13 @@ class Suicide(Enemy):
 
         # Effet d'explosion pour les suicides
         if self.is_exploding:
-            self.shoot_sound.play()
             explosion_size = self.radius + (15 - self.explosion_timer) * 6
             pygame.draw.circle(screen, (255, 150, 0), (int(self.x), int(self.y)), explosion_size, 3)
         
+        # met un son une seul fois quand il explose
+        if self.is_exploding and self.explosion_timer == 15:
+            self.shoot_sound.play()
+
         # Indicateur de type (cercle intérieur ou motif)
         
         pygame.draw.circle(screen, (200, 0, 200), (int(self.x), int(self.y)), self.radius - 6)
