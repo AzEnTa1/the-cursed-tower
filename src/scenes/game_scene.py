@@ -11,9 +11,7 @@ from src.systems.game_stats import GameStats
 from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
-from .sub_scenes.perks_sub_scene import PerksSubScene
-from .sub_scenes.pause_sub_scene import PauseSubScene
-from .sub_scenes.stats_sub_scene import StatSubScene
+from .sub_scenes import *
 from src.entities.projectiles import FireZone
 
 
@@ -57,6 +55,7 @@ class GameScene(BaseScene):
         self.stat_sub_scene = StatSubScene(self.game, self, self.settings)
         self.perks_sub_scene = PerksSubScene(self.game, self, self.settings, self.player, self.weapon)
         self.pause_sub_scene = PauseSubScene(self.game, self, self.settings)
+        self.tuto_sub_scene = TutoSubScene(self.game, self, self.settings)
         self.game_paused = False
         self.current_sub_scene = None
 
@@ -89,6 +88,13 @@ class GameScene(BaseScene):
                     self.current_sub_scene.on_enter(self.game_stats.update(self.player, self.weapon))
                 else:
                     self.current_sub_scene = None
+
+            elif event.key == pygame.K_t:
+                # Affiche le tuto
+                if not self.game_paused:
+                    self.game_paused = True
+                    self.current_sub_scene = self.tuto_sub_scene
+                    self.current_sub_scene.on_enter()
                 
             elif event.key == pygame.K_p:
                 # Affiche les perks (temporaire)

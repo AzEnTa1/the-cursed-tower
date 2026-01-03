@@ -3,7 +3,7 @@
 import pygame
 from .base_sub_scene import BaseSubScene
 
-class Tuto(BaseSubScene):
+class TutoSubScene(BaseSubScene):
     """Gère le Menu Pause"""
     
     def __init__(self, game, game_scene, settings):
@@ -12,8 +12,8 @@ class Tuto(BaseSubScene):
     def on_enter(self):
         """Appelée quand la scène devient active"""
         super().on_enter()
-        self.rect = pygame.Rect(self.settings.screen_width//3, self.settings.screen_height//3,
-                                self.settings.screen_width//3, self.settings.screen_height//3
+        self.rect = pygame.Rect(self.settings.screen_width//4, self.settings.screen_height//4,
+                                self.settings.screen_width//2, self.settings.screen_height//2
                                 )
 
 
@@ -24,6 +24,7 @@ class Tuto(BaseSubScene):
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
+            return
             if self.exit_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene.game_paused = False
 
