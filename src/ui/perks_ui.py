@@ -62,7 +62,7 @@ class PerksUI:
             screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
             
             # fait en sorte que quand la souris passe sur un perk, un cadre apparaisse autour
-            if rect[0].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            if rect[2].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
                 hover_cadre = pygame.image.load(r"assets/images/cadre.png")
                 hover_cadre = pygame.transform.scale(hover_cadre, (rect[0][2]+10, rect[0][3]+10))
                 hover_rect = hover_cadre.get_rect(center=rect[0].center)
