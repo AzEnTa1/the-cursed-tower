@@ -64,7 +64,7 @@ class MenuScene(BaseScene):
 
     def update_sound(self, val):
         self.player_data["master_volume"] = max(0, self.player_data["master_volume"] + val)
-        pygame.Sound.set_volume(self.player_data["master_volume"])
+        pygame.mixer.music.set_volume(self.player_data["master_volume"])
     
     def update(self):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
