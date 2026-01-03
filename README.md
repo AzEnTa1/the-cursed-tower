@@ -67,26 +67,10 @@ La fonction récursive principale se trouve dans `src/entities/enemies/boss.py` 
 1. **Représentation naturelle** : Les patterns d'attaque du boss forment naturellement un arbre
 2. **Génération procédurale** : Permet de créer des comportements uniques à chaque boss
 3. **Évolutivité** : La difficulté augmente avec la profondeur de l'arbre
-4. **Maintenabilité** : Code plus lisible qu'une solution itérative complexe
 
 ### Structure de données personnalisée
 
 #### File (Queue) dans `src/utils/queue.py`
-
-**Implémentation** :
-```python
-class Queue:
-    def __init__(self):
-        self.items = []
-    
-    def enqueue(self, item):      # O(1)
-        self.items.append(item)
-    
-    def dequeue(self):           # O(1)
-        if self.is_empty():
-            return None
-        return self.items.pop(0)
-```
 
 **Utilisation dans WaveManager** :
 1. **Séquencement des vagues** : Chaque étage a une file de vagues à traiter
@@ -97,51 +81,6 @@ class Queue:
 - `enqueue()` : O(1) - ajout en fin de liste
 - `dequeue()` : O(1) - retrait en début de liste (avec pop(0))
 - `is_empty()` : O(1) - vérification de longueur
-
-### Gestion des ressources et modularité
-
-#### Séparation code/ressources
-```
-assets/
-├── images/           # Sprites, backgrounds, UI elements
-│   ├── background/   # Fond d'écran par scène
-│   └── perks_icons/  # Icônes des améliorations
-├── sounds/           # Effets sonores et musique
-└── fonts/            # Polices d'écriture
-```
-
-#### Système de configuration
-- **Settings** (`config/settings.py`) : Centralise tous les paramètres modifiables
-- **Données joueur** (`data/player_data.json`) : Sauvegarde de la progression
-- **Aspect ratio** : Système de redimensionnement intelligent (4:3 maintenu)
-
-### Qualité du code
-
-#### Standards respectés
-1. **Documentation** : Docstrings complètes selon Google Style
-2. **Typage** : Annotations de type pour clarifier les interfaces
-3. **Séparation des responsabilités** : Chaque classe a un rôle unique
-4. **Gestion d'erreurs** : Try/except pour les opérations critiques
-5. **Constantes nommées** : Pas de nombres magiques
-
-#### Exemple de docstring
-```python
-def generate_behavior_tree(floor_number, seed, depth=0, max_depth=4):
-    """
-    Génère un arbre de comportement récursif pour le boss
-    
-    Complexité : O(branches^depth) où branches = floor_number % 3 + 2
-    
-    Args:
-        floor_number (int): Niveau actuel (influence complexité)
-        seed (int): Graine unique pour la génération
-        depth (int): Profondeur actuelle (0 pour la racine)
-        max_depth (int): Profondeur maximale basée sur l'étage
-    
-    Returns:
-        dict: Arbre de comportement avec branches récursives
-    """
-```
 
 #### Tests unitaires
 ```
