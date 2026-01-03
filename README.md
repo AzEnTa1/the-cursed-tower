@@ -125,13 +125,14 @@ tests/
 - **Menu principal** : Navigation et transitions
 - **Menu statistiques** : Affichage des données de jeu
 - **Tests unitaires** : Développement et exécution
-
+- **Menu Tutoriel** : Explication du fonctionnement du jeu
 
 #### Zia - Développeur UI & Assets
 - **Menu GameOver** : Écran de fin avec statistiques
 - **Design UI** : Boutons, menus, feedback visuel
-- **Menu pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
+- **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
 - **Tests unitaires** : Développement et exécution
+- **Menu ** : 
 
 ### Méthodologie de travail
 

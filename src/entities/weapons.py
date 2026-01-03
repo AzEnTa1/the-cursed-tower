@@ -41,11 +41,7 @@ class Weapon:
             # Liste des fichiers de son de tir disponibles
             shoot_files = [
                 "assets/sounds/Tire_1.mp3",
-                "assets/sounds/Tire_2.mp3", 
-                "assets/sounds/Tire_3.mp3",
-                "assets/sounds/Tire_4.mp3",
-                "assets/sounds/Tire_5.mp3",
-                "assets/sounds/Tire_6.mp3"
+                "assets/sounds/Tire_2.mp3" 
             ]
             
             for sound_file in shoot_files:
