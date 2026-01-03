@@ -12,20 +12,18 @@ class StatSubScene(BaseSubScene):
     
     def on_enter(self, game_stats:dict):
         """Appelée quand la scène devient active"""
-
+        super().on_enter()
         self.ui = StatUI(game_stats, self.settings)
-        
-        
-        #fait un bouton transparant derrière le texte
 
+        #met un fond d'écran au stat
 
         self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
         self.back_to_menu_rect = pygame.image.load(r"assets/images/cadre.png")
         self.back_to_menu_rect = pygame.transform.scale(self.back_to_menu_rect, (200, 50))
-        self.back_to_menu_rect = self.back_to_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5))
+        self.back_to_menu_rect = self.back_to_menu_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 +200))
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
         
-
+    
     
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -57,6 +55,6 @@ class StatSubScene(BaseSubScene):
     def resize(self):
         """appelé lorsque la fenêtre change de taille"""
         # Met à jour les positions des éléments UI en fonction de la nouvelle taille de l'écran
-        self.back_to_menu_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 37.5, 200, 50)
+        self.back_to_menu_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 200, 200, 50)
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
         self.ui.resize()

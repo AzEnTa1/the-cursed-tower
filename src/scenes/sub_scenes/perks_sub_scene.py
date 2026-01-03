@@ -15,6 +15,7 @@ class PerksSubScene(BaseSubScene):
 
     def on_enter(self):
         """Appelée quand la scène devient active"""
+        super().on_enter()
         self.ui = PerksUI(self.settings)
         self.perks_manager = PerksManager(self.settings, self.player, self.weapon)
         self.perks_list = self.perks_manager.get_perks()
@@ -52,8 +53,8 @@ class PerksSubScene(BaseSubScene):
         
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
-        self.game_scene.game_paused = False
-    
+        pass
+        
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:

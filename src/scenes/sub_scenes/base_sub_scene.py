@@ -10,7 +10,7 @@ class BaseSubScene:
     
     def on_enter(self):
         """Appelée quand la scène devient active"""
-        pass
+        self.game_scene.player.reset_player_movements()
     
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""

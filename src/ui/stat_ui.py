@@ -5,9 +5,11 @@ class StatUI:
     def __init__(self, game_stats:dict, settings):
         self.settings = settings
         self.game_stats = game_stats
-        
         # Rect des stats et surface qui accepte de modifier l'alpha
-        self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
+        self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2-60, self.settings.screen_height-300)
+
+
+
 
 
     def draw(self, screen, exit_rect, exit_text_rect, exit_text):
@@ -16,18 +18,31 @@ class StatUI:
         """        
 
         # Met une image de fond
-        bg_image = pygame.image.load(r"assets/images/background/menu_scene.png")
+        bg_image = pygame.image.load(r"assets/images/background/stat_scene.png")
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
         screen.blit(bg_image, (0, 0))
 
-        # Affiche les stats # le text se met automatiquement par rapport a stats_rect
-        pygame.draw.rect(screen, (100, 100, 100, 240), self.stats_rect)
+        
+        
+        #cree un cadre en fond pour les stats
+        bg_image1 = pygame.image.load(r"assets/images/cadre.png")
+        bg_image1 = pygame.transform.scale(bg_image1, (self.stats_rect.width, self.stats_rect.height))
+        screen.blit(bg_image1, self.stats_rect)
+        self.stats_rect.center = (self.settings.screen_width//2, self.settings.screen_height//2)
+        self.stats_rect.y = 137
+
         i = 0
         for key in self.game_stats.keys():
             i += 1
-            txt = self.settings.font["h4"].render(f"{key}: {self.game_stats[key]}", True, (0, 0, 0))
+            txt = self.settings.font["h4"].render(f"{key}: {self.game_stats[key]}", True, (255, 255, 255))
             rect = txt.get_rect(topleft = (self.stats_rect[0] + 5, self.stats_rect[1] + 20*i + 5))
+            rect.center = (self.settings.screen_width//2, self.settings.screen_height//1.5 - 20*i)
             screen.blit(txt, rect)
+
+
+
+
+        
 
         # Met le bouton quitter
         bg_image = pygame.image.load(r"assets/images/cadre.png")
