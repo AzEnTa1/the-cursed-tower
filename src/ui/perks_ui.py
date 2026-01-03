@@ -62,7 +62,7 @@ class PerksUI:
             screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
             
             # fait en sorte que quand la souris passe sur un perk, un cadre apparaisse autour
-            if rect[0].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            if rect[2].move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
                 hover_cadre = pygame.image.load(r"assets/images/cadre.png")
                 hover_cadre = pygame.transform.scale(hover_cadre, (rect[0][2]+10, rect[0][3]+10))
                 hover_rect = hover_cadre.get_rect(center=rect[0].center)
@@ -92,7 +92,7 @@ class PerksUI:
             "player_size_up": "+10% taille (meilleure visibilité)",
             "player_size_down": "-10% taille (plus difficile à toucher)",
             "player_regen": "Soigne 20% de vos PV",
-            "projectil_speed": "+10% vitesse des projectiles",
+            "projectile_speed": "+10% vitesse des projectiles",
             "multishot": "Tire +1 projectile supplémentaire",
             "infinite life": "INVINCIBILITÉ (debug)",
             "arc_shot": "Tire 3 projectiles en éventail",

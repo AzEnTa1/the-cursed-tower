@@ -1,7 +1,6 @@
 # src/game.py 
 import pygame
 import sys
-import random
 import json
 from config.settings import Settings
 from src.scenes import *
@@ -23,10 +22,10 @@ class Game:
         
         # Création de la fenêtre
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height), pygame.RESIZABLE)
-        self.full_screen = False
         pygame.display.set_caption(self.settings.title)
         icon = pygame.image.load(self.settings.ICON_PATH)
         pygame.display.set_icon(icon)
+        self.full_screen = False
 
         # Initialiser les fonts
         self.settings.initialize_fonts()
@@ -80,7 +79,11 @@ class Game:
             
             # Événement de redimensionnement
             elif event.type == pygame.VIDEORESIZE:
-                self.resize(event.dict["w"], event.dict["h"])
+                if event.dict["w"] < 800 or event.dict["h"] < 600:
+                    self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+                    self.resize(800, 600)
+                else:
+                    self.resize(event.dict["w"], event.dict["h"])
 
             # Événement de bascule plein écran
             elif event.type == pygame.KEYDOWN:
