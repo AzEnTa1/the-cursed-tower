@@ -1,4 +1,4 @@
-# Tour Maudite - Documentation
+# Tour Maudite - README.md
 
 ## Rapport Technique
 
@@ -7,9 +7,9 @@
 #### 1. Architecture générale
 ```
 src/
-├── entities/          # Entités du jeu (personnages, projectiles, effets)
-├── scenes/           # Scènes du jeu (menu, jeu principal, fin de partie)
-├── systems/          # Systèmes de gestion (vagues, statistiques, talents)
+├── entities/        # Entités du jeu (personnages, projectiles, effets)
+├── scenes/          # Scènes du jeu (menu, jeu principal, fin de partie)
+├── systems/         # Systèmes de gestion (vagues, statistiques, talents)
 ├── ui/              # Interface utilisateur (HUD, menus, transitions)
 ├── perks/           # Système d'améliorations
 ├── utils/           # Structures de données et utilitaires
@@ -37,13 +37,13 @@ src/
 - **SpawnEffect** : Effets visuels pour l'apparition des ennemis
 
 #### 5. Page de lancement et manuel utilisateur
-##### **Le menu principal (MenuScene) inclut :**
+#### **Le menu principal (MenuScene) inclut :**
 
 - Bouton "Jouer" pour démarrer une partie
 - Bouton "Talents" pour accéder à la progression permanente
 - Instructions intégrées dans le HUD pendant le jeu
 
-##### **Le jeu inclut également un système de pause avec :**
+#### **Le jeu inclut également un système de pause avec :**
 
 - Bouton "Continuer" pour reprendre la partie
 - Bouton "Statistiques" pour voir les données de jeu
@@ -145,7 +145,7 @@ tests/
 - **Design UI** : Boutons, menus, feedback visuel
 - **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
 - **Tests unitaires** : Développement et exécution
-- **Menu ** : 
+- **Menu Menu** : 
 
 ### Méthodologie de travail
 
