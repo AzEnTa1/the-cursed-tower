@@ -60,6 +60,12 @@ class MenuScene(BaseScene):
         """Démarre le jeu"""
         pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
         self.game.change_scene(self.settings.SCENE_GAME)
+        # simule l'entré dans une sub scene depuis game_scene
+        if self.player_data["game_played"] == 0:
+            self.game.scenes[self.settings.SCENE_GAME].game_paused = True
+            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene = self.game.scenes[self.settings.SCENE_GAME].pause_sub_scene
+            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene.on_enter(self.game.scenes[self.settings.SCENE_GAME].game_stats)
+        self.player_data["game_played"] += 1
 
     def update_sound(self, val):
         self.settings.master_volume = max(0, self.settings.master_volume + val*0.1)
