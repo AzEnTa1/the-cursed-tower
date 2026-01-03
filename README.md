@@ -4,8 +4,6 @@
 
 ### Architecture du projet
 
-Le projet "Tour Maudite" est structuré selon les principes de la Programmation Orientée Objet (POO) avec une organisation modulaire claire :
-
 #### 1. Architecture générale
 ```
 src/
@@ -15,7 +13,6 @@ src/
 ├── ui/              # Interface utilisateur (HUD, menus, transitions)
 ├── perks/           # Système d'améliorations
 ├── utils/           # Structures de données et utilitaires
-├── audio/           # Gestion audio
 └── game.py          # Point d'entrée principal
 ```
 
