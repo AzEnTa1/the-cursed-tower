@@ -42,6 +42,11 @@ class MenuScene(BaseScene):
         self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
+        self.plus_bouton = pygame.image.load("assets/images/son_plus.png").convert_alpha()
+        self.plus_bouton = pygame.transform.scale(self.plus_bouton, (50, 50))
+        self.moins_bouton = pygame.image.load("assets/images/son_moins.png").convert_alpha()
+        self.moins_bouton = pygame.transform.scale(self.moins_bouton, (50, 50))
+
     
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
@@ -127,6 +132,31 @@ class MenuScene(BaseScene):
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
             self.reset_hovered = False
 
+        if self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            #change la couleur du rectangle
+            self.plus_bouton = pygame.image.load("assets/images/son_plus_hover.png").convert_alpha()
+            self.plus_bouton = pygame.transform.scale(self.plus_bouton, (50, 50))
+            if not hasattr(self, 'volume_hovered') or not self.volume_hovered:
+                self.volume_hovered = True
+                self.settings.sounds["souris_on_button"].play()
+        else:
+            self.volume_hovered = False
+            self.plus_bouton = pygame.image.load("assets/images/son_plus.png").convert_alpha()
+            self.plus_bouton = pygame.transform.scale(self.plus_bouton, (50, 50))
+        
+        if self.volume_moins.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
+            #change la couleur du rectangle
+            self.moins_bouton = pygame.image.load("assets/images/son_moins_hover.png").convert_alpha()
+            self.moins_bouton = pygame.transform.scale(self.moins_bouton, (50, 50))
+            if not hasattr(self, 'volume_moins_hovered') or not self.volume_moins_hovered:
+                self.volume_moins_hovered = True
+                self.settings.sounds["souris_on_button"].play()
+        else:
+            self.volume_moins_hovered = False
+            self.moins_bouton = pygame.image.load("assets/images/son_moins.png").convert_alpha()
+            self.moins_bouton = pygame.transform.scale(self.moins_bouton, (50, 50))
+        
+
     def draw(self, screen):
         """Dessine le menu"""
         
@@ -143,11 +173,11 @@ class MenuScene(BaseScene):
         screen.blit(self.text_reset, self.reset_button)
 
         # Boutons pour changer le volume
+        
         pygame.draw.rect(screen, (255, 255, 255), self.volume_plus)
-        pygame.draw.rect(screen, (50, 50, 50), self.plus_hori)
-        pygame.draw.rect(screen, (50, 50, 50), self.plus_vert)
+        screen.blit(self.plus_bouton, self.volume_plus)
         pygame.draw.rect(screen, (255, 255, 255), self.volume_moins)
-        pygame.draw.rect(screen, (50, 50, 50), self.moins)
+        screen.blit(self.moins_bouton, self.volume_moins)
         pygame.draw.rect(screen, (255, 255, 255), self.val_volume)
 
         screen.blit(self.txt_val_volume, self.txt_vel_volume_rect)
