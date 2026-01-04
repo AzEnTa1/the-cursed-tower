@@ -188,9 +188,13 @@ class MenuScene(BaseScene):
         Recalcule les positions des éléments
         """
         self.play_button.update(self.settings.screen_width//2-100, self.settings.screen_height//2-20, 200, 50)
-        self.talents_button.update(600, self.settings.screen_height - 50, 200, 50)
+        self.talents_button.update(self.settings.screen_width-200, self.settings.screen_height - 50, 200, 50)
         self.reset_button.update(0, self.settings.screen_height - 50, 200, 50)
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
         self.button_rect = self.text.get_rect(center=self.play_button.center)
         self.talents_button = self.text_talents.get_rect(center=self.talents_button.center)
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
+        self.volume_plus.update(self.settings.screen_width - 50, 0, 50, 50)
+        self.volume_moins.update(self.settings.screen_width - 190, 0, 50, 50)
+        self.val_volume.update(self.settings.screen_width - 120, 0, 50, 50)
+        self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
