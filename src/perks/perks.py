@@ -26,7 +26,7 @@ class Perks:
         self.player.size = round(self.player.size * 0.9)
 
     def player_regen(self):
-        self.player.health = round(self.player.health + (self.player.max_health * self.settings.regen_power))
+        self.player.health = round(self.player.health + (self.player.max_health * self.settings.player_regen_power))
         if self.player.health > self.player.max_health:
             self.player.health = self.player.max_health
 
