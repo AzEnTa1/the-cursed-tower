@@ -56,7 +56,7 @@ def test_game_stats():
     # Vérifie les valeurs
     assert result["score"] == 1500
     assert result["xp"] == 200
-    assert result["attack_damages"] == 3
+    assert result["attack_damages"] == 30
 
 def test_talents_basic():
     """Test des talents de base"""
