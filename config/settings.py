@@ -86,7 +86,6 @@ class Settings:
 
         # Associe chaque key de player_data a une "description" en français
         self.data_translation_map = { 
-            "name":"Nom",
             "master_volume":"Volume Général",
 
             "max_health":"Vie Maximale",
