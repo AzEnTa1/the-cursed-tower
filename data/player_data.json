@@ -13,7 +13,7 @@
     "projectile_size": 5,
     "stationary_threshold": 30,
     "best_score": 0,
-    "game_played": 0,
+    "game_played": 1,
     "coins": 0,
     "all_time_coins": 0
 }
