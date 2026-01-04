@@ -11,11 +11,10 @@ class WaveManager:
         self.wave_queue = WaveQueue(settings)
         self.current_wave_enemies = []
         self.wave_number = 0
-        self.total_waves = 3  # 3 vagues par étage (sauf boss)
         self.floor_number = 1
         self.enemies_remaining = 0
-        self.state = "between_waves"  # between_waves, in_wave, all_cleared
-        self.is_boss_floor = False
+        self.state = "between_waves"  # between_waves, in_wave, boss_wave, all_cleared
+        self.boss_spawned = False
         
         # Timing des vagues
         self.wave_start_time = 0
@@ -30,31 +29,29 @@ class WaveManager:
         self.wave_number = 0
         self.enemies_remaining = 0
         self.state = "between_waves"
+        self.boss_spawned = False
         
-        # Boss tous les 3 étages (étages 3, 6, 9, etc.)
-        self.is_boss_floor = (floor_number % 3 == 0) and floor_number > 0
-        
-        if self.is_boss_floor:
-            # Pour un étage de boss
-            self.wave_queue.setup_boss_floor(floor_number)
-            self.total_waves = 1
-        else:
-            # Étage normal
-            self.wave_queue.setup_waves_for_floor(floor_number)
-            self.total_waves = 3
+        # Configurer les vagues pour cet étage (3 vagues normales)
+        self.wave_queue.setup_waves_for_floor(floor_number)
         
         self.wave_start_time = pygame.time.get_ticks()
         self.current_wave_enemies.clear()
     
     def update(self, current_time):
         """Met à jour l'état du gestionnaire de vagues"""
-        if self.state == "between_waves" and self.wave_queue.has_more_waves():
+        if self.state == "between_waves" and (self.wave_queue.has_more_waves() or (self.wave_number >= 3 and not self.boss_spawned)):
             if current_time - self.wave_start_time >= self.time_between_waves:
                 return True  # Indique qu'une nouvelle vague doit commencer
         return False
     
     def start_next_wave(self):
-        """Démarre la vague suivante"""
+        """Démarre la vague suivante ou le boss"""
+        # Si on a fini les 3 vagues normales et le boss n'a pas encore spawn
+        if self.wave_number >= 3 and not self.boss_spawned:
+            # C'est l'heure du boss !
+            return self.start_boss_wave()
+        
+        # Sinon, c'est une vague normale
         if not self.wave_queue.has_more_waves():
             return []
         
@@ -66,23 +63,26 @@ class WaveManager:
         self.state = "in_wave"
         spawn_positions = []
         
-        # Traiter chaque élément de la vague
-        for enemy_info in wave_data:
+        # Traiter chaque ennemi de la vague
+        for enemy_type in wave_data:
             x, y = self.generate_spawn_position()
-            
-            # Déterminer le type d'ennemi
-            if isinstance(enemy_info, tuple) and enemy_info[0] == "boss":
-                # C'est un boss : ("boss", seed)
-                _, boss_seed = enemy_info
-                spawn_positions.append((x, y, "boss", boss_seed))
-                self.enemies_remaining = 1
-            else:
-                # C'est un ennemi normal : juste le nom du type
-                enemy_type = enemy_info
-                spawn_positions.append((x, y, enemy_type))
-                self.enemies_remaining = len(wave_data)
+            spawn_positions.append((x, y, enemy_type))
         
+        self.enemies_remaining = len(wave_data)
+        print(f"[WAVE] Début vague {self.wave_number}/3, ennemis: {self.enemies_remaining}")
         return spawn_positions
+    
+    def start_boss_wave(self):
+        """Démarre la vague de boss"""
+        boss_seed = hash((self.floor_number, pygame.time.get_ticks())) % (2**32)
+        x, y = self.generate_boss_spawn_position()
+        
+        self.state = "boss_wave"
+        self.boss_spawned = True
+        self.enemies_remaining = 1
+        
+        print(f"[WAVE] Boss spawné pour l'étage {self.floor_number}, seed: {boss_seed}")
+        return [(x, y, "boss", boss_seed)]
     
     def generate_spawn_position(self):
         """Génère une position de spawn à l'intérieur de l'écran"""
@@ -123,6 +123,13 @@ class WaveManager:
         y = random.randint(top, bottom)
         return x, y
     
+    def generate_boss_spawn_position(self):
+        """Génère une position de spawn spéciale pour le boss"""
+        # Le boss apparaît au centre de l'écran
+        x = self.settings.screen_width // 2
+        y = self.settings.screen_height // 2
+        return x, y
+    
     def on_enemy_died(self, enemy):
         """Appelé quand un ennemi meurt"""
         if enemy in self.current_wave_enemies:
@@ -131,13 +138,15 @@ class WaveManager:
             
             if self.enemies_remaining <= 0:
                 self.on_wave_cleared()
+                print(f"[WAVE] {'Vague' if self.state != 'boss_wave' else 'Boss'} terminé(e)")
     
     def on_wave_cleared(self):
         """Appelé quand une vague est terminée"""
         self.state = "between_waves"
         self.wave_start_time = pygame.time.get_ticks()
         
-        if not self.wave_queue.has_more_waves():
+        # Si c'était le boss, l'étage est terminé
+        if self.boss_spawned and self.enemies_remaining == 0:
             self.state = "all_cleared"
     
     def is_between_waves(self):
@@ -148,34 +157,30 @@ class WaveManager:
     
     def get_wave_info(self):
         """Retourne les informations sur la vague actuelle"""
-        # Pour l'affichage, ajuster le numéro de vague (1-indexed)
-        display_wave = self.wave_number
+        # Pour l'affichage, on montre seulement les vagues normales (1 à 3)
+        # Le boss est traité séparément
         
         return {
             'floor': self.floor_number,
-            'current_wave': display_wave,
-            'total_waves': self.total_waves,
+            'current_wave': self.wave_number if self.state != "boss_wave" else 3,  # Quand boss, on reste à 3/3
+            'total_waves': 3,  # Toujours 3 vagues normales
             'enemies_remaining': self.enemies_remaining,
             'state': self.state,
-            'is_boss': self.is_boss_floor
+            'is_boss_wave': self.state == "boss_wave"
         }
     
     def get_remaining_waves_count(self):
-        """Retourne le nombre de vagues restantes"""
-        if self.is_boss_floor:
-            return 1 if self.state == "in_wave" else 0
+        """Retourne le nombre de vagues normales restantes"""
+        if self.state == "all_cleared" or self.boss_spawned:
+            return 0
+        elif self.state == "in_wave":
+            return max(0, 3 - self.wave_number + 1)
         else:
-            # Pour les étages normaux
-            if self.state == "all_cleared":
-                return 0
-            elif self.state == "in_wave":
-                return max(0, self.total_waves - self.wave_number + 1)
-            else:
-                return max(0, self.total_waves - self.wave_number)
+            return max(0, 3 - self.wave_number)
     
-    def is_boss_wave(self):
-        """Retourne True si c'est un étage de boss"""
-        return self.is_boss_floor
+    def is_boss_wave_current(self):
+        """Retourne True si c'est le moment du boss"""
+        return self.state == "boss_wave"
     
     def reset(self):
         """Réinitialise complètement le wave manager"""
