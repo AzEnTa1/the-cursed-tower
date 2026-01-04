@@ -94,6 +94,13 @@ class GameScene(BaseScene):
                     self.game_paused = True
                     self.current_sub_scene = self.tuto_sub_scene
                     self.current_sub_scene.on_enter()
+
+            elif event.key == pygame.K_p:
+                # Affiche le tuto
+                if not self.game_paused:
+                    self.game_paused = True
+                    self.current_sub_scene = self.perks_sub_scene
+                    self.current_sub_scene.on_enter()
             
 
         if self.game_paused:
