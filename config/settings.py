@@ -72,8 +72,13 @@ class Settings:
         self.BORDER_WIDTH = 2
 
         self.master_volume = player_data["master_volume"]
+        # Si certains sons on un volume différent des autres en permanance 
+        # val entre 0.0 et 1.0 au dixième
+        self.sounds_volume_map = {
+
+        }
     
-    def initialize_fonts(self):
+    def init_fonts(self):
         """Initialise les fonts"""
         self.font = {
             "h1": pygame.font.Font(None, 48),
@@ -81,5 +86,24 @@ class Settings:
             "h3": pygame.font.Font(None, 24),
             "h4": pygame.font.Font(None, 18),
             "main_menu": pygame.font.SysFont(None, 60),
-            
         }
+
+    def init_sounds(self):
+        """Initialise les sons"""
+        self.sounds = {
+            "boom":pygame.mixer.Sound("assets/sounds/boom.mp3"),
+            "coins":pygame.mixer.Sound("assets/sounds/coins.mp3"),
+            "degat_1":pygame.mixer.Sound("assets/sounds/degat_1.mp3"),
+            "game_over":pygame.mixer.Sound("assets/sounds/game_over.mp3"),
+            "game_start":pygame.mixer.Sound("assets/sounds/game_start.mp3"),
+            "souris_on_button":pygame.mixer.Sound("assets/sounds/souris_on_button.mp3"),
+            "spawn":pygame.mixer.Sound("assets/sounds/spawn.mp3"),
+            "Tire_1":pygame.mixer.Sound("assets/sounds/Tire_1.mp3"),
+            "Tire_2":pygame.mixer.Sound("assets/sounds/Tire_2.mp3"),
+            "Tire_3":pygame.mixer.Sound("assets/sounds/Tire_3.mp3"),
+            "Tire_4":pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
+        }
+
+    def update_master_volume(self):
+        for key in self.sounds.keys():
+            self.sounds[key].set_volume(self.master_volume * self.sounds_volume_map.get(key, 1))

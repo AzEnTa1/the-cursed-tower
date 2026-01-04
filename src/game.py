@@ -28,7 +28,11 @@ class Game:
         self.full_screen = False
 
         # Initialiser les fonts
-        self.settings.initialize_fonts()
+        self.settings.init_fonts()
+        self.settings.update_master_volume()
+
+        # Initialiser les sons
+        self.settings.init_sounds()
         
         # Surface de la fenetre utilisé
         self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
