@@ -71,13 +71,11 @@ class WaveManager:
                 _, boss_seed = enemy_info
                 spawn_positions.append((x, y, "boss", boss_seed))
                 self.enemies_remaining = 1
-                print(f"[WAVE] Boss généré avec seed {boss_seed}")
             else:
                 # C'est un ennemi normal : juste le nom du type
                 enemy_type = enemy_info
                 spawn_positions.append((x, y, enemy_type))
                 self.enemies_remaining = len(wave_data)
-                print(f"[WAVE] {enemy_type} généré")
         
         return spawn_positions
     
@@ -150,3 +148,17 @@ class WaveManager:
             'enemies_remaining': self.enemies_remaining,
             'state': self.state
         }
+    
+    def get_remaining_waves_count(self):
+        """Retourne le nombre de vagues restantes"""
+        if self.is_boss_floor:
+            return 1 if self.state == "in_wave" else 0
+        else:
+            waves_remaining = max(0, 3 - self.wave_number)
+            if self.state == "in_wave":
+                waves_remaining = max(0, 3 - self.wave_number + 1)
+            return waves_remaining
+    
+    def is_boss_wave(self):
+        """Retourne True si c'est un étage de boss"""
+        return self.is_boss_floor

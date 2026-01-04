@@ -22,7 +22,6 @@ class PerksUI:
         # Si une image n'est pas trouvée, on remplace par une image par défaut
         for perk_name in self.perks_imgs:
             if self.perks_imgs[perk_name] is None:
-                print(f"[UI] Image manquante pour {perk_name}")
                 self.perks_imgs[perk_name] = pygame.Surface((64, 64), pygame.SRCALPHA)
                 self.perks_imgs[perk_name].fill((100, 100, 100, 200))
         

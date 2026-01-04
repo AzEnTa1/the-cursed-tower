@@ -425,3 +425,13 @@ class Player:
             "score":self.score,
             "xp":self.xp
         }
+
+    def add_coins(self, amount):
+        """Ajoute des pièces au joueur"""
+        if not hasattr(self, 'coins'):
+            self.coins = 0
+        self.coins += amount
+
+    def get_coins(self):
+        """Retourne le nombre de pièces"""
+        return getattr(self, 'coins', 0)
