@@ -145,6 +145,7 @@ class TalentsScene(BaseScene):
         screen.blit(self.quit_button_img, self.exit_menu_rect)
         screen.blit(self.exit_menu_text, self.exit_menu_text_rect)
 
+        # Affiche les talents
         i = 0
         for key in list(self.talent_dict.keys()):
             screen.blit(self.talent_cadre, self.talent_dict[key]["total_rect"].topleft)
@@ -154,12 +155,13 @@ class TalentsScene(BaseScene):
                 screen.blit(txt, txt_rect)
             i += 1
 
-        bg_image1 = pygame.transform.scale(self.cadre, (self.stats_rect.width, self.stats_rect.height))
-        screen.blit(bg_image1, self.stats_rect)
+        # Affiche les stats
+        stats_img = pygame.transform.scale(self.cadre, (self.stats_rect.width, self.stats_rect.height))
+        screen.blit(stats_img, self.stats_rect)
         i = 0
         for key in self.player_data.keys():
             i += 1
-            txt = self.settings.font["h4"].render(f"{key.replace("_", " ")}: {self.player_data[key]}", True, (255, 255, 255))
+            txt = self.settings.font["h4"].render(f"{self.settings.data_translation_map.get(key, key)}: {self.player_data[key]}", True, (255, 255, 255))
             rect = txt.get_rect(midtop = (self.stats_rect.midtop)).move(0, 20*i)
             screen.blit(txt, rect)
     

@@ -249,8 +249,8 @@ class Weapon:
     def get_stats(self):
         """renvoi les donnés associé a l'arme du joueur (pour le menu pause)"""
         return {
-            "fire_rate":self.fire_rate,
-            "damage":self.damage,
+            "attack_speed":self.fire_rate,
+            "attack_damages":self.damage,
             "projectile_speed":self.projectile_speed,
             "stationary_threshold":self.stationary_threshold
         }
