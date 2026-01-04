@@ -1,4 +1,3 @@
-# src/entities/projectiles.py
 import pygame
 import random
 import math
@@ -16,9 +15,25 @@ class Projectile:
         self.damage = damage
         self.radius = radius
         self.color = color
-        self.lifetime = 60  # frames avant disparition
+        self.lifetime = 90  # frames avant disparition (augmenté)
         self.settings = settings
         self.is_multishot = is_multishot
+        
+        # Propriétés pour projectiles spéciaux
+        self.is_bouncing = False
+        self.bounces_remaining = 0
+        self.will_split = False
+        self.splits_remaining = 0
+        self.split_timer = 0
+        self.special_type = None
+        
+        # Pour projectiles accélérants
+        self.acceleration = 0
+        self.max_speed = 0
+        
+        # Pour projectiles qui poursuivent
+        self.target = None
+        self.turn_rate = 0
         
         # Effet visuel spécial pour le multishot
         self.trail_particles = []
@@ -27,9 +42,22 @@ class Projectile:
     
     def update(self):
         """Met à jour la position du projectile"""
+        # Gestion des projectiles spéciaux
+        if self.special_type == "accelerating":
+            self._update_accelerating()
+        elif self.special_type == "homing" and self.target:
+            self._update_homing()
+        elif self.special_type == "splitting":
+            self._update_splitting()
+        
+        # Déplacement normal
         self.x += self.dx
         self.y += self.dy
         self.lifetime -= 1
+        
+        # Gestion du rebond
+        if self.is_bouncing:
+            self._handle_bouncing()
         
         # Effets de particules différents selon le type
         self.trail_timer += 1
@@ -64,10 +92,120 @@ class Projectile:
             if particle['life'] <= 0:
                 self.trail_particles.remove(particle)
         
-        # Vérifie les bords de l'écran
+        # Vérifie les bords de l'écran (sauf pour les rebondissants)
         if (self.x < 0 or self.x > self.settings.screen_width or 
             self.y < 0 or self.y > self.settings.screen_height):
-            self.lifetime = 0
+            if not self.is_bouncing or self.bounces_remaining <= 0:
+                self.lifetime = 0
+    
+    def _update_accelerating(self):
+        """Met à jour un projectile qui accélère"""
+        current_speed = math.sqrt(self.dx**2 + self.dy**2)
+        if current_speed < self.max_speed:
+            # Normaliser la direction
+            if current_speed > 0:
+                self.dx *= 1 + self.acceleration / current_speed
+                self.dy *= 1 + self.acceleration / current_speed
+    
+    def _update_homing(self):
+        """Met à jour un projectile qui poursuit sa cible"""
+        if not self.target:
+            return
+        
+        # Calcul de l'angle vers la cible
+        dx_target = self.target.x - self.x
+        dy_target = self.target.y - self.y
+        distance = math.sqrt(dx_target**2 + dy_target**2)
+        
+        if distance > 0:
+            # Angle actuel du projectile
+            current_angle = math.atan2(self.dy, self.dx)
+            
+            # Angle vers la cible
+            target_angle = math.atan2(dy_target, dx_target)
+            
+            # Différence d'angle (normalisée entre -pi et pi)
+            angle_diff = target_angle - current_angle
+            while angle_diff > math.pi:
+                angle_diff -= 2 * math.pi
+            while angle_diff < -math.pi:
+                angle_diff += 2 * math.pi
+            
+            # Ajuster l'angle
+            turn_amount = min(abs(angle_diff), self.turn_rate)
+            if angle_diff < 0:
+                turn_amount = -turn_amount
+            
+            new_angle = current_angle + turn_amount
+            
+            # Mettre à jour la vitesse
+            speed = math.sqrt(self.dx**2 + self.dy**2)
+            self.dx = math.cos(new_angle) * speed
+            self.dy = math.sin(new_angle) * speed
+    
+    def _update_splitting(self):
+        """Met à jour un projectile qui va se diviser"""
+        if self.will_split and self.splits_remaining > 0:
+            self.split_timer -= 1
+            if self.split_timer <= 0:
+                self.will_split = False  
+    
+    def _handle_bouncing(self):
+        """Gère le rebond du projectile"""
+        bounced = False
+        
+        if self.x <= self.radius:
+            self.x = self.radius
+            self.dx = abs(self.dx) * 0.8  # Perte d'énergie au rebond
+            bounced = True
+        elif self.x >= self.settings.screen_width - self.radius:
+            self.x = self.settings.screen_width - self.radius
+            self.dx = -abs(self.dx) * 0.8
+            bounced = True
+        
+        if self.y <= self.radius:
+            self.y = self.radius
+            self.dy = abs(self.dy) * 0.8
+            bounced = True
+        elif self.y >= self.settings.screen_height - self.radius:
+            self.y = self.settings.screen_height - self.radius
+            self.dy = -abs(self.dy) * 0.8
+            bounced = True
+        
+        if bounced:
+            self.bounces_remaining -= 1
+            if self.bounces_remaining <= 0:
+                self.is_bouncing = False
+    
+    def create_split_projectiles(self):
+        """Crée les projectiles résultant d'une division"""
+        if not self.will_split or self.splits_remaining <= 0:
+            return []
+        
+        projectiles = []
+        speed = math.sqrt(self.dx**2 + self.dy**2)
+        
+        for i in range(2):
+            # Angle légèrement décalé
+            angle = math.atan2(self.dy, self.dx) + (math.pi/6 if i == 0 else -math.pi/6)
+            dx = math.cos(angle) * speed * 0.7
+            dy = math.sin(angle) * speed * 0.7
+            
+            # Créer un nouveau projectile (plus petit)
+            new_projectile = Projectile(
+                self.x, self.y, dx, dy, 
+                self.damage * 0.6,  # Moins de dégâts
+                self.settings,
+                color=self.color,
+                radius=max(3, self.radius - 2)
+            )
+            
+            projectiles.append(new_projectile)
+        
+        return projectiles
+    
+    def is_alive(self):
+        return self.lifetime > 0
     
     def draw(self, screen):
         """Dessine le projectile et sa traînée"""
@@ -82,10 +220,6 @@ class Projectile:
         
         # Dessine le projectile principal
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
-        
-
-    def is_alive(self):
-        return self.lifetime > 0
 
 
 class FireZone:

@@ -1,4 +1,3 @@
-# src/scenes/game_scene.py
 import pygame
 import math
 import random
@@ -191,32 +190,53 @@ class GameScene(BaseScene):
         # Mise à jour des projectiles joueurs
         for projectile in self.projectiles[:]:
             projectile.update()
+            
+            # Gestion des projectiles qui se divisent
+            if hasattr(projectile, 'will_split') and projectile.will_split and projectile.split_timer <= 0:
+                split_projectiles = projectile.create_split_projectiles()
+                self.projectiles.extend(split_projectiles)
+                projectile.will_split = False
+            
             if not projectile.is_alive():
                 self.projectiles.remove(projectile)
         
         # Mise à jour des projectiles ennemis
         for projectile in self.enemy_projectiles[:]:
             projectile.update()
+            
+            # Gestion des projectiles qui se divisent
+            if hasattr(projectile, 'will_split') and projectile.will_split and projectile.split_timer <= 0:
+                split_projectiles = projectile.create_split_projectiles()
+                self.enemy_projectiles.extend(split_projectiles)
+                projectile.will_split = False
+            
             if not projectile.is_alive():
                 self.enemy_projectiles.remove(projectile)
-            
-            # Collisions projectiles ennemis → joueur
-            distance = ((projectile.x - self.player.x)**2 + (projectile.y - self.player.y)**2)**0.5
-            if distance < self.player.size + projectile.radius:
-                if self.player.take_damage(projectile.damage):
-                    self._handle_player_death()
-                if projectile in self.enemy_projectiles:
-                    self.enemy_projectiles.remove(projectile)
+            else:
+                # Collisions projectiles ennemis → joueur
+                distance = ((projectile.x - self.player.x)**2 + (projectile.y - self.player.y)**2)**0.5
+                if distance < self.player.size + projectile.radius:
+                    if self.player.take_damage(projectile.damage):
+                        self._handle_player_death()
+                    if projectile in self.enemy_projectiles:
+                        self.enemy_projectiles.remove(projectile)
     
     def _update_enemies(self, dt):
         """Met à jour tous les ennemis"""
+        new_bosses_from_division = []
+        
         for enemy in self.enemies[:]:
             # Passe les zones de feu et pending_zones au pyromane
             if enemy.type == "pyromane":
                 enemy.update(self.player, self.fire_zones, self.pending_fire_zones)
             # Passe les projectiles ennemis au shooter et destructeur
-            elif enemy.type in ["shooter", "destructeur", "boss"]:
+            elif enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
+            elif enemy.type == "boss":
+                # Le boss retourne maintenant (ennemis_créés, bosses_de_division)
+                enemies_created, division_bosses = enemy.update(self.player, self.enemy_projectiles)
+                if division_bosses:
+                    new_bosses_from_division.extend(division_bosses)
             else:   
                 enemy.update(self.player, None)
                         
@@ -230,6 +250,12 @@ class GameScene(BaseScene):
             # Gestion des suicides
             if enemy.type == "suicide":
                 self._handle_suicide_enemy(enemy)
+        
+        # Ajouter les nouveaux bosses de division
+        for boss in new_bosses_from_division:
+            if boss not in self.enemies:
+                self.enemies.append(boss)
+                self.wave_manager.current_wave_enemies.append(boss)
     
     def _check_player_projectile_collisions(self, enemy):
         """Vérifie les collisions entre projectiles joueur et ennemi"""
@@ -266,8 +292,6 @@ class GameScene(BaseScene):
     
     def _check_melee_collision(self, enemy):
         """Vérifie les collisions en mêlée entre ennemi et joueur"""
-        # Exclure le boss arborescent des collisions de mêlée
-            
         distance = ((enemy.x - self.player.x)**2 + (enemy.y - self.player.y)**2)**0.5
         if distance < enemy.radius + self.player.size:
             if self.player.take_damage(enemy.damage):

@@ -1,699 +1,747 @@
-# src/entities/enemies/boss.py
 import pygame
 import math
 import random
 from .enemy import Enemy
 from ..projectiles import Projectile
-from .basic import Basic
-from .charger import Charger
-from .shooter import Shooter
 
-class RecursivePatternCore:
-    """
-    Noyau récursif de génération de patterns
-    Système central de récursivité pour les attaques du boss
-    """
+class SpecialProjectile:
+    """Classe de base pour les projectiles spéciaux du boss"""
     
     @staticmethod
-    def generate_recursive_pattern(center_x, center_y, depth, max_depth, 
-                                  pattern_type="fractal", params=None, current_time=0):
+    def create_bouncing(x, y, dx, dy, damage, settings, bounces=3):
+        """Crée un projectile rebondissant sur les murs"""
+        projectile = Projectile(x, y, dx, dy, damage, settings, color=(100, 255, 100), radius=8)
+        projectile.bounces_remaining = bounces
+        projectile.is_bouncing = True
+        projectile.special_type = "bouncing"
+        return projectile
+    
+    @staticmethod
+    def create_accelerating(x, y, dx, dy, damage, settings, max_speed=10):
+        """Crée un projectile qui accélère progressivement"""
+        projectile = Projectile(x, y, dx * 0.5, dy * 0.5, damage, settings, color=(255, 150, 50), radius=6)
+        projectile.initial_speed = math.sqrt(dx**2 + dy**2) * 0.5
+        projectile.max_speed = max_speed
+        projectile.acceleration = 0.1
+        projectile.special_type = "accelerating"
+        return projectile
+    
+    @staticmethod
+    def create_splitting(x, y, dx, dy, damage, settings, splits=2):
+        """Crée un projectile qui se divise en plusieurs"""
+        projectile = Projectile(x, y, dx, dy, damage, settings, color=(150, 100, 255), radius=7)
+        projectile.will_split = True
+        projectile.splits_remaining = splits
+        projectile.split_timer = 60  # Se divise après 1 seconde
+        projectile.special_type = "splitting"
+        return projectile
+    
+    @staticmethod
+    def create_homing(x, y, dx, dy, damage, settings, player, turn_rate=0.05):
+        """Crée un projectile qui poursuit le joueur"""
+        projectile = Projectile(x, y, dx, dy, damage, settings, color=(255, 100, 150), radius=6)
+        projectile.target = player
+        projectile.turn_rate = turn_rate
+        projectile.special_type = "homing"
+        return projectile
+
+
+class RecursivePatternGenerator:
+    """Générateur de patterns récursifs pour le boss"""
+    
+    @staticmethod
+    def generate_circle_recursive(x, y, depth, max_depth, angle_offset=0, projectile_types=None):
         """
-        Génère un motif récursif avec de nombreuses variantes
+        Génère un motif circulaire récursif
         
         Args:
-            pattern_type: Type de motif (fractal, flower, web, crystal, vortex, etc.)
+            x, y: Position centrale
+            depth: Profondeur actuelle
+            max_depth: Profondeur maximale
+            angle_offset: Rotation
+            projectile_types: Types de projectiles spéciaux à utiliser
         """
         if depth <= 0:
             return []
         
-        if params is None:
-            params = {
-                'angle_offset': 0,
-                'scale': 1.0,
-                'intensity': 1.0,
-                'phase': 1
-            }
-        
         result = []
         
-        # Base récursive pour tous les patterns
-        if pattern_type == "fractal":
-            result = RecursivePatternCore._generate_fractal(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        elif pattern_type == "flower":
-            result = RecursivePatternCore._generate_flower(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        elif pattern_type == "web":
-            result = RecursivePatternCore._generate_web(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        elif pattern_type == "crystal":
-            result = RecursivePatternCore._generate_crystal(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        elif pattern_type == "vortex":
-            result = RecursivePatternCore._generate_vortex(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        elif pattern_type == "spiral":
-            result = RecursivePatternCore._generate_spiral(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
-        else:
-            result = RecursivePatternCore._generate_simple(
-                center_x, center_y, depth, max_depth, params, current_time
-            )
+        # Nombre d'éléments augmente avec la profondeur
+        elements = 4 + depth * 2
         
-        return result
-    
-    @staticmethod
-    def _generate_fractal(center_x, center_y, depth, max_depth, params, current_time):
-        """Fractale classique - la récursivité principale"""
-        result = []
-        branches = 3 + min(depth, 3)
-        
-        for i in range(branches):
-            angle = (2 * math.pi * i / branches) + params['angle_offset']
+        for i in range(elements):
+            # Angle pour cet élément
+            angle = (2 * math.pi * i / elements) + angle_offset
             
-            distance = 40 * (max_depth - depth + 1) * params['scale']
-            pulse = math.sin(current_time * 2 + i) * 4
+            # Distance du centre
+            radius = 30 * (max_depth - depth + 1)
             
-            x = center_x + math.cos(angle) * (distance + pulse)
-            y = center_y + math.sin(angle) * (distance + pulse)
+            # Position
+            elem_x = x + math.cos(angle) * radius
+            elem_y = y + math.sin(angle) * radius
             
-            # Taille augmentée des projectiles
-            speed = 2.5 + (max_depth - depth) * 0.4
+            # Direction radiale
+            speed = 2.5 + (max_depth - depth) * 0.5
             dx = math.cos(angle) * speed
             dy = math.sin(angle) * speed
+            damage = 8 + depth * 3
             
-            result.append(('projectile', x, y, dx, dy, 10 + depth * 3, angle))
+            # Type de projectile spécial
+            projectile_type = None
+            if projectile_types and i % 3 == 0:  # Un sur trois est spécial
+                projectile_type = random.choice(projectile_types)
             
-            # Appel récursif (cœur de la récursivité)
+            result.append(('projectile', elem_x, elem_y, dx, dy, damage, projectile_type))
+            
+            # Appel récursif pour sous-motifs
             if depth > 1:
-                sub_params = params.copy()
-                sub_params['angle_offset'] += 0.3
-                sub_result = RecursivePatternCore._generate_fractal(
-                    x, y, depth - 1, max_depth, sub_params, current_time
+                sub_result = RecursivePatternGenerator.generate_circle_recursive(
+                    elem_x, elem_y, depth - 1, max_depth,
+                    angle_offset + 0.5,
+                    projectile_types
                 )
                 result.extend(sub_result)
         
         return result
     
     @staticmethod
-    def _generate_flower(center_x, center_y, depth, max_depth, params, current_time):
-        """Motif floral avec pétales"""
-        result = []
-        petals = 6
-        
-        for i in range(petals):
-            angle = (2 * math.pi * i / petals) + params['angle_offset']
-            petal_shape = math.sin(current_time + i) * 0.4
-            
-            distance = 50 + 25 * math.sin(i * 2) * params['scale']
-            x = center_x + math.cos(angle + petal_shape) * distance
-            y = center_y + math.sin(angle + petal_shape) * distance
-            
-            speed = 2.0 + depth * 0.3
-            dx = math.cos(angle) * speed
-            dy = math.sin(angle) * speed
-            
-            result.append(('projectile', x, y, dx, dy, 8 + depth * 2, angle))
-        
-        return result
-    
-    @staticmethod
-    def _generate_web(center_x, center_y, depth, max_depth, params, current_time):
-        """Toile d'araignée avec connections"""
-        result = []
-        rings = 3
-        spokes = 8
-        
-        for ring in range(1, rings + 1):
-            radius = 40 * ring * params['scale']
-            
-            for spoke in range(spokes):
-                angle = (2 * math.pi * spoke / spokes) + params['angle_offset']
-                
-                x = center_x + math.cos(angle) * radius
-                y = center_y + math.sin(angle) * radius
-                
-                speed = 1.5 + ring * 0.3
-                dx = math.cos(angle + math.pi/2) * speed
-                dy = math.sin(angle + math.pi/2) * speed
-                
-                result.append(('projectile', x, y, dx, dy, 7 + ring * 2, angle))
-        
-        return result
-    
-    @staticmethod
-    def _generate_crystal(center_x, center_y, depth, max_depth, params, current_time):
-        """Motif cristallin géométrique"""
-        result = []
-        sides = 6
-        
-        for i in range(sides):
-            angle = (2 * math.pi * i / sides) + params['angle_offset']
-            
-            distance = 60 * params['scale']
-            x = center_x + math.cos(angle) * distance
-            y = center_y + math.sin(angle) * distance
-            
-            speed = 2.2
-            dx = math.cos(angle) * speed
-            dy = math.sin(angle) * speed
-            
-            result.append(('projectile', x, y, dx, dy, 9 + depth * 2, angle))
-        
-        return result
-    
-    @staticmethod
-    def _generate_vortex(center_x, center_y, depth, max_depth, params, current_time):
-        """Vortex spirale"""
-        result = []
-        arms = 2
-        points_per_arm = 6 + depth
+    def generate_spiral_arms(x, y, arms=3, projectiles_per_arm=6, projectile_types=None):
+        """Génère un motif en spirale avec bras"""
+        projectiles = []
+        current_time = pygame.time.get_ticks() * 0.001
         
         for arm in range(arms):
-            base_angle = (math.pi * arm) + params['angle_offset']
+            base_angle = (2 * math.pi * arm / arms) + current_time * 0.3
             
-            for point in range(points_per_arm):
-                spiral_factor = point * 0.5
-                angle = base_angle + spiral_factor
-                radius = 20 + point * 15
+            for i in range(projectiles_per_arm):
+                # Progression en spirale
+                progress = i / projectiles_per_arm
+                angle = base_angle + progress * math.pi * 2
+                radius = 20 + i * 25
                 
-                x = center_x + math.cos(angle) * radius
-                y = center_y + math.sin(angle) * radius
+                px = x + math.cos(angle) * radius
+                py = y + math.sin(angle) * radius
                 
-                speed = 2.0
-                dx = math.cos(angle + math.pi/2) * speed * 0.7 + math.cos(angle) * speed * 0.3
-                dy = math.sin(angle + math.pi/2) * speed * 0.7 + math.sin(angle) * speed * 0.3
+                # Direction tangentielle
+                dx = math.cos(angle + math.pi/2) * 3.5
+                dy = math.sin(angle + math.pi/2) * 3.5
                 
-                result.append(('projectile', x, y, dx, dy, 7 + point, angle))
+                # Type de projectile spécial
+                projectile_type = None
+                if projectile_types and i % 2 == 0:
+                    projectile_type = random.choice(projectile_types)
+                
+                projectiles.append(('projectile', px, py, dx, dy, 10, projectile_type))
         
-        return result
+        return projectiles
     
     @staticmethod
-    def _generate_spiral(center_x, center_y, depth, max_depth, params, current_time):
-        """Spirale simple"""
-        result = []
-        turns = 2
-        total_points = 10 + depth * 2
+    def generate_wave_pattern(x, y, waves=3, projectiles_per_wave=8):
+        """Génère un pattern en vague"""
+        projectiles = []
+        current_time = pygame.time.get_ticks() * 0.001
         
-        for i in range(total_points):
-            progress = i / total_points
-            angle = params['angle_offset'] + turns * 2 * math.pi * progress
-            radius = 25 + 50 * progress
+        for wave in range(waves):
+            wave_offset = wave * (math.pi / waves)
             
-            x = center_x + math.cos(angle) * radius
-            y = center_y + math.sin(angle) * radius
-            
-            speed = 2.5
-            dx = math.cos(angle + math.pi/2) * speed
-            dy = math.sin(angle + math.pi/2) * speed
-            
-            result.append(('projectile', x, y, dx, dy, 6 + int(progress * 5), angle))
+            for i in range(projectiles_per_wave):
+                angle = (2 * math.pi * i / projectiles_per_wave) + current_time
+                
+                # Effet de vague
+                wave_height = math.sin(angle * 2 + wave_offset + current_time * 2) * 0.5
+                dx = math.cos(angle) * (3.0 + wave_height)
+                dy = math.sin(angle) * (3.0 + wave_height)
+                
+                projectiles.append(('projectile', x, y, dx, dy, 8, None))
         
-        return result
+        return projectiles
+
+
+class BossDivisionSystem:
+    """Gère la division du boss en deux"""
     
-    @staticmethod
-    def _generate_simple(center_x, center_y, depth, max_depth, params, current_time):
-        """Pattern très simple"""
-        result = []
-        points = 8
-        radius = 40 + depth * 10
+    def __init__(self, settings):
+        self.settings = settings
+        self.can_divide = True
+        self.division_threshold = 0.5  # Division à 50% de vie
+        self.has_divided = False
+        self.division_cooldown = 0
+    
+    def update(self):
+        """Met à jour le cooldown de division"""
+        if self.division_cooldown > 0:
+            self.division_cooldown -= 1
+    
+    def check_division(self, boss, current_health, max_health):
+        """Vérifie si le boss doit se diviser"""
+        if not self.can_divide or self.has_divided or self.division_cooldown > 0:
+            return None
         
-        for i in range(points):
-            angle = (2 * math.pi * i / points) + params['angle_offset']
-            x = center_x + math.cos(angle) * radius
-            y = center_y + math.sin(angle) * radius
-            
-            speed = 1.8
-            dx = math.cos(angle + math.pi/2) * speed
-            dy = math.sin(angle + math.pi/2) * speed
-            
-            result.append(('projectile', x, y, dx, dy, 8, angle))
+        health_ratio = current_health / max_health
         
-        return result
+        if health_ratio <= self.division_threshold:
+            self.has_divided = True
+            self.division_cooldown = 300  # 5 secondes avant de pouvoir rediviser
+            return self.create_division_bosses(boss)
+        
+        return None
+    
+    def create_division_bosses(self, original_boss):
+        """Crée deux nouveaux bosses à partir de l'original"""
+        bosses = []
+        
+        for i in range(2):
+            # Position décalée
+            angle = math.pi/2 + (i * math.pi)
+            distance = original_boss.radius * 1.5
+            x = original_boss.x + math.cos(angle) * distance
+            y = original_boss.y + math.sin(angle) * distance
+            
+            # Créer un boss plus petit
+            from .boss import Boss  # Import circulaire, mais OK pour une classe interne
+            boss = Boss(
+                x, y, 
+                self.settings,
+                floor_number=1,
+                global_seed=hash(f"{original_boss.x}_{original_boss.y}_{i}"),
+                is_divided=True
+            )
+            
+            # Réduire les stats
+            boss.health = original_boss.health * 0.4  # 40% de la vie restante
+            boss.max_health = boss.health
+            boss.damage = original_boss.damage * 0.6  # Réduit les dégâts
+            boss.speed = original_boss.speed * 1.1
+            boss.radius = original_boss.radius * 0.7
+            
+            # Limiter les capacités
+            boss.max_phases = min(2, original_boss.max_phases - 1)
+            boss.phases = boss._create_phases()
+            
+            # Pas de division récursive pour les clones
+            boss.division_system.can_divide = False
+            
+            bosses.append(boss)
+        
+        return bosses
 
 
 class BossPhase:
-    """Phase du boss avec rage à 1/3 de vie"""
+    """Représente une phase du boss"""
     
     def __init__(self, number, max_phases):
         self.number = number
         self.max_phases = max_phases
         self.health_threshold = 1.0 - (number / max_phases)
+        self.active = False
         
-        # Caractéristiques
-        self.attack_speed = 1.0 + (number * 0.2)
-        self.damage_multiplier = 1.0 + (number * 0.25)
-        self.movement_speed = 1.0 + (number * 0.15)
+        # Caractéristiques de la phase
+        self.attack_cooldown = max(50, 100 - (number * 15))  # Plus lent
+        self.projectile_size = 7 + (number * 1)  # Taille augmentée
+        self.damage_multiplier = 0.8 + ((number - 1) * 0.1)  # Réduit
         
         # Patterns disponibles
-        self.base_patterns = ["fractal", "simple"]
-        
+        self.patterns = ['circle', 'spiral', 'burst', 'wave']
         if number >= 2:
-            self.base_patterns.extend(["flower", "web"])
-        if number >= 3:
-            self.base_patterns.extend(["crystal", "vortex"])
-        if number >= 4:
-            self.base_patterns.extend(["spiral"])
+            self.patterns.append('mixed')
         
-        # Rage mode (activé séparément)
-        self.rage_activated = False
+        # Types de projectiles spéciaux selon la phase
+        if number == 1:
+            self.special_projectiles = []
+        elif number == 2:
+            self.special_projectiles = ['bouncing', 'accelerating']
+        elif number >= 3:
+            self.special_projectiles = ['bouncing', 'accelerating', 'splitting', 'homing']
         
         # Couleur de la phase
-        self.color = self._get_phase_color(number)
-    
-    def _get_phase_color(self, phase):
-        """Couleurs des phases"""
-        colors = [
-            (100, 180, 255),    # Phase 1: Bleu
-            (180, 120, 255),    # Phase 2: Violet
-            (255, 120, 150),    # Phase 3: Rose
-            (255, 200, 100),    # Phase 4: Or
-        ]
-        return colors[min(phase - 1, len(colors) - 1)]
-    
-    def activate_rage(self):
-        """Active le mode rage pour cette phase"""
-        self.rage_activated = True
-        self.attack_speed *= 1.5
-        self.damage_multiplier *= 1.3
-        self.movement_speed *= 1.2
-        self.color = (255, 80, 80)  # Rouge pour la rage
+        self.color = [
+            (100, 200, 255),    # Phase 1: Bleu
+            (200, 100, 255),    # Phase 2: Violet
+            (255, 100, 100),    # Phase 3: Rouge
+            (255, 200, 50)      # Phase 4: Or
+        ][min(number - 1, 3)]
     
     def get_random_pattern(self):
         """Retourne un pattern aléatoire"""
-        return random.choice(self.base_patterns)
-
-
-class MinionSpawnSystem:
-    """Système d'invocation de minions pour le boss"""
-    
-    def __init__(self, settings):
-        self.settings = settings
-        self.spawn_cooldown = 0
-        self.spawn_rate = 180  # 3 secondes
-        self.max_minions = 6
-    
-    def update(self, boss, enemies_list):
-        """Met à jour le spawn des minions"""
-        if self.spawn_cooldown > 0:
-            self.spawn_cooldown -= 1
-            return []
-        
-        # Compter les minions actuels
-        current_minions = sum(1 for e in enemies_list if hasattr(e, 'is_boss_minion') and e.is_boss_minion)
-        
-        if current_minions >= self.max_minions:
-            return []
-        
-        # Spawn de minions
-        if random.random() < 0.02:  # 2% de chance par frame
-            return self.spawn_minions(boss, 2)
-        
-        return []
-    
-    def spawn_minions(self, boss, count):
-        """Fait apparaître des minions"""
-        minions = []
-        
-        for i in range(count):
-            # Position autour du boss
-            angle = random.random() * 2 * math.pi
-            distance = 120 + random.random() * 60
-            x = boss.x + math.cos(angle) * distance
-            y = boss.y + math.sin(angle) * distance
-            
-            # Type de minion
-            minion_type = random.choices(
-                ['basic', 'charger', 'shooter'],
-                weights=[0.4, 0.35, 0.25],
-                k=1
-            )[0]
-            
-            # Créer le minion
-            if minion_type == 'basic':
-                minion = Basic(x, y, self.settings)
-            elif minion_type == 'charger':
-                minion = Charger(x, y, self.settings)
-            else:  # shooter
-                minion = Shooter(x, y, self.settings)
-            
-            # Marquer comme minion du boss
-            minion.is_boss_minion = True
-            minion.boss_owner = boss
-            minions.append(minion)
-        
-        self.spawn_cooldown = self.spawn_rate
-        return minions
-
-
-class BossDivisionSystem:
-    """Système de division du boss"""
-    
-    def __init__(self):
-        self.can_divide = True
-        self.division_cooldown = 0
-        self.division_health_threshold = 0.33  # Division à 1/3 de vie
-    
-    def check_division(self, boss, health_ratio):
-        """Vérifie si le boss doit se diviser"""
-        if not self.can_divide:
-            return False
-        
-        if health_ratio <= self.division_health_threshold and self.division_cooldown <= 0:
-            return True
-        
-        return False
-    
-    def divide_boss(self, boss):
-        """Divise le boss en deux"""
-        if not self.can_divide:
-            return []
-                
-        clones = []
-        current_health = boss.health / 2
-        
-        for i in range(2):
-            # Position décalée
-            angle = (math.pi * i) + random.random() * 0.5
-            distance = boss.radius * 2
-            x = boss.x + math.cos(angle) * distance
-            y = boss.y + math.sin(angle) * distance
-            
-            # Créer un clone avec stats réduites
-            clone = type(boss)(x, y, boss.settings, 1, None)
-            
-            # Stats réduites
-            clone.health = current_health * 0.7
-            clone.max_health = clone.health
-            clone.damage = boss.damage * 0.6
-            clone.speed = boss.speed * 1.1
-            clone.radius = boss.radius * 0.8
-            
-            # Copier l'état actuel
-            clone.current_phase = boss.current_phase
-            clone.rage_mode = boss.rage_mode
-            
-            # Empêcher la division infinie
-            clone.division_system.can_divide = False
-            
-            # Couleur plus claire pour distinguer
-            clone.base_color = (
-                min(255, boss.base_color[0] + 30),
-                min(255, boss.base_color[1] + 30),
-                min(255, boss.base_color[2] + 30)
-            )
-            
-            clones.append(clone)
-        
-        # Désactiver la division pour le boss original
-        self.can_divide = False
-        self.division_cooldown = 600  # 10 secondes
-        
-        return clones
+        return random.choice(self.patterns)
 
 
 class Boss(Enemy):
     """
-    Boss amélioré avec division et invocation de minions
-    Nom: "Boss"
+    Boss avec système de division et patterns récursifs
+    Nom: "Boss" (toujours)
     """
     
-    def __init__(self, x, y, settings, floor_number, global_seed=None):
+    def __init__(self, x, y, settings, floor_number=1, global_seed=None, is_divided=False):
+        """
+        Initialise le boss
+        
+        Args:
+            x, y: Position
+            settings: Configuration
+            floor_number: Difficulté (1+)
+            global_seed: Seed aléatoire
+            is_divided: True si créé par division
+        """
         super().__init__(x, y, settings)
         
-        # Configuration
+        # Configuration de base
         self.type = "boss"
         self.name = "Boss"
         
         # Seed aléatoire
-        if global_seed:
+        if global_seed is not None:
             random.seed(global_seed + floor_number)
         
-        # Statistiques
-        self._init_stats(floor_number)
+        # Statistiques adaptées
+        self._init_stats(floor_number, is_divided)
+        
+        # Apparence
+        self._init_appearance(floor_number)
         
         # Systèmes
-        self.pattern_core = RecursivePatternCore()
-        self.phases = []
+        self.pattern_generator = RecursivePatternGenerator()
+        self.special_projectile = SpecialProjectile()
+        self.division_system = BossDivisionSystem(settings)
+        
+        # Phases
+        self.max_phases = min(4, 1 + (floor_number // 2))
+        if is_divided:
+            self.max_phases = min(2, self.max_phases)
         self.current_phase = 1
-        self._init_phases(min(4, 1 + floor_number // 2))
+        self.phases = self._create_phases()
+        self.phases[0].active = True
         
-        self.minion_system = MinionSpawnSystem(settings)
-        self.division_system = BossDivisionSystem()
-        
-        # État
+        # Attaques
         self.current_pattern = None
-        self.pattern_cooldown = 0
-        self.attack_cooldown = self._get_cooldown(floor_number)
+        self.attack_cooldown = 0
+        self.attack_sound = "Tire_4"
         
+        # Mode Rage (à 1/3 de vie)
         self.rage_mode = False
-        self.rage_health_threshold = 0.33  # Rage à 1/3 de vie
+        self.rage_health_threshold = 0.33
+        self.rage_activated = False
         
         # Animation
         self.pulse_timer = 0
         self.rotation_angle = 0
         
-        # Couleur
-        self.base_color = (150, 100, 255)
+        # État
+        self.is_divided_boss = is_divided
+        self.player = None  # Sera défini lors du update
+        
+        # Pour les projectiles qui poursuivent
+        self.projectiles_to_update = []
+        
+        print(f"[BOSS] Créé - Phase: {self.current_phase}, PV: {self.health}, Division: {is_divided}")
+    
+    def _init_stats(self, floor_number, is_divided):
+        """Initialise les statistiques"""
+        boss_level = max(1, floor_number)
+        
+        # Stats équilibrées (réduites pour éviter le oneshot)
+        if is_divided:
+            self.health = 180 + (boss_level * 35)  # Réduit pour les clones
+            self.damage = 8 + (boss_level * 0.8)  # Réduit
+        else:
+            self.health = 320 + (boss_level * 60)  # Réduit de base
+            self.damage = 9 + (boss_level * 1.0)  # Réduit
+        
+        self.max_health = self.health
+        self.speed = 1.2 + (boss_level * 0.07)
+        self.radius = 28 + min(boss_level, 8)
+        
+        # Plus lent pour donner du temps au joueur
+        self.attack_cooldown_base = max(60, 120 - (boss_level * 5))
+        
+        # Rage stats
+        self.rage_damage_multiplier = 1.3
+        self.rage_speed_multiplier = 1.2
+    
+    def _init_appearance(self, floor_number):
+        """Initialise l'apparence"""
+        # Couleur basée sur l'étage
+        hue = (floor_number * 25) % 360
+        self.color = self._hsv_to_rgb(hue / 360, 0.7, 0.9)
         self.core_color = (255, 255, 220)
         
-    
-    def _init_stats(self, floor_number):
-        """Initialise les statistiques"""
-        level = max(1, floor_number)
+    def _hsv_to_rgb(self, h, s, v):
+        """Convertit HSV en RGB"""
+        c = v * s
+        x = c * (1 - abs((h * 6) % 2 - 1))
+        m = v - c
         
-        self.health = 400 + (level * 100)
-        self.max_health = self.health
-        self.damage = 15 + (level * 2)
-        self.speed = 1.5 + (level * 0.1)
-        self.radius = 30
+        if h < 1/6:
+            r, g, b = c, x, 0
+        elif h < 2/6:
+            r, g, b = x, c, 0
+        elif h < 3/6:
+            r, g, b = 0, c, x
+        elif h < 4/6:
+            r, g, b = 0, x, c
+        elif h < 5/6:
+            r, g, b = x, 0, c
+        else:
+            r, g, b = c, 0, x
         
-        # Multiplicateurs
-        self.damage_multiplier = 1.0
-        self.speed_multiplier = 1.0
+        return (int((r + m) * 255), int((g + m) * 255), int((b + m) * 255))
     
-    def _get_cooldown(self, floor_number):
-        """Calcule le cooldown d'attaque"""
-        base = 90
-        reduction = min(30, floor_number * 2)
-        return max(60, base - reduction)
-    
-    def _init_phases(self, count):
-        """Initialise les phases"""
-        self.phases = [BossPhase(i + 1, count) for i in range(count)]
+    def _create_phases(self):
+        """Crée les phases du boss"""
+        phases = []
+        for i in range(self.max_phases):
+            phases.append(BossPhase(i + 1, self.max_phases))
+        return phases
     
     def update(self, player, enemy_projectiles=None):
         """
         Met à jour le boss
-        Retourne: (minions_spawned, clones_created)
+        
+        Returns:
+            Tuple (None car pas d'ennemis, bosses_créés_par_division)
         """
-        # Mise à jour de phase
+        # Stocker le joueur pour les projectiles qui poursuivent
+        self.player = player
+        
+        # Mise à jour de la rage
+        self._update_rage_mode()
+        
+        # Mise à jour de la division
+        self.division_system.update()
+        
+        # Mise à jour des animations
+        self.pulse_timer += 0.05
+        self.rotation_angle += 0.02
+        
+        # Vérifier les phases
+        self._check_phase_transition()
+        
+        # Déplacement simple
+        self._simple_movement(player)
+        
+        # Garder dans l'écran
+        self._constrain_to_screen()
+        
+        # Gestion des attaques
+        if enemy_projectiles is not None:
+            self._update_attacks(enemy_projectiles)
+        
+        # Vérifier la division
+        division_bosses = self.division_system.check_division(
+            self, self.health, self.max_health
+        )
+        
+        # Retourner les bosses de division (pas d'ennemis créés)
+        return None, division_bosses
+    
+    def _update_rage_mode(self):
+        """Active le mode rage à 1/3 de vie"""
+        if self.rage_activated:
+            return
+            
         health_ratio = self.health / self.max_health
+        if health_ratio <= self.rage_health_threshold:
+            self.rage_mode = True
+            self.rage_activated = True
+            print("[BOSS] Rage activée!")
+            
+            # Boost en rage
+            self.speed *= self.rage_speed_multiplier
+            self.attack_cooldown_base = max(40, self.attack_cooldown_base - 20)
+            
+            # Dans la rage, on arrête les patterns normaux et on utilise uniquement des patterns spéciaux
+            for phase in self.phases:
+                phase.patterns = ['wave', 'mixed']  # Patterns plus simples mais intenses
+                phase.special_projectiles = ['bouncing', 'accelerating', 'splitting']  # Tous les projectiles spéciaux
+    
+    def _check_phase_transition(self):
+        """Vérifie si on change de phase"""
+        health_ratio = self.health / self.max_health
+        
         for i, phase in enumerate(self.phases):
             if health_ratio <= phase.health_threshold:
                 new_phase = i + 1
                 if new_phase > self.current_phase:
                     self.current_phase = new_phase
-                    self._on_phase_change(new_phase)
+                    self._activate_phase(new_phase)
                     break
-        
-        # Vérifier la rage
-        self._check_rage_mode(health_ratio)
-        
-        # Vérifier la division
-        clones = []
-        if self.division_system.check_division(self, health_ratio):
-            clones = self.division_system.divide_boss(self)
-        
-        # Animation
-        self.pulse_timer += 0.07
-        self.rotation_angle += 0.02
-        
-        # Déplacement
-        self._smart_movement(player)
-        
-        # Attaques
-        self._update_attacks(enemy_projectiles)
-        
-        # Invocation de minions
-        minions = self.minion_system.update(self, [])  # Liste vide car pas accès aux ennemis
-        
-        # Contraintes
-        self._constrain_to_screen()
-        
-        return minions, clones
     
-    def _on_phase_change(self, new_phase):
-        """Transition de phase"""
+    def _activate_phase(self, phase_number):
+        """Active une nouvelle phase"""
+        print(f"[BOSS] Phase {phase_number} activée")
         
-        # Effet visuel
+        # Désactiver toutes les phases
+        for phase in self.phases:
+            phase.active = False
+        
+        # Activer la nouvelle phase
+        self.phases[phase_number - 1].active = True
+        
+        # Effet sonore
         self.settings.sounds["spawn"].play()
-        
-        # Buff de phase
-        phase = self.phases[new_phase - 1]
-        self.speed *= 1.1
-        
-        # Réinitialiser le pattern
-        self.current_pattern = None
-        self.pattern_cooldown = 0
     
-    def _check_rage_mode(self, health_ratio):
-        """Active le mode rage à 1/3 de vie"""
-        if health_ratio <= self.rage_health_threshold and not self.rage_mode:
-            self.rage_mode = True
-            
-            # Activer la rage sur la phase actuelle
-            if self.current_phase <= len(self.phases):
-                self.phases[self.current_phase - 1].activate_rage()
-            
-            # Buffs de rage
-            self.speed *= 1.3
-            self.damage_multiplier = 1.5
-            self.attack_cooldown *= 0.7
-                
-    def _smart_movement(self, player):
-        """Déplacement intelligent"""
+    def _simple_movement(self, player):
+        """Déplacement simple vers le joueur"""
         dx = player.x - self.x
         dy = player.y - self.y
         distance = max(math.sqrt(dx*dx + dy*dy), 0.1)
         
-        # Distance cible selon le mode
-        if self.rage_mode:
-            target_distance = 100  # Plus agressif en rage
-        else:
-            target_distance = 150
+        # Distance cible
+        target_distance = 180  # Un peu plus loin pour donner de l'espace
         
-        # Vitesse ajustée
-        speed = self.speed * self.speed_multiplier
-        
-        # Mouvement
         if distance > target_distance * 1.2:
-            # Approche
-            self.x += (dx / distance) * speed
-            self.y += (dy / distance) * speed
+            # Trop loin, s'approcher
+            self.x += (dx / distance) * self.speed
+            self.y += (dy / distance) * self.speed
         elif distance < target_distance * 0.8:
-            # Éloignement
-            self.x -= (dx / distance) * speed * 0.8
-            self.y -= (dy / distance) * speed * 0.8
-        else:
-            # Mouvement latéral
-            lateral_angle = math.atan2(dy, dx) + math.pi/2
-            self.x += math.cos(lateral_angle) * speed * 0.6
-            self.y += math.sin(lateral_angle) * speed * 0.6
-        
-        # Tremblement en rage
-        if self.rage_mode:
-            shake = math.sin(self.pulse_timer * 3) * 2
-            self.x += shake
-            self.y += shake
-    
-    def _update_attacks(self, enemy_projectiles):
-        """Gère les attaques"""
-        if enemy_projectiles is None:
-            return
-        
-        if self.pattern_cooldown > 0:
-            self.pattern_cooldown -= 1
-            return
-        
-        # Choisir un pattern
-        if self.current_pattern is None:
-            if self.current_phase <= len(self.phases):
-                phase = self.phases[self.current_phase - 1]
-                self.current_pattern = phase.get_random_pattern()
-            else:
-                self.current_pattern = random.choice(["fractal", "simple"])
-        
-        # Exécuter le pattern
-        self._execute_pattern(enemy_projectiles)
-        
-        # Cooldown ajusté
-        if self.current_phase <= len(self.phases):
-            phase = self.phases[self.current_phase - 1]
-            cooldown = self.attack_cooldown / phase.attack_speed
-        else:
-            cooldown = self.attack_cooldown
-        
-        # Rage mode réduit le cooldown
-        if self.rage_mode:
-            cooldown *= 0.6
-        
-        self.pattern_cooldown = int(cooldown)
-        self.current_pattern = None
-    
-    def _execute_pattern(self, enemy_projectiles):
-        """Exécute le pattern actuel"""
-        self.settings.sounds["Tire_4"].play()
-        
-        current_time = pygame.time.get_ticks() * 0.001
-        phase_color = self.phases[self.current_phase - 1].color if self.current_phase <= len(self.phases) else self.base_color
-        
-        # Paramètres
-        params = {
-            'angle_offset': self.rotation_angle,
-            'scale': 1.0,
-            'intensity': 1.0,
-            'phase': self.current_phase
-        }
-        
-        # Profondeur selon la phase
-        depth = min(4, 1 + self.current_phase)
-        
-        # Génération récursive
-        pattern_data = self.pattern_core.generate_recursive_pattern(
-            self.x, self.y, depth, depth,
-            self.current_pattern, params, current_time
-        )
-        
-        # Création des projectiles avec taille augmentée
-        for item in pattern_data:
-            if item[0] == 'projectile':
-                _, x, y, dx, dy, base_damage, angle = item
-                
-                # Dégâts ajustés
-                damage = base_damage * self.damage_multiplier
-                if self.current_phase <= len(self.phases):
-                    damage *= self.phases[self.current_phase - 1].damage_multiplier
-                
-                # Taille augmentée (rayon de 5 à 8 au lieu de 3 à 5)
-                radius = max(5, 8 - depth // 2)
-                
-                # Couleur selon l'état
-                color = phase_color
-                if self.rage_mode:
-                    color = (255, 100, 100)  # Rouge en rage
-                
-                projectile = Projectile(
-                    x, y, 
-                    dx, dy,
-                    damage,
-                    settings=self.settings,
-                    color=color,
-                    radius=radius  # Taille augmentée
-                )
-                enemy_projectiles.append(projectile)
+            # Trop près, s'éloigner un peu
+            self.x -= (dx / distance) * self.speed * 0.7
+            self.y -= (dy / distance) * self.speed * 0.7
     
     def _constrain_to_screen(self):
-        """Garder dans l'écran"""
-        margin = self.radius + 25
+        """Maintient dans l'écran"""
+        margin = self.radius + 20
         self.x = max(margin, min(self.x, self.settings.screen_width - margin))
         self.y = max(margin, min(self.y, self.settings.screen_height - margin))
     
+    def _update_attacks(self, enemy_projectiles):
+        """Gère les attaques"""
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+            return
+        
+        # Choisir un pattern
+        phase = self.phases[self.current_phase - 1]
+        if self.current_pattern is None:
+            self.current_pattern = phase.get_random_pattern()
+        
+        # Exécuter l'attaque
+        self._execute_pattern(enemy_projectiles, phase)
+        
+        # Réinitialiser le cooldown
+        self.attack_cooldown = phase.attack_cooldown
+        if self.rage_mode:
+            self.attack_cooldown = max(30, phase.attack_cooldown // 2)
+        
+        self.current_pattern = None
+    
+    def _execute_pattern(self, enemy_projectiles, phase):
+        """Exécute le pattern actuel"""
+        self.settings.sounds[self.attack_sound].play()
+        
+        if self.current_pattern == 'circle':
+            self._execute_circle_pattern(enemy_projectiles, phase)
+        elif self.current_pattern == 'spiral':
+            self._execute_spiral_pattern(enemy_projectiles, phase)
+        elif self.current_pattern == 'burst':
+            self._execute_burst_pattern(enemy_projectiles, phase)
+        elif self.current_pattern == 'wave':
+            self._execute_wave_pattern(enemy_projectiles, phase)
+        elif self.current_pattern == 'mixed':
+            self._execute_mixed_pattern(enemy_projectiles, phase)
+    
+    def _execute_circle_pattern(self, enemy_projectiles, phase):
+        """Pattern circulaire récursif"""
+        depth = min(3, self.current_phase)
+        
+        # Types de projectiles spéciaux
+        special_types = phase.special_projectiles if phase.special_projectiles else []
+        
+        pattern = self.pattern_generator.generate_circle_recursive(
+            self.x, self.y,
+            depth=depth,
+            max_depth=depth,
+            angle_offset=self.rotation_angle,
+            projectile_types=special_types
+        )
+        
+        for item in pattern:
+            if item[0] == 'projectile':
+                _, x, y, dx, dy, damage, projectile_type = item
+                damage *= phase.damage_multiplier
+                if self.rage_mode:
+                    damage *= self.rage_damage_multiplier
+                
+                # Taille augmentée
+                radius = phase.projectile_size
+                if self.rage_mode:
+                    radius = int(radius * 1.4)
+                
+                # Créer le projectile spécial ou normal
+                if projectile_type and self.player:
+                    self._create_special_projectile(
+                        x, y, dx, dy, damage, phase.color, radius, 
+                        projectile_type, enemy_projectiles
+                    )
+                else:
+                    enemy_projectiles.append(Projectile(
+                        x, y, dx, dy, damage,
+                        settings=self.settings,
+                        color=phase.color,
+                        radius=radius
+                    ))
+    
+    def _execute_spiral_pattern(self, enemy_projectiles, phase):
+        """Pattern en spirale"""
+        arms = 2 + self.current_phase
+        if self.rage_mode:
+            arms += 1
+        
+        # Types de projectiles spéciaux
+        special_types = phase.special_projectiles if phase.special_projectiles else []
+        
+        pattern = self.pattern_generator.generate_spiral_arms(
+            self.x, self.y,
+            arms=arms,
+            projectiles_per_arm=5,  # Réduit
+            projectile_types=special_types
+        )
+        
+        for item in pattern:
+            if item[0] == 'projectile':
+                _, x, y, dx, dy, damage, projectile_type = item
+                damage *= phase.damage_multiplier
+                if self.rage_mode:
+                    damage *= self.rage_damage_multiplier
+                
+                radius = phase.projectile_size
+                
+                # Créer le projectile spécial ou normal
+                if projectile_type and self.player:
+                    self._create_special_projectile(
+                        x, y, dx, dy, damage, (255, 150, 100), radius, 
+                        projectile_type, enemy_projectiles
+                    )
+                else:
+                    enemy_projectiles.append(Projectile(
+                        x, y, dx, dy, damage,
+                        settings=self.settings,
+                        color=(255, 150, 100),
+                        radius=radius
+                    ))
+    
+    def _execute_burst_pattern(self, enemy_projectiles, phase):
+        """Explosion de projectiles"""
+        projectiles_count = 6 + (self.current_phase * 2)  # Réduit
+        
+        for i in range(projectiles_count):
+            angle = (2 * math.pi * i / projectiles_count) + self.rotation_angle
+            speed = 2.0 + random.random() * 1.0  # Réduit
+            
+            dx = math.cos(angle) * speed
+            dy = math.sin(angle) * speed
+            
+            damage = 6 * phase.damage_multiplier  # Réduit
+            if self.rage_mode:
+                damage *= self.rage_damage_multiplier
+            
+            radius = phase.projectile_size
+            
+            # 25% de chance d'avoir un projectile spécial en phase 3+
+            projectile_type = None
+            if self.current_phase >= 3 and random.random() < 0.25 and self.player:
+                projectile_type = random.choice(phase.special_projectiles)
+            
+            if projectile_type:
+                self._create_special_projectile(
+                    self.x, self.y, dx, dy, damage, (255, 200, 50), radius, 
+                    projectile_type, enemy_projectiles
+                )
+            else:
+                enemy_projectiles.append(Projectile(
+                    self.x, self.y, dx, dy, damage,
+                    settings=self.settings,
+                    color=(255, 200, 50),
+                    radius=radius
+                ))
+    
+    def _execute_wave_pattern(self, enemy_projectiles, phase):
+        """Pattern en vague"""
+        pattern = self.pattern_generator.generate_wave_pattern(
+            self.x, self.y,
+            waves=2 + self.current_phase,
+            projectiles_per_wave=6
+        )
+        
+        for item in pattern:
+            if item[0] == 'projectile':
+                _, x, y, dx, dy, damage, _ = item
+                damage *= phase.damage_multiplier
+                if self.rage_mode:
+                    damage *= self.rage_damage_multiplier
+                
+                radius = phase.projectile_size
+                enemy_projectiles.append(Projectile(
+                    x, y, dx, dy, damage,
+                    settings=self.settings,
+                    color=(100, 200, 255),
+                    radius=radius
+                ))
+    
+    def _execute_mixed_pattern(self, enemy_projectiles, phase):
+        """Mélange de patterns"""
+        # Exécute deux patterns aléatoires
+        patterns = ['circle', 'spiral', 'burst', 'wave']
+        patterns.remove(self.current_pattern) if self.current_pattern in patterns else None
+        
+        pattern1 = random.choice(patterns)
+        pattern2 = random.choice([p for p in patterns if p != pattern1])
+        
+        # Sauvegarder le pattern actuel
+        current = self.current_pattern
+        
+        # Exécuter premier pattern
+        self.current_pattern = pattern1
+        if pattern1 == 'circle':
+            self._execute_circle_pattern(enemy_projectiles, phase)
+        elif pattern1 == 'spiral':
+            self._execute_spiral_pattern(enemy_projectiles, phase)
+        elif pattern1 == 'burst':
+            self._execute_burst_pattern(enemy_projectiles, phase)
+        elif pattern1 == 'wave':
+            self._execute_wave_pattern(enemy_projectiles, phase)
+        
+        # Exécuter deuxième pattern
+        self.current_pattern = pattern2
+        if pattern2 == 'circle':
+            self._execute_circle_pattern(enemy_projectiles, phase)
+        elif pattern2 == 'spiral':
+            self._execute_spiral_pattern(enemy_projectiles, phase)
+        elif pattern2 == 'burst':
+            self._execute_burst_pattern(enemy_projectiles, phase)
+        elif pattern2 == 'wave':
+            self._execute_wave_pattern(enemy_projectiles, phase)
+        
+        # Restaurer
+        self.current_pattern = current
+    
+    def _create_special_projectile(self, x, y, dx, dy, damage, color, radius, projectile_type, enemy_projectiles):
+        """Crée un projectile spécial"""
+        if projectile_type == 'bouncing':
+            projectile = SpecialProjectile.create_bouncing(x, y, dx, dy, damage, self.settings, bounces=2)
+        elif projectile_type == 'accelerating':
+            projectile = SpecialProjectile.create_accelerating(x, y, dx, dy, damage, self.settings, max_speed=8)
+        elif projectile_type == 'splitting':
+            projectile = SpecialProjectile.create_splitting(x, y, dx, dy, damage, self.settings, splits=2)
+        elif projectile_type == 'homing' and self.player:
+            projectile = SpecialProjectile.create_homing(x, y, dx, dy, damage, self.settings, self.player, turn_rate=0.03)
+        else:
+            # Fallback au projectile normal
+            projectile = Projectile(x, y, dx, dy, damage, self.settings, color=color, radius=radius)
+        
+        enemy_projectiles.append(projectile)
+    
     def take_damage(self, amount):
         """
-        Prend des dégâts
-        Retourne True si le boss meurt
+        Inflige des dégâts au boss
+        
+        Returns:
+            bool: True si mort
         """
         # Réduction selon la phase
         phase = self.current_phase
-        reduction = 0.9 ** (phase - 1)
-        actual_damage = amount * reduction
+        damage_reduction = 1.0 - ((phase - 1) * 0.08)  # Réduction légère
+        actual_damage = amount * damage_reduction
         
         # Appliquer
         self.health -= actual_damage
@@ -708,46 +756,47 @@ class Boss(Enemy):
         return False
     
     def draw(self, screen):
-        """Dessin du boss"""
+        """Dessine le boss"""
         current_time = pygame.time.get_ticks() * 0.001
-        phase_color = self.phases[self.current_phase - 1].color if self.current_phase <= len(self.phases) else self.base_color
         
         # Pulsation
-        base_pulse = math.sin(self.pulse_timer) * 6
-        
+        pulse = math.sin(self.pulse_timer) * 4
         if self.rage_mode:
-            rage_pulse = math.sin(current_time * 6) * 4
-            base_pulse += rage_pulse
+            pulse += math.sin(current_time * 8) * 3
         
-        main_radius = self.radius + base_pulse
+        main_radius = self.radius + pulse
         
         # Aura de rage
         if self.rage_mode:
-            aura_radius = main_radius + 20
-            aura_alpha = 80 + int(40 * math.sin(current_time * 4))
+            rage_radius = main_radius + 10 + math.sin(current_time * 6) * 3
+            rage_alpha = 80 + int(40 * math.sin(current_time * 4))
             
-            aura_surface = pygame.Surface((int(aura_radius*2), int(aura_radius*2)), pygame.SRCALPHA)
+            rage_surface = pygame.Surface((int(rage_radius*2), int(rage_radius*2)), pygame.SRCALPHA)
             pygame.draw.circle(
-                aura_surface,
-                (255, 50, 50, aura_alpha),
-                (int(aura_radius), int(aura_radius)),
-                int(aura_radius)
+                rage_surface,
+                (255, 50, 50, rage_alpha),
+                (int(rage_radius), int(rage_radius)),
+                int(rage_radius)
             )
-            screen.blit(aura_surface, (int(self.x - aura_radius), int(self.y - aura_radius)))
+            screen.blit(rage_surface, (int(self.x - rage_radius), int(self.y - rage_radius)))
         
-        # Corps
-        layers = 4
-        for i in range(layers, 0, -1):
-            radius = main_radius * (i / layers)
-            alpha = 60 + (i * 40)
+        # Corps principal
+        for i in range(3, 0, -1):
+            radius = main_radius * (i / 3)
+            alpha = 100 + (i * 30)
             
-            # Dégradé
-            blend = i / layers
-            color = (
-                int(phase_color[0] * blend + self.core_color[0] * (1 - blend)),
-                int(phase_color[1] * blend + self.core_color[1] * (1 - blend)),
-                int(phase_color[2] * blend + self.core_color[2] * (1 - blend))
-            )
+            # Couleur selon la phase
+            phase_color = self.phases[self.current_phase - 1].color
+            if i == 3:  # Extérieur
+                color = phase_color
+            else:
+                # Dégradé vers le centre
+                blend = i / 3
+                color = (
+                    int(phase_color[0] * blend + self.core_color[0] * (1 - blend)),
+                    int(phase_color[1] * blend + self.core_color[1] * (1 - blend)),
+                    int(phase_color[2] * blend + self.core_color[2] * (1 - blend))
+                )
             
             layer_surface = pygame.Surface((int(radius*2), int(radius*2)), pygame.SRCALPHA)
             pygame.draw.circle(
@@ -757,8 +806,10 @@ class Boss(Enemy):
             screen.blit(layer_surface, (int(self.x - radius), int(self.y - radius)))
         
         # Cœur
-        core_radius = main_radius * 0.4
-        core_pulse = math.sin(current_time * 5) * 3
+        core_radius = main_radius * 0.3
+        core_pulse = math.sin(current_time * 4) * 2
+        if self.rage_mode:
+            core_pulse += math.sin(current_time * 10) * 1.5
         
         pygame.draw.circle(
             screen, self.core_color,
@@ -766,56 +817,57 @@ class Boss(Enemy):
             int(core_radius + core_pulse)
         )
         
-        # Particules d'énergie
-        for i in range(10):
-            angle = (2 * math.pi * i / 10) + self.rotation_angle
-            distance = main_radius * 0.8
+        # Indicateurs de phase
+        for i in range(self.current_phase):
+            angle = (2 * math.pi * i / self.current_phase) + self.rotation_angle
+            indicator_radius = main_radius * 0.7
+            ix = self.x + math.cos(angle) * indicator_radius
+            iy = self.y + math.sin(angle) * indicator_radius
             
-            particle_x = self.x + math.cos(angle) * distance
-            particle_y = self.y + math.sin(angle) * distance
-            
-            particle_size = 3 + math.sin(current_time * 3 + i) * 1.5
-            
+            size = 4 + math.sin(current_time * 3 + i) * 2
             pygame.draw.circle(
-                screen, phase_color,
-                (int(particle_x), int(particle_y)),
-                int(particle_size)
+                screen, (255, 255, 200),
+                (int(ix), int(iy)), int(size)
             )
         
-        # Interface
+        # Texte
         if hasattr(self.settings, 'font') and self.settings.font:
             # Nom
-            name_text = self.settings.font["h2"].render(self.name, True, (255, 255, 255))
-            name_rect = name_text.get_rect(center=(self.x, self.y - main_radius - 30))
+            name_text = self.settings.font["h3"].render(self.name, True, (255, 255, 255))
+            name_rect = name_text.get_rect(center=(self.x, self.y - main_radius - 25))
+            screen.blit(name_text, name_rect)
             
             # Phase
-            phase_text = self.settings.font["h3"].render(
+            phase_text = self.settings.font["h4"].render(
                 f"Phase {self.current_phase}", 
-                True, phase_color
+                True, self.phases[self.current_phase - 1].color
             )
-            phase_rect = phase_text.get_rect(center=(self.x, self.y - main_radius - 55))
+            phase_rect = phase_text.get_rect(center=(self.x, self.y - main_radius - 45))
+            screen.blit(phase_text, phase_rect)
             
             # Rage
             if self.rage_mode:
-                rage_text = self.settings.font["h3"].render("RAGE!", True, (255, 50, 50))
-                rage_rect = rage_text.get_rect(center=(self.x, self.y + main_radius + 25))
+                rage_text = self.settings.font["h4"].render("RAGE!", True, (255, 50, 50))
+                rage_rect = rage_text.get_rect(center=(self.x, self.y + main_radius + 20))
                 screen.blit(rage_text, rage_rect)
             
-            screen.blit(name_text, name_rect)
-            screen.blit(phase_text, phase_rect)
+            # Division (seulement si pas encore divisé)
+            if not self.is_divided_boss and self.division_system.can_divide and not self.division_system.has_divided:
+                div_text = self.settings.font["h4"].render("DIVISION DISPONIBLE", True, (255, 255, 0))
+                div_rect = div_text.get_rect(center=(self.x, self.y + main_radius + 40))
+                screen.blit(div_text, div_rect)
         
         # Barre de vie
         self._draw_health_bar(screen)
     
-    def _draw_health_bar(self, screen, width=300, height=20):
+    def _draw_health_bar(self, screen, width=250, height=12):
         """Barre de vie"""
-        # Position
         bar_x = self.x - width // 2
-        bar_y = self.y - self.radius - 85
+        bar_y = self.y - self.radius - 65
         
         # Fond
         pygame.draw.rect(
-            screen, (40, 40, 40),
+            screen, (30, 30, 30),
             (bar_x, bar_y, width, height),
             border_radius=height//2
         )
@@ -825,52 +877,39 @@ class Boss(Enemy):
         health_width = int(width * health_ratio)
         
         if health_width > 0:
-            # Couleur selon la santé
-            if health_ratio > 0.6:
-                color = (100, 255, 100)
-            elif health_ratio > 0.3:
-                color = (255, 255, 100)
-            else:
-                color = (255, 100, 100)
+            phase_color = self.phases[self.current_phase - 1].color
             
-            # Gradient
+            # Gradient simple
             health_surface = pygame.Surface((health_width, height), pygame.SRCALPHA)
             for i in range(health_width):
-                pos = i / width
-                r = int(color[0] * (0.7 + 0.3 * pos))
-                g = int(color[1] * (0.7 + 0.3 * pos))
-                b = int(color[2] * (0.7 + 0.3 * pos))
+                pos_ratio = i / width
+                r = int(phase_color[0] * (0.7 + 0.3 * pos_ratio))
+                g = int(phase_color[1] * (0.7 + 0.3 * pos_ratio))
+                b = int(phase_color[2] * (0.7 + 0.3 * pos_ratio))
                 
                 pygame.draw.line(
-                    health_surface, (r, g, b, 220),
+                    health_surface, (r, g, b, 200),
                     (i, 0), (i, height)
                 )
             
             screen.blit(health_surface, (bar_x, bar_y))
         
-        # Seuil de rage (1/3)
-        rage_marker = bar_x + int(width * self.rage_health_threshold)
-        pygame.draw.line(
-            screen, (255, 50, 50, 180),
-            (rage_marker, bar_y - 5),
-            (rage_marker, bar_y + height + 5), 3
-        )
-        
-        # Marqueurs de phase
-        for i in range(1, len(self.phases)):
-            marker_x = bar_x + int(width * (i / len(self.phases)))
-            
-            if i < self.current_phase:
-                marker_color = (*self.phases[i - 1].color, 180)
-            elif i == self.current_phase:
-                marker_color = (*self.phases[i - 1].color, 220)
-            else:
-                marker_color = (80, 80, 80, 120)
-            
+        # Indicateur de division (50%)
+        if self.division_system.can_divide and not self.division_system.has_divided:
+            division_x = bar_x + int(width * 0.5)
             pygame.draw.line(
-                screen, marker_color,
-                (marker_x, bar_y - 3),
-                (marker_x, bar_y + height + 3), 2
+                screen, (255, 255, 0, 150),
+                (division_x, bar_y - 3),
+                (division_x, bar_y + height + 3), 2
+            )
+        
+        # Indicateur de rage (33%)
+        if not self.rage_activated:
+            rage_x = bar_x + int(width * self.rage_health_threshold)
+            pygame.draw.line(
+                screen, (255, 50, 50, 150),
+                (rage_x, bar_y - 3),
+                (rage_x, bar_y + height + 3), 2
             )
         
         # Bordure
@@ -881,14 +920,14 @@ class Boss(Enemy):
         pygame.draw.rect(
             screen, border_color,
             (bar_x, bar_y, width, height),
-            3, border_radius=height//2
+            2, border_radius=height//2
         )
         
         # Texte
         if hasattr(self.settings, 'font') and self.settings.font:
-            health_text = self.settings.font["h3"].render(
+            health_text = self.settings.font["h4"].render(
                 f"{int(self.health)}/{self.max_health}", 
                 True, (255, 255, 255)
             )
-            health_rect = health_text.get_rect(center=(self.x, bar_y - 25))
+            health_rect = health_text.get_rect(center=(self.x, bar_y - 20))
             screen.blit(health_text, health_rect)
