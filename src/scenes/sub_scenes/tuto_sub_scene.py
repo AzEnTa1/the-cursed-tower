@@ -12,9 +12,9 @@ class TutoSubScene(BaseSubScene):
     def on_enter(self):
         """Appelée quand la scène devient active"""
         super().on_enter()
-        self.rect = pygame.Rect(self.settings.screen_width//4, self.settings.screen_height//4,
-                                self.settings.screen_width//2, self.settings.screen_height//2
-                                )
+        
+        self.rect = pygame.image.load(r"assets/images/tuto.png")
+        self.rect = pygame.transform.scale(self.rect, (self.settings.screen_width, self.settings.screen_height))
 
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -33,11 +33,12 @@ class TutoSubScene(BaseSubScene):
 
     def draw(self, screen):
         """Dessine la scène"""
-        pygame.draw.rect(screen, (255, 255, 0), self.rect)
+        #met l'imade du tuto
+        screen.blit(self.rect, (0, 0))
 
     def resize(self):
         """
         Appelé lorsque la fenêtre change de taille
         Recalcule les positions des éléments
         """
-        pass
+        self.rect = pygame.transform.scale(self.rect, (self.settings.screen_width, self.settings.screen_height))
