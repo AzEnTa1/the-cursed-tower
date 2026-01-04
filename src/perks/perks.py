@@ -17,7 +17,7 @@ class Perks:
         self.weapon.damage = round(self.weapon.damage + 30)
 
     def player_max_health(self):
-        self.player.max_health = round(self.player.max_health + 20)
+        self.player.max_health = round(self.player.max_health * 1.05)
 
     def player_size_up(self):
         self.player.size = round(self.player.size * 1.1)
@@ -26,7 +26,7 @@ class Perks:
         self.player.size = round(self.player.size * 0.9)
 
     def player_regen(self):
-        self.player.health = round(self.player.health + (self.player.max_health * 0.2))
+        self.player.health = round(self.player.health + (self.player.max_health * self.settings.regen_power))
         if self.player.health > self.player.max_health:
             self.player.health = self.player.max_health
 

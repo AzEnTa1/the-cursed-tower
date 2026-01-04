@@ -26,6 +26,7 @@ class Settings:
         self.player_speed = player_data.get("speed", 5)
         self.player_size = player_data.get("size", 20)
         self.player_health = player_data.get("max_health", 100)
+        self.player_regen_power = player_data.get("regen_power", 0.1)
         self.player_data = player_data
         
         # Scènes
