@@ -427,8 +427,8 @@ class Player:
         }
 
     def add_coins(self, amount):
-        """Ajoute des pièces au joueur"""
-        if not self.coins:
+        """Ajoute des pièces au joueur si l'attribut existe, sinon initialise à 0 puis ajoute"""
+        if not hasattr(self, 'coins'):
             self.coins = 0
         self.coins += amount
 

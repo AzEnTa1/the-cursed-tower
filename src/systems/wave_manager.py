@@ -27,7 +27,7 @@ class WaveManager:
         
         # Boss tous les 3 étages (étages 3, 6, 9, etc.)
         self.is_boss_floor = (floor_number > 1 and floor_number % 3 == 0)
-        
+        self.is_boss_floor = True  # Forcer étage de boss pour les tests
         if self.is_boss_floor:
             # Pour un étage de boss
             self.wave_queue.setup_boss_floor(floor_number)
@@ -133,6 +133,7 @@ class WaveManager:
         
         if not self.wave_queue.has_more_waves():
             self.state = "all_cleared"
+            self.floor_number += 1
     
     def is_between_waves(self):
         return self.state == "between_waves"
@@ -141,6 +142,7 @@ class WaveManager:
         return self.state == "all_cleared"
     
     def get_wave_info(self):
+        print(f"coucou {self.floor_number}, {self.wave_number}, {self.enemies_remaining}, {self.state}")
         """Retourne les informations sur la vague actuelle"""
         return {
             'floor': self.floor_number,
