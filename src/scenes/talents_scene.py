@@ -61,7 +61,7 @@ class TalentsScene(BaseScene):
             self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
-        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
+        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+100)
         
         # Charger l'image de fond
         bg_img = pygame.image.load("assets/images/background/perks_scene.png")
@@ -156,5 +156,5 @@ class TalentsScene(BaseScene):
                 self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
-        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
+        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+100)
         
