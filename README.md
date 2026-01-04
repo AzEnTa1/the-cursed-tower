@@ -95,7 +95,9 @@ La fonction récursive principale se trouve dans `src/entities/enemies/boss.py` 
 ```
 tests/
 ├── test_entities.py   # Tests des entités (joueur, ennemis)
+├── test_perks.py      # Tests des perks (menu, abilitées )
 ├── test_systems.py    # Tests des systèmes (vagues, collisions)
+├── test_ui.py         # Tests des ui (menu, affichage des ennemis)
 └── test_utils.py      # Tests des utilitaires (file)
 ```
 
@@ -103,18 +105,16 @@ tests/
 
 ### Répartition des tâches
 
-#### Gabriel - Développeur gameplay & UI
+#### Gabriel - Développeur Gameplay/UI
 - **Menu GameOver** : Écran de fin avec statistiques
 - **Design UI** : Boutons, menus, feedback visuel
-- **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
+- **Menu Pause** : Interface visuelle
 - **Audio** : Gestion des sons des bouttons
 - **Audio** : Gestion de son de tir
-- **Tests unitaires** : Développement et exécution
 - **Système de Vague** : Implémentation de Wave_manager
-- **Structure de données personnalisée** : Implémentation d'une file pour l'apparition des ennemies
+- **Structure de données personnalisée** : Implémentation d'une file pour l'apparition des ennemis
 
-
-#### Hugo - Chef de projet & Développeur principal
+#### Hugo - Chef de projet/Développeur principal
 - **Architecture globale** : Conception de l'architecture POO
 - **Système de combat** : Armes, projectiles, dégâts
 - **Game loop** : Boucle principale et gestion des états
@@ -122,16 +122,14 @@ tests/
 - **Ennemis basiques** : IA des ennemis standards
 - **HUD** : Interface en jeu (barres de vie, scores)
 - **Effets visuels** : Particules, animations, transitions
-- **Menu principal** : Navigation et transitions
+- **Menu de jeu** : Navigation et transitions
 - **Documentation technique** : Rédaction du rapport
 - **Équilibrage** : Courbe de difficulté et statistiques
 - **Boss adaptatif** : Implémentation de la fonction récursive
 - **Tests unitaires** : Réalisation de la moitiée des fichiers
-- **Système de collisions** : Détection et résolution
-- **Système de scènes** : Implémentation du pattern Scene
+- **Système de collisions des différentes entités** : Détection et résolution
 
-#### Julien - Développeur systèmes & Développeur principal
-- **Système de vagues** : WaveManager et génération procédurale
+#### Julien - Développeur systèmes/Développeur principal
 - **Système de perks** : Améliorations et gestion des choix
 - **Equilibrage du jeu** : Scores, XP, progression
 - **Menu des talents** : Interface de progression permanente
@@ -140,28 +138,29 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Menu Tutoriel** : Explication du fonctionnement du jeu
 - **Tests unitaires** : Réalisation de la moitiée des fichiers
+- **Menu Pause** : Fonctionnalités (Quitter/Continuer/Statistiques)
+- **Système de scènes** : Implémentation de l'héritage de la Scène
 
-#### Zia - Assets
-- **Tests unitaires** : Développement et exécution
-- **Menu Menu** : Gère comment 
-- **Sons et musique** : Sélection et intégration des assets
-- **Intégration audio** : Gestion des sons et musique
+#### Zia - Développeur UI/Assets
+- **Menu Menu** : Implémentation (début) du Menu principal
+- **Sons et musique** : Sélection et intégration des assets (sons, images) en coopération avec Gabriel
+- **Intégration audio** : Gestion des sons et musique en coopération avec Gabriel
 
 ### Méthodologie de travail
 
 #### Outils utilisés
-- **Github Desktop** : Pour se passer les fichiers facilement et pouvoir 
+- **Github Desktop** : Pour une transmission efficace des fichiers
 - **Discord** : Communication et revues de code
 
 #### Processus de développement
-1. **Revue hebdomadaire** : Répartition des tâches hebdomadaire avec chaque dimanche ce qui doit etre fait individuellement pendant la semaine
-2. **Code reviews** : On revoir tout le code pour voir si il n'y a pas de redondance et de bug lors des combo de plusieurs code de personnes différentes
+1. **Revue hebdomadaire** : Répartition des tâches hebdomadaire avec chaque dimanche, ce qui doit etre fait individuellement pendant la semaine
+2. **Code reviews** : On revoir tout le code pour voir si il n'y a pas de redondance et de bug lors de la mise en commun de plusieurs code de personnes différentes
 
 ### Difficultés rencontrées et solutions
 
 #### 1. Gestion du redimensionnement
 **Problème** : Maintenir le ratio 4:3 tout en permettant le plein écran
-**Solution** : Système de bordures dynamiques dans `Game.resize()` et des fonctions resize dans un grand nombre de scène du jeu
+**Solution** : Système de bordures dynamiques avec `Game.draw()` et des fonctions resize dans toutes les scènes du jeu
 
 #### 2. Fonction récursive et division du boss
 **Problème** : Risque d'explosion exponentielle de la complexité avec la division et les patterns récursifs
