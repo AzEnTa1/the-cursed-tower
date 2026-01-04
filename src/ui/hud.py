@@ -133,45 +133,32 @@ class HUD:
         )
         screen.blit(floor_text, (info_x, info_y))
         
-        # Type de vague - AFFICHAGE SIMPLIFIÉ
-        if wave_info['is_boss_wave']:
-            # BOSS
+        # Vague actuelle - CORRIGÉ POUR AFFICHER CORRECTEMENT
+        if wave_info['is_boss']:
             wave_text = self.settings.font["h3"].render(
                 "BOSS", 
                 True, (255, 50, 50)
             )
         else:
-            # Vague normale
-            current_wave = wave_info['current_wave']
-            if current_wave == 0:
-                # Entre les vagues, afficher la prochaine
-                wave_text = self.settings.font["h3"].render(
-                    "Préparation", 
-                    True, (255, 255, 100)
-                )
-            else:
-                # Pendant une vague normale
-                wave_text = self.settings.font["h3"].render(
-                    f"Vague {current_wave}/3", 
-                    True, (100, 150, 255)
-                )
+            # Afficher "Vague X/3" où X est la vague en cours
+            current_display_wave = wave_info['current_wave']
+            if wave_info['state'] == "between_waves" and current_display_wave < wave_info['total_waves']:
+                current_display_wave += 1  # Afficher la prochaine vague si on est entre les vagues
+            
+            wave_text = self.settings.font["h3"].render(
+                f"Vague {current_display_wave}/{wave_info['total_waves']}", 
+                True, (100, 150, 255)
+            )
         
         screen.blit(wave_text, (info_x, info_y + 35))
         
         # État de la vague
-        if wave_info['state'] == "between_waves":
-            if wave_info['current_wave'] >= 3 and not wave_info['is_boss_wave']:
-                state_text = "BOSS approche"
-                state_color = (255, 100, 100)
-            else:
-                state_text = "Préparation"
-                state_color = self.settings.YELLOW
+        if wave_info['state'] == "between_waves" and self.wave_manager.wave_queue.has_more_waves():
+            state_text = "Préparation"
+            state_color = self.settings.YELLOW
         elif wave_info['state'] == "in_wave":
             state_text = f"Ennemis: {wave_info['enemies_remaining']}"
             state_color = self.settings.RED
-        elif wave_info['state'] == "boss_wave":
-            state_text = f"BOSS: {wave_info['enemies_remaining']}"
-            state_color = (255, 50, 50)
         elif wave_info['state'] == "all_cleared":
             state_text = "Étage terminé"
             state_color = self.settings.GREEN
@@ -223,36 +210,37 @@ class HUD:
         info_x = self.settings.screen_width - 130
         info_y = self.margin + 100
         
-        # Type de vague actuelle
-        if wave_info['is_boss_wave']:
-            type_text = "BOSS"
-            type_color = (255, 50, 50)
-        elif wave_info['state'] == "between_waves" and wave_info['current_wave'] >= 3:
-            type_text = "BOSS bientôt"
-            type_color = (255, 150, 50)
-        else:
-            type_text = "Normale"
-            type_color = (100, 200, 100)
+        # Indicateur de boss
+        is_boss_floor = wave_info['is_boss']
+        boss_text = "BOSS" if is_boss_floor else "Normal"
+        boss_color = (255, 50, 50) if is_boss_floor else (100, 200, 100)
         
-        type_display = self.settings.font["h3"].render(type_text, True, type_color)
-        screen.blit(type_display, (info_x, info_y))
+        boss_display = self.settings.font["h3"].render(boss_text, True, boss_color)
+        screen.blit(boss_display, (info_x, info_y))
         
-        # Vagues normales terminées
-        if not wave_info['is_boss_wave']:
-            completed_waves = wave_info['current_wave']
-            waves_text = f"Vagues: {completed_waves}/3"
-            waves_display = self.settings.font["h4"].render(
-                waves_text, 
-                True, (200, 200, 200)
-            )
-            screen.blit(waves_display, (info_x, info_y + 30))
+        # Vagues restantes
+        if is_boss_floor:
+            waves_text = "Vague unique"
         else:
-            boss_text = "BOSS en cours"
-            boss_display = self.settings.font["h4"].render(
-                boss_text, 
-                True, (255, 100, 100)
-            )
-            screen.blit(boss_display, (info_x, info_y + 30))
+            total_waves = wave_info['total_waves']
+            current_wave = wave_info['current_wave']
+            
+            if wave_info['state'] == "in_wave":
+                # Pendant une vague, on compte la vague actuelle comme "en cours"
+                remaining = max(0, total_waves - current_wave + 1)
+            elif wave_info['state'] == "between_waves" and current_wave < total_waves:
+                # Entre les vagues, on affiche le nombre de vagues restantes
+                remaining = max(0, total_waves - current_wave)
+            else:
+                remaining = 0
+                
+            waves_text = f"Vagues restantes: {remaining}"
+        
+        waves_display = self.settings.font["h4"].render(
+            waves_text, 
+            True, (200, 200, 200)
+        )
+        screen.blit(waves_display, (info_x, info_y + 30))
     
     def draw_quick_info(self, screen):
         """Informations rapides en bas de l'écran"""
