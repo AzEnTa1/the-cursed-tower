@@ -105,9 +105,6 @@ class Player:
 
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
-        if self.infinite_life:
-            self.health = self.max_health
-
         # Gestion du dash
         if self.is_dashing:
             self.update_dash()
@@ -418,8 +415,8 @@ class Player:
     def get_stats(self)->dict:
         """sert a obtenir les stats du joueur"""
         return {
-            "speed":self.speed,
-            "size":self.size,
+            "player_speed":self.speed,
+            "player_size":self.size,
             "current_health":self.health,
             "max_health":self.max_health,
             "score":self.score,

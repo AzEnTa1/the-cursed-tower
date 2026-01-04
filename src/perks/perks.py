@@ -26,7 +26,7 @@ class Perks:
         self.player.size = round(self.player.size * 0.9)
 
     def player_regen(self):
-        self.player.health = round(self.player.health + (self.player.max_health * self.settings.regen_power))
+        self.player.health = round(self.player.health + (self.player.max_health * self.settings.player_regen_power))
         if self.player.health > self.player.max_health:
             self.player.health = self.player.max_health
 
@@ -42,9 +42,6 @@ class Perks:
             self.weapon.shot_interval = 50  # ms entre chaque projectile
             self.weapon.multishot_timer = 0
             self.weapon.multishot_queue = []
-
-    def infinite_life(self):
-        self.player.infinite_life = True
 
     def arc_shot(self):
         """Active le tir en arc (3 projectiles en éventail)"""
