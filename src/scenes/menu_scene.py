@@ -40,7 +40,7 @@ class MenuScene(BaseScene):
         self.text_talents = self.settings.font["h1"].render("Talents", True, (0, 0, 255))
         self.talents_button = self.text_talents.get_rect(center=self.talents_button.center)
 
-        self.text_reset = self.settings.font["h2"].render("Réinitialisation", True, (111, 6, 6))
+        self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
         
@@ -123,12 +123,12 @@ class MenuScene(BaseScene):
             self.talents_hovered = False
 
         if self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text_reset = self.settings.font["h2"].render("Réinitialisation", True, (198, 12, 12))
+            self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (198, 12, 12))
             if not hasattr(self, 'reset_hovered') or not self.reset_hovered:
                 self.reset_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text_reset = self.settings.font["h2"].render("Réinitialisation", True, (111, 6, 6))
+            self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (111, 6, 6))
             self.reset_hovered = False
 
         if self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
