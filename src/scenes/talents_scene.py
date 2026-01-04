@@ -97,7 +97,7 @@ class TalentsScene(BaseScene):
         self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+100)
         
         # Charger l'image de fond
-        bg_img = pygame.image.load("assets/images/background/perks_scene.png")
+        bg_img = pygame.image.load("assets/images/background/talents_scene.png")
         self.bg_image = pygame.transform.scale(bg_img, (self.settings.screen_width, self.settings.screen_height))
 
     def handle_event(self, event):

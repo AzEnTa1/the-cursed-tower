@@ -37,12 +37,12 @@ class PerksUI:
         
         self._draw_background(screen)
         # Titre
-        title = self.title_font.render("CHOISISSEZ UNE AMÉLIORATION", True, (255, 255, 0))
+        title = self.title_font.render("CHOISISSEZ UNE CAPACITÉ", True, (255, 255, 0))
         title_rect = title.get_rect(center=(self.settings.screen_width // 2, screen.get_height() - 130))
         screen.blit(title, title_rect)
         
         # Instructions
-        instructions = self.perk_font.render("Cliquez sur une amélioration pour l'équiper", 
+        instructions = self.perk_font.render("Cliquez sur une capacité pour l'équiper", 
                                            True, (255, 255, 255))
         instructions_rect = instructions.get_rect(center=(self.settings.screen_width // 2, screen.get_height()  - 80))
         screen.blit(instructions, instructions_rect)
