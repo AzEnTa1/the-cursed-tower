@@ -20,17 +20,50 @@ class TalentsScene(BaseScene):
         self.exit_menu_text_rect = self.exit_menu_text.get_rect(center=self.exit_menu_rect.center)
         
         self.talent_dict = {
-            "max_health":{"img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png")},
-            "regen_power":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png")},
-            "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Speed_Icon.png")},
-            "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png")},
-            "dash_cooldown":{"img":pygame.image.load(r"assets\images\perks_icons\dash_cooldown_icon.png")},
-            "dash_distance":{"img":pygame.image.load(r"assets\images\perks_icons\dash_distance_icon.png")},
-            "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_icon.png")},
-            "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_speed_icon.png")},
-            "stationnary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\stationnary_threshold_icon.png")},
-            "projectile_size":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_size_up_icon.png")},
-            "projectile_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png")},
+            "max_health":{
+                "img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "regen_power":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png"),
+                "val_min":0,
+                "val_max":1
+                },
+            "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Speed_Icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png"),
+                "val_min":5,
+                "val_max":20
+                },
+            "dash_cooldown":{"img":pygame.image.load(r"assets\images\perks_icons\dash_cooldown_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "dash_distance":{"img":pygame.image.load(r"assets\images\perks_icons\dash_distance_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_icon.png"),
+                "val_min":1
+                },
+            "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_speed_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "stationnary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\stationnary_threshold_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "projectile_size":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_size_up_icon.png"),
+                "val_min":1,
+                "val_max":1
+                },
+            "projectile_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png"),
+                "val_min":1,
+                "val_max":1
+                }
         }
         
         # Calcul des positions et tailles des éléments

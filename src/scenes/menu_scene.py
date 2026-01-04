@@ -86,8 +86,8 @@ class MenuScene(BaseScene):
         # simule l'entré dans une sub scene depuis game_scene
         if self.player_data["game_played"] == 0:
             self.game.scenes[self.settings.SCENE_GAME].game_paused = True
-            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene = self.game.scenes[self.settings.SCENE_GAME].pause_sub_scene
-            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene.on_enter(self.game.scenes[self.settings.SCENE_GAME].game_stats)
+            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene = self.game.scenes[self.settings.SCENE_GAME].tuto_sub_scene
+            self.game.scenes[self.settings.SCENE_GAME].current_sub_scene.on_enter()
         self.player_data["game_played"] += 1
 
     def update_volume(self, val):
