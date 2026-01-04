@@ -7,6 +7,10 @@ from src.entities.spawn_effect import SpawnEffect
 
 def test_player_movement():
     """Test des mouvements du joueur"""
+    class MockSound():
+        def play(self):
+            pass
+
     class MockSettings:
         screen_width = 800
         screen_height = 600
@@ -17,8 +21,8 @@ def test_player_movement():
         BLACK = (0, 0, 0)
         WHITE = (255, 255, 255)
         
-        def __init__(self):
-            self.sounds = {"degat_1": None, "game_over": None, "game_start": None}
+        def __init__(self):        
+            self.sounds = {"degat_1": MockSound(), "game_over": MockSound(), "game_start": MockSound()}
     
     class MockPlayerData:
         def __init__(self):
@@ -63,8 +67,9 @@ def test_player_movement():
     player.update()
     assert player.is_dashing == True
     assert player.dash_timer > 0
-    
+
     # Test dégâts
+    player.is_dashing = False
     initial_health = player.health
     player.take_damage(10)
     assert player.health == initial_health - 10
@@ -192,12 +197,16 @@ def test_enemy_suicide():
 
 def test_spawn_effect():
     """Test des effets d'apparition"""
+    class MockSound():
+        def play(self):
+            pass
+
     class MockSettings:
         screen_width = 800
         screen_height = 600
         
         def __init__(self):
-            self.sounds = {"spawn": None}
+            self.sounds = {"spawn": MockSound()}
     
     settings = MockSettings()
     
