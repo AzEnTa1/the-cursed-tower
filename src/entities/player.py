@@ -43,11 +43,11 @@ class Player:
         
         # Système de Dash
         self.dash_cooldown = 0
-        self.dash_cooldown_max = 120  # 2 secondes à 60 FPS
+        self.dash_cooldown_max = 180  # 3 secondes à 60 FPS
         self.is_dashing = False
         self.dash_timer = 0
         self.dash_duration = 15  # 0.25s à 60 FPS
-        self.dash_speed_multiplier = 5
+        self.dash_speed_multiplier = player_data["dash_distance"]
         self.dash_trail_particles = []
         self.dash_afterimages = []
         self.dash_afterimage_timer = 0

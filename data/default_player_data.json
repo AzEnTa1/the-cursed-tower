@@ -6,13 +6,13 @@
     "regen_power":0.1,
     "size":20,
     "speed":5,
-    "dash_cooldown":1,
-    "dash_distance":1, 
+    "dash_cooldown":180,
+    "dash_distance":4, 
 
     "base_damages":20,
     "fire_rate":2,
     "projectile_speed":10,
-    "projectile_size":1,
+    "projectile_size":5,
     "damage_variance":5,
     "stationary_threshold": 30,
 

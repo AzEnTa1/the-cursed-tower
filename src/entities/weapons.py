@@ -198,6 +198,8 @@ class Weapon:
     
     def _create_single_projectile(self, data, projectiles):
         """Crée un projectile unique"""
+
+        radius = self.settings.player_data["projectile_size"]
         # Couleurs pour multishot
         if 'index' in data:
             colors = [
@@ -210,7 +212,7 @@ class Weapon:
             ]
             color_idx = data['index'] % len(colors)
             color = colors[color_idx]
-            radius = 4 if data['index'] == 0 else 3
+            radius *= 0.8 if data['index'] == 0 else 0.6
             is_multishot = True
         elif 'arc_index' in data: 
             # Couleurs spéciales pour l'arc
@@ -220,11 +222,11 @@ class Weapon:
                 (255, 150, 0)     
             ]
             color = arc_colors[data['arc_index'] % len(arc_colors)]
-            radius = 4
+            radius *= 0.8
             is_multishot = False
         else:
             color = (255, 255, 0)  # Jaune pour les tirs normaux
-            radius = 5
+            radius *= 0.8
             is_multishot = False
         
         self._play_shoot_sound()
