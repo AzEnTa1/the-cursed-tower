@@ -26,8 +26,8 @@ src/
 #### 3. Système d'entités
 - **Player** : Joueur avec système de déplacement, dash et gestion des points de vie
 - **Enemy** : Classe de base pour tous les ennemis, avec spécialisations :
-  - `Basic`, `Charger`, `Shooter`, `Suicide`, `Destructeur`, `Pyromane`
-  - `AdaptiveBoss` : Boss unique avec comportement récursif
+- `Basic`, `Charger`, `Shooter`, `Suicide`, `Destructeur`, `Pyromane`
+- `Boss` : Boss avec système de division et patterns d'attaque récursifs
 - **Projectile** : Système de projectiles avec effets visuels avancés
 - **FireZone** : Zones de feu interactives avec animations complexes
 
@@ -54,29 +54,28 @@ src/
 #### Localisation
 La fonction récursive principale se trouve dans `src/entities/enemies/boss.py` :
 
-1. **Classe `RecursiveBossCore`** :
-   - Méthode `generate_behavior_tree()` (lignes 20-80)
-   - Méthode `recursive_attack_pattern()` (lignes 83-145)
+1. **Classe `RecursivePatternGenerator`** :
+   - Méthode `generate_circle_recursive()` (lignes 78-130)
 
-2. **Implémentation dans `AdaptiveBoss`** :
-   - L'arbre de comportement est généré lors de la création du boss
-   - Les patterns d'attaque sont exécutés récursivement pendant le combat
+2. **Implémentation dans `Boss`** :
+   - Les patterns d'attaque sont générés récursivement pendant le combat
+   - Le boss utilise également un système de division récursive via `BossDivisionSystem`
 
 #### Justification de la complexité
 
 **Complexité algorithmique** : O(branches^depth)
-- `branches` = (floor_number % 3) + 2 (entre 2 et 4 branches)
-- `depth` = max_depth (limité à 4 maximum)
+- `branches` : nombre de sous-patterns générés à chaque niveau
+- `depth` : profondeur maximale de récursion (limité à 3)
 
 **Contrôle de la complexité** :
-1. **Limitation de profondeur** : `max_depth = min(4, 1 + (floor_number // 6))`
-2. **Cache des arbres** : Les arbres de comportement sont mis en cache pour éviter la régénération
-3. **Condition d'arrêt** : `if depth >= max_depth or floor_number < depth * 3`
+1. **Limitation de profondeur** : `depth = min(3, self.current_phase)`
+2. **Cache des patterns** : Les patterns sont générés à la volée, mais la profondeur est faible
+3. **Condition d'arrêt** : `if depth <= 0`
 
 **Pourquoi la récursivité ?**
-1. **Représentation naturelle** : Les patterns d'attaque du boss forment naturellement un arbre
-2. **Génération procédurale** : Permet de créer des comportements uniques à chaque boss
-3. **Évolutivité** : La difficulté augmente avec la profondeur de l'arbre
+1. **Représentation naturelle** : Les patterns d'attaque en cercles forment naturellement une structure récursive
+2. **Génération procédurale** : Permet de créer des patterns complexes à partir de règles simples
+3. **Évolutivité** : La difficulté augmente avec la profondeur de récursion et le nombre de phases
 
 ### Structure de données personnalisée
 
@@ -131,8 +130,6 @@ tests/
 - **Système de collisions** : Détection et résolution
 - **Système de scènes** : Implémentation du pattern Scene
 
-
-
 #### Julien - Développeur systèmes & Développeur principal
 - **Système de vagues** : WaveManager et génération procédurale
 - **Système de perks** : Améliorations et gestion des choix
@@ -165,9 +162,9 @@ tests/
 **Problème** : Maintenir le ratio 4:3 tout en permettant le plein écran
 **Solution** : Système de bordures dynamiques dans `Game.resize()` et des fonctions resize dans un grand nombre de scène du jeu
 
-#### 2. Fonction récursive du boss
-**Problème** : Risque d'explosion exponentielle de la complexité
-**Solution** : Limitation de profondeur 
+#### 2. Fonction récursive et division du boss
+**Problème** : Risque d'explosion exponentielle de la complexité avec la division et les patterns récursifs
+**Solution** : Limitation de profondeur et contrôle du nombre de divisions
 
 ### Bilan
 
@@ -175,3 +172,4 @@ tests/
 - Ajout de plus de types d'ennemis
 - Système d'achievements
 - Mode multijoueur (en local sur une seule machine)
+- Variantes de boss avec différents systèmes de division et patterns récursifs
