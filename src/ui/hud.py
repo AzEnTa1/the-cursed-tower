@@ -123,7 +123,7 @@ class HUD:
         wave_info = self.wave_manager.get_wave_info()
         
         # Position en haut à droite
-        info_x = self.settings.screen_width - 220
+        info_x = self.settings.screen_width - 130
         info_y = self.margin
         
         # Étage
@@ -195,7 +195,7 @@ class HUD:
         """Vue d'ensemble de l'étage"""
         wave_info = self.wave_manager.get_wave_info()
         
-        info_x = self.settings.screen_width - 220
+        info_x = self.settings.screen_width - 130
         info_y = self.margin + 100
         
         # Indicateur de boss
@@ -242,7 +242,7 @@ class HUD:
         )
         screen.blit(xp_text, (self.margin + 150, info_y))
         
-        # Instructions minimales
+        # Instructions 
         instructions = self.small_font.render(
             "ZQSD: Déplacer • Stop: Viser • X: Dash • ESC: Menu", 
             True, (150, 150, 150)
