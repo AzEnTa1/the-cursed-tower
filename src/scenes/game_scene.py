@@ -121,6 +121,8 @@ class GameScene(BaseScene):
         
         self.current_time = pygame.time.get_ticks()
         dt = self.game.clock.get_time()  # Delta time en millisecondes
+        self.hud.update(dt)
+
         
         # Mise à jour de l'effet de transition
         self.transition.update(dt)
@@ -232,19 +234,29 @@ class GameScene(BaseScene):
     def _check_player_projectile_collisions(self, enemy):
         """Vérifie les collisions entre projectiles joueur et ennemi"""
         for projectile in self.projectiles[:]:
-            # Méthode normale pour les autres ennemis
             distance = ((enemy.x - projectile.x)**2 + (enemy.y - projectile.y)**2)**0.5
             if distance < enemy.radius + projectile.radius:
                 if enemy.take_damage(projectile.damage):
                     self.enemies.remove(enemy)
                     self.wave_manager.on_enemy_died(enemy)
-                    # Score différent selon le type d'ennemi
-                    if enemy.type == "destructeur":
-                        self.player.add_score(50)
+                    
+                    # Score et pièces selon le type d'ennemi
+                    if enemy.type == "boss":
+                        score_amount = 200
+                        coins_amount = 50
+                    elif enemy.type == "destructeur":
+                        score_amount = 50
+                        coins_amount = 15
                     elif enemy.type == "suicide":
-                        self.player.add_score(20)
+                        score_amount = 20
+                        coins_amount = 5
                     else:
-                        self.player.add_score(10)
+                        score_amount = 10
+                        coins_amount = 2
+                    
+                    self.player.add_score(score_amount)
+                    self.player.add_coins(coins_amount) 
+                    self.settings.sounds["coins"].play()  
                     
                     self._check_for_level_up()
 

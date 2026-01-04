@@ -17,7 +17,7 @@ class GameOverScene(BaseScene):
         self.game.save()
         
         self.ui = GameOverUI(self.settings, game_stats)
-        self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 0, 0))
+        self.quit_text = self.settings.font["h3"].render("Revenir au Menu", True, (255, 0, 0))
         self.quit_button = pygame.image.load(r"assets/images/cadre.png")
         self.quit_button = pygame.transform.scale(self.quit_button, (200, 50))
         self.quit_button = self.quit_button.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
@@ -35,12 +35,12 @@ class GameOverScene(BaseScene):
     def update(self):
         """"""
         if self.quit_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
+            self.quit_text = self.settings.font["h3"].render("Revenir au Menu", True, (255, 255, 255))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 0, 0))
+            self.quit_text = self.settings.font["h3"].render("Revenir au Menu", True, (255, 0, 0))
             self.exit_hovered = False
     
     def draw(self, screen):

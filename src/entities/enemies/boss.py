@@ -251,11 +251,6 @@ class AdaptiveBoss(Enemy):
         self.player_distance_history = []
         self.preferred_distance = 200 + (floor_number * 20)
         self.attack_pattern_history = []
-        
-        # Debug et logging
-        print(f"[BOSS] Créé: {self.name} (Étage {floor_number}, Seed {self.boss_seed})")
-        print(f"[BOSS] Phases: {self.phase_depth}, PV: {self.health}")
-
     
     def _calculate_base_stats(self, floor_number):
         """Calcule les statistiques de base selon l'étage"""

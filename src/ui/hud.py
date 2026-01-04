@@ -1,5 +1,6 @@
 # src/ui/hud.py
 import pygame
+import math
 
 class HUD:
     def __init__(self, player, wave_manager, weapon, settings):
@@ -7,128 +8,244 @@ class HUD:
         self.wave_manager = wave_manager
         self.weapon = weapon
         self.settings = settings
-
-        # Positions
-        self.margin = 10
-        self.bar_height = 8
-        self.bar_width = 150
         
+        # Positions et dimensions
+        self.margin = 15
+        self.bar_height = 12
+        self.small_bar_height = 8
+        self.corner_radius = 4
+        self.pulse_value = 0
+        self.pulse_speed = 0.05
+        
+        # Police pour les petites infos
+        self.small_font = pygame.font.Font(None, 20)
+    
+    def update(self, dt):
+        """Met à jour les animations du HUD"""
+        self.pulse_value = (self.pulse_value + self.pulse_speed) % (2 * math.pi)
+    
     def draw(self, screen):
-        """Dessine l'interface complète sans radar"""
+        """Dessine l'interface complète"""
+        # Dessiner les éléments principaux
         self.draw_health_bar(screen)
+        self.draw_dash_indicator(screen)
         self.draw_wave_info(screen)
         self.draw_aim_indicator(screen)
-        self.draw_floor_info(screen)
-        self.draw_quick_stats(screen)
+        self.draw_floor_overview(screen)
         
+        # Infos rapides en bas
+        self.draw_quick_info(screen)
+    
     def draw_health_bar(self, screen):
-        """Barre de vie avec pourcentage"""
-        # Fond de la barre
+        """Barre de vie épurée"""
         bar_x = self.margin
         bar_y = self.margin
-        pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, self.bar_width, self.bar_height))
+        bar_width = 200
         
-        # Vie actuelle
+        # Calcul de la santé
         health_percent = self.player.health / self.player.max_health
-        health_width = int(self.bar_width * health_percent)
         
-        # Couleur qui change selon la vie
-        if health_percent > 0.6:
-            color = self.settings.GREEN
-        elif health_percent > 0.3:
-            color = self.settings.YELLOW
-        else:
-            color = self.settings.RED
+        # Fond de la barre
+        pygame.draw.rect(screen, (40, 40, 40), 
+                        (bar_x, bar_y, bar_width, self.bar_height),
+                        border_radius=self.corner_radius)
+        
+        # Barre de vie
+        if health_percent > 0:
+            health_width = int(bar_width * health_percent)
             
-        pygame.draw.rect(screen, color, (bar_x, bar_y, health_width, self.bar_height))
+            # Déterminer la couleur
+            if health_percent > 0.6:
+                color = self.settings.GREEN
+            elif health_percent > 0.3:
+                color = self.settings.YELLOW
+            else:
+                color = self.settings.RED
+                # Pulsation rouge pour basse vie
+                pulse = math.sin(self.pulse_value * 3) * 2
+                health_width = max(5, health_width + int(pulse))
+            
+            pygame.draw.rect(screen, color, 
+                           (bar_x, bar_y, health_width, self.bar_height),
+                           border_radius=self.corner_radius)
         
-        # Texte
+        # Bordure
+        pygame.draw.rect(screen, (80, 80, 80), 
+                        (bar_x, bar_y, bar_width, self.bar_height),
+                        1, border_radius=self.corner_radius)
+        
+        # Texte santé
         health_text = self.settings.font["h3"].render(
-            f"VIE: {self.player.health}/{self.player.max_health}", 
-            True, self.settings.WHITE
+            f"{int(self.player.health)}/{self.player.max_health}", 
+            True, (255, 255, 255)
         )
-        screen.blit(health_text, (bar_x, bar_y + self.bar_height + 2))
+        screen.blit(health_text, (bar_x + bar_width + 10, bar_y - 2))
+    
+    def draw_dash_indicator(self, screen):
+        """Indicateur de dash simple"""
+        dash_x = self.margin
+        dash_y = self.margin + 30
+        bar_width = 120
         
-    def draw_wave_info(self, screen):
-        """Informations sur les vagues"""
-        wave_info = self.wave_manager.get_wave_info()
-        
-        # Étage et vague
-        floor_text = self.settings.font["h2"].render(
-            f"ÉTAGE {wave_info['floor']}", 
-            True, self.settings.WHITE
-        )
-        screen.blit(floor_text, (self.settings.screen_width - 150, self.margin))
-        
-        wave_text = self.settings.font["h3"].render(
-            f"VAGUE {wave_info['current_wave']}/3", 
-            True, self.settings.WHITE
-        )
-        screen.blit(wave_text, (self.settings.screen_width - 150, self.margin + 35))
-        
-        # État de la vague avec couleur
-        state_text = ""
-        state_color = self.settings.WHITE
-        
-        if wave_info['state'] == "between_waves" and self.wave_manager.wave_queue.has_more_waves():
-            state_text = "PRÉPAREZ-VOUS"
-            state_color = self.settings.YELLOW
-        elif wave_info['state'] == "in_wave":
-            state_text = f"ENNEMIS: {wave_info['enemies_remaining']}"
-            state_color = self.settings.RED
-        elif wave_info['state'] == "all_cleared":
-            state_text = "ÉTAGE TERMINÉ!"
-            state_color = self.settings.GREEN
-            
-        state_display = self.settings.font["h3"].render(state_text, True, state_color)
-        screen.blit(state_display, (self.settings.screen_width - 150, self.margin + 60))
-        
-    def draw_aim_indicator(self, screen):
-        """Indicateur de visée avec barre de progression"""
-        stationary_percent = min(self.weapon.stationary_time / self.weapon.stationary_threshold, 1.0)
-        
-        # Barre de progression de visée
-        aim_x = self.margin
-        aim_y = 80 # Sous la barre de vie
+        # Calcul du cooldown
+        dash_percent = self.player.get_dash_cooldown_percent()
+        is_ready = dash_percent >= 1.0
         
         # Fond
-        pygame.draw.rect(screen, (50, 50, 50), (aim_x, aim_y, self.bar_width, self.bar_height))
+        pygame.draw.rect(screen, (30, 30, 50), 
+                        (dash_x, dash_y, bar_width, self.small_bar_height),
+                        border_radius=self.corner_radius)
         
-        # Progression
-        aim_width = int(self.bar_width * stationary_percent)
-        pygame.draw.rect(screen, self.settings.BLUE, (aim_x, aim_y, aim_width, self.bar_height))
+        # Barre de recharge
+        if dash_percent > 0:
+            dash_width = int(bar_width * dash_percent)
+            dash_color = (100, 200, 255) if is_ready else (50, 100, 255)
+            pygame.draw.rect(screen, dash_color, 
+                           (dash_x, dash_y, dash_width, self.small_bar_height),
+                           border_radius=self.corner_radius)
+        
+        # Bordure
+        border_color = (100, 200, 255) if is_ready else (80, 80, 120)
+        pygame.draw.rect(screen, border_color, 
+                        (dash_x, dash_y, bar_width, self.small_bar_height),
+                        1, border_radius=self.corner_radius)
         
         # Texte
-        if stationary_percent >= 1.0:
-            aim_text = self.settings.font["h3"].render("PRÊT À TIRER!", True, self.settings.GREEN)
-        else:
-            aim_text = self.settings.font["h3"].render(f"VISÉE: {int(stationary_percent * 100)}%", True, self.settings.WHITE)
-            
-        screen.blit(aim_text, (aim_x, aim_y + self.bar_height + 2))
+        status = "PRÊT" if is_ready else f"{(self.player.dash_cooldown/60):.1f}s"
+        dash_text = self.settings.font["h4"].render(
+            f"DASH: {status}", 
+            True, (200, 200, 255)
+        )
+        screen.blit(dash_text, (dash_x + bar_width + 10, dash_y - 3))
+    
+    def draw_wave_info(self, screen):
+        """Informations sur la vague actuelle"""
+        wave_info = self.wave_manager.get_wave_info()
         
-    def draw_floor_info(self, screen):
-        """Informations générales en bas"""
+        # Position en haut à droite
+        info_x = self.settings.screen_width - 220
+        info_y = self.margin
+        
+        # Étage
+        floor_text = self.settings.font["h2"].render(
+            f"Étage {wave_info['floor']}", 
+            True, (255, 215, 0)
+        )
+        screen.blit(floor_text, (info_x, info_y))
+        
+        # Vague actuelle
+        wave_text = self.settings.font["h3"].render(
+            f"Vague {wave_info['current_wave']}/3", 
+            True, (100, 150, 255)
+        )
+        screen.blit(wave_text, (info_x, info_y + 35))
+        
+        # État de la vague
+        if wave_info['state'] == "between_waves" and self.wave_manager.wave_queue.has_more_waves():
+            state_text = "Préparation"
+            state_color = self.settings.YELLOW
+        elif wave_info['state'] == "in_wave":
+            state_text = f"Ennemis: {wave_info['enemies_remaining']}"
+            state_color = self.settings.RED
+        elif wave_info['state'] == "all_cleared":
+            state_text = "Étage terminé"
+            state_color = self.settings.GREEN
+        else:
+            state_text = wave_info['state']
+            state_color = self.settings.WHITE
+        
+        state_display = self.settings.font["h3"].render(state_text, True, state_color)
+        screen.blit(state_display, (info_x, info_y + 65))
+    
+    def draw_aim_indicator(self, screen):
+        """Indicateur de visée simple"""
+        stationary_percent = min(self.weapon.stationary_time / self.weapon.stationary_threshold, 1.0)
+        
+        aim_x = self.margin
+        aim_y = self.margin + 60
+        bar_width = 150
+        
+        # Fond
+        pygame.draw.rect(screen, (40, 40, 40), 
+                        (aim_x, aim_y, bar_width, self.small_bar_height),
+                        border_radius=self.corner_radius)
+        
+        # Barre de progression
+        if stationary_percent > 0:
+            aim_width = int(bar_width * stationary_percent)
+            aim_color = (100, 150, 255) if stationary_percent < 1.0 else (100, 255, 100)
+            pygame.draw.rect(screen, aim_color, 
+                           (aim_x, aim_y, aim_width, self.small_bar_height),
+                           border_radius=self.corner_radius)
+        
+        # Bordure
+        pygame.draw.rect(screen, (80, 120, 200), 
+                        (aim_x, aim_y, bar_width, self.small_bar_height),
+                        1, border_radius=self.corner_radius)
+        
+        # Texte
+        status = "Prêt" if stationary_percent >= 1.0 else f"{int(stationary_percent * 100)}%"
+        aim_text = self.settings.font["h4"].render(
+            f"Visée: {status}", 
+            True, (200, 220, 255)
+        )
+        screen.blit(aim_text, (aim_x + bar_width + 10, aim_y - 3))
+    
+    def draw_floor_overview(self, screen):
+        """Vue d'ensemble de l'étage"""
+        wave_info = self.wave_manager.get_wave_info()
+        
+        info_x = self.settings.screen_width - 220
+        info_y = self.margin + 100
+        
+        # Indicateur de boss
+        is_boss_floor = hasattr(self.wave_manager, 'is_boss_floor') and self.wave_manager.is_boss_floor
+        boss_text = "BOSS" if is_boss_floor else "Normal"
+        boss_color = (255, 50, 50) if is_boss_floor else (100, 200, 100)
+        
+        boss_display = self.settings.font["h3"].render(boss_text, True, boss_color)
+        screen.blit(boss_display, (info_x, info_y))
+        
+        # Vagues restantes
+        remaining_waves = max(0, 3 - wave_info['current_wave'])
+        if wave_info['state'] == "in_wave":
+            remaining_waves = max(0, 3 - wave_info['current_wave'] + 1)
+        
+        waves_text = self.settings.font["h4"].render(
+            f"Vagues restantes: {remaining_waves}", 
+            True, (200, 200, 200)
+        )
+        screen.blit(waves_text, (info_x, info_y + 30))
+        
+        # Étage courant
+        floor_text = self.settings.font["h4"].render(
+            f"Étage courant: {wave_info['floor']}", 
+            True, (200, 200, 200)
+        )
+        screen.blit(floor_text, (info_x, info_y + 55))
+    
+    def draw_quick_info(self, screen):
+        """Informations rapides en bas de l'écran"""
         info_y = self.settings.screen_height - 40
         
         # Score
-        score_text = self.settings.font["h4"].render(f"Score: {self.player.score}", True, self.settings.WHITE)
+        score_text = self.settings.font["h4"].render(
+            f"Score: {self.player.score}", 
+            True, (255, 255, 255)
+        )
         screen.blit(score_text, (self.margin, info_y))
         
-        # Instructions
-        instructions = self.settings.font["h4"].render("ZQSD: Déplacer • Stop: Viser automatique • ESC: Menu", True, self.settings.WHITE)
-        screen.blit(instructions, (self.settings.screen_width // 2 - instructions.get_width() // 2, info_y))
+        # XP
+        xp_text = self.settings.font["h4"].render(
+            f"XP: {self.player.xp}/200", 
+            True, (200, 200, 255)
+        )
+        screen.blit(xp_text, (self.margin + 150, info_y))
         
-    def draw_quick_stats(self, screen):
-        """Statistiques rapides en haut à droite"""
-        stats_x = self.settings.screen_width - 200
-        stats_y = 100
-        
-        # XP actuel
-        xp_text = self.settings.font["h3"].render(f"XP: {self.player.xp} / 200", True, self.settings.YELLOW)
-        screen.blit(xp_text, (stats_x, stats_y))
-        
-        # Ennemis tués dans cette vague (approximatif)
-        enemies_killed = max(0, self.wave_manager.enemies_remaining - len(self.wave_manager.current_wave_enemies))
-        if self.wave_manager.wave_number > 0:
-            kills_text = self.settings.font["h4"].render(f"Tués cette vague: {enemies_killed}", True, self.settings.WHITE)
-            screen.blit(kills_text, (stats_x, stats_y + 30))
+        # Instructions minimales
+        instructions = self.small_font.render(
+            "ZQSD: Déplacer • Stop: Viser • X: Dash • ESC: Menu", 
+            True, (150, 150, 150)
+        )
+        screen.blit(instructions, 
+                   (self.settings.screen_width // 2 - instructions.get_width() // 2, info_y))

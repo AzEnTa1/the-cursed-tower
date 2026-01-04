@@ -33,7 +33,7 @@ class MenuScene(BaseScene):
         self.bg_image = pygame.image.load("assets/images/background/menu_scene.png")
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
 
-        self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+        self.text = self.settings.font["main_menu"].render("Jouer !", True, (255, 200, 0))
         self.button_rect = self.text.get_rect(center=self.play_button.center)
 
         self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 200, 0))
@@ -101,12 +101,12 @@ class MenuScene(BaseScene):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+            self.text = self.settings.font["main_menu"].render("Jouer !", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered: 
                 self.exit_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
+            self.text = self.settings.font["main_menu"].render("Jouer !", True, (255, 255, 255))
             self.exit_hovered = False
 
         if self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
