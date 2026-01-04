@@ -83,7 +83,7 @@ class Settings:
             "Tire_4":0.3
         }
     
-    def init_fonts(self):
+    def _init_fonts(self):
         """Initialise les fonts"""
         self.font = {
             "h1": pygame.font.Font(None, 48),
@@ -93,7 +93,7 @@ class Settings:
             "main_menu": pygame.font.SysFont(None, 60),
         }
 
-    def init_sounds(self):
+    def _init_sounds(self):
         """Initialise les sons"""
         self.sounds = {
             "boom":pygame.mixer.Sound("assets/sounds/boom.mp3"),
