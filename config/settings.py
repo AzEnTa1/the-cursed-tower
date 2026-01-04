@@ -21,7 +21,6 @@ class Settings:
 
         self.ICON_PATH = "assets/images/icon.png"
         self.PLAYER_DATA_PATH = "data/player_data.json"
-        self.SOUND_START_PATH = "assets/sounds/game_start.mp3"
 
         # Joueur
         self.player_speed = player_data.get("speed", 5)
@@ -118,3 +117,20 @@ class Settings:
         pygame.mixer.music.set_volume(self.master_volume)
         for key in self.sounds.keys():
             self.sounds[key].set_volume(self.master_volume * self.sounds_volume_map.get(key, 1))
+
+    def update_player_data(self, player_data):
+        # Joueur
+        self.player_speed = player_data.get("speed", 5)
+        self.player_size = player_data.get("size", 20)
+        self.player_health = player_data.get("max_health", 100)
+        self.player_data = player_data
+        
+        # Armes
+        self.WEAPON_DAMAGE = player_data.get("base_damages", 30)
+        self.WEAPON_FIRE_RATE = player_data.get("fire_rate", 2)
+        self.WEAPON_PROJECTILE_SPEED = player_data.get("projectile_speed", 10)
+        self.WEAPON_DAMAGE_VARIANCE = player_data.get("damage_variance", 5)
+        self.WEAPON_STATIONARY_THRESHOLD = player_data.get("stationary_threshold", 25)
+
+        # Volume
+        self.master_volume = player_data["master_volume"]

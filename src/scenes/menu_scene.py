@@ -17,12 +17,16 @@ class MenuScene(BaseScene):
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2-50, 200, 50)
         self.talents_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 20, 200, 50)
         self.reset_button = pygame.Rect(0, self.settings.screen_height - 50, 200, 50)
+
         self.volume_plus = pygame.Rect(self.settings.screen_width - 50, 0, 50, 50)
         self.plus_hori = pygame.Rect(self.settings.screen_width - 50, 15, 50, 20)
         self.plus_vert = pygame.Rect(self.settings.screen_width - 35, 0, 20, 50)
         self.volume_moins = pygame.Rect(self.settings.screen_width - 190, 0, 50, 50)
         self.moins = pygame.Rect(self.settings.screen_width - 190, 15, 50, 20)
         self.val_volume = pygame.Rect(self.settings.screen_width - 120, 0, 50, 50)
+
+        self.txt_val_volume = self.settings.font["h2"].render(str(int(self.settings.master_volume*100)), True, (0, 0, 0))
+        self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
 
         # Charger l'image de fond
 
@@ -44,29 +48,32 @@ class MenuScene(BaseScene):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.play_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.start_game()
+
             elif self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.change_scene(self.settings.SCENE_TALENTS)
+
             elif self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.reset_player_data()
                 self.settings.sounds["game_over"].play()
+                # Actualise le son car il est aussi reset
+                self.txt_val_volume = self.settings.font["h2"].render(str(int(self.settings.master_volume*100)), True, (0, 0, 0))
+                self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
+
             elif self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.update_volume(1)
             elif self.volume_moins.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.update_volume(-1)
 
-        # Véeifie si shift et pressé pour faire + 10 au son au lieu de +1
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+            if event.key == pygame.K_RETURN:  # Touche ENTER
+                self.start_game()
+            # Véeifie si shift et pressé pour faire + 10 au son au lieu de +1
+            elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                 self.shift_pressed = True
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                 self.shift_pressed = False
-        
-
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:  # Touche ENTER
-                self.start_game()
     
     def start_game(self):
         """Démarre le jeu"""
@@ -85,9 +92,11 @@ class MenuScene(BaseScene):
             self.settings.update_master_volume(val*0.1)
         else:
             self.settings.update_master_volume(val*0.01)
-        
-        
-    
+
+        # Update le text affiché
+        self.txt_val_volume = self.settings.font["h2"].render(str(int(self.settings.master_volume*100)), True, (0, 0, 0))
+        self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
+
     def update(self):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
         
@@ -132,12 +141,16 @@ class MenuScene(BaseScene):
 
         # Bouton reset avec effet hover
         screen.blit(self.text_reset, self.reset_button)
+
+        # Boutons pour changer le volume
         pygame.draw.rect(screen, (255, 255, 255), self.volume_plus)
-        pygame.draw.rect(screen, (0, 0, 0), self.plus_hori)
-        pygame.draw.rect(screen, (0, 0, 0), self.plus_vert)
+        pygame.draw.rect(screen, (50, 50, 50), self.plus_hori)
+        pygame.draw.rect(screen, (50, 50, 50), self.plus_vert)
         pygame.draw.rect(screen, (255, 255, 255), self.volume_moins)
-        pygame.draw.rect(screen, (0, 0, 0), self.moins)
+        pygame.draw.rect(screen, (50, 50, 50), self.moins)
         pygame.draw.rect(screen, (255, 255, 255), self.val_volume)
+
+        screen.blit(self.txt_val_volume, self.txt_vel_volume_rect)
 
     
     def resize(self):

@@ -27,7 +27,7 @@ class StatUI:
         i = 0
         for key in self.game_stats.keys():
             i += 1
-            txt = self.settings.font["h4"].render(f"{key}: {self.game_stats[key]}", True, (255, 255, 255))
+            txt = self.settings.font["h4"].render(f"{key.replace("_", " ")}: {self.game_stats[key]}", True, (255, 255, 255))
             rect = txt.get_rect(topleft = (self.stats_rect[0] + 5, self.stats_rect[1] + 20*i + 5))
             rect.center = (self.settings.screen_width//2, self.settings.screen_height//1.5 - 20*i)
             screen.blit(txt, rect)
