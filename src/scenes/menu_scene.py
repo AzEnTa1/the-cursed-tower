@@ -14,8 +14,8 @@ class MenuScene(BaseScene):
         self.shift_pressed = False
 
         # Rectangle pour les boutons (x, y, width, height)
-        self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2-50, 200, 50)
-        self.talents_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 20, 200, 50)
+        self.play_button = pygame.Rect(self.settings.screen_width//2-100, self.settings.screen_height//2-20, 200, 50)
+        self.talents_button = pygame.Rect(600, self.settings.screen_height - 50, 200, 50)
         self.reset_button = pygame.Rect(0, self.settings.screen_height - 50, 200, 50)
 
         self.volume_plus = pygame.Rect(self.settings.screen_width - 50, 0, 50, 50)
@@ -34,10 +34,10 @@ class MenuScene(BaseScene):
         self.bg_image = pygame.image.load("assets/images/background/menu_scene.png")
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
 
-        self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+        self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 200, 0))
         self.button_rect = self.text.get_rect(center=self.play_button.center)
 
-        self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 200, 0))
+        self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 200, 0))
         self.talents_button = self.text_talents.get_rect(center=self.talents_button.center)
 
         self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
@@ -105,21 +105,21 @@ class MenuScene(BaseScene):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+            self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered: 
                 self.exit_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
+            self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 255, 255))
             self.exit_hovered = False
 
         if self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 200, 0))
+            self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 200, 0))
             if not hasattr(self, 'talents_hovered') or not self.talents_hovered:
                 self.talents_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 255, 255))
+            self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 255, 255))
             self.talents_hovered = False
 
         if self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
@@ -187,8 +187,8 @@ class MenuScene(BaseScene):
         Appelé lorsque la fenêtre change de taille
         Recalcule les positions des éléments
         """
-        self.play_button.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 -50, 200, 50)
-        self.talents_button.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 20, 200, 50)
+        self.play_button.update(self.settings.screen_width//2-100, self.settings.screen_height//2-20, 200, 50)
+        self.talents_button.update(600, self.settings.screen_height - 50, 200, 50)
         self.reset_button.update(0, self.settings.screen_height - 50, 200, 50)
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
         self.button_rect = self.text.get_rect(center=self.play_button.center)
