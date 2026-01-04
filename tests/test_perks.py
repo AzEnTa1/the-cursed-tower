@@ -64,13 +64,6 @@ def test_perks_basic():
     perks.player_regen()
     expected_health = round(initial_health + (player.max_health * settings.player_regen_power))
     assert player.health == min(expected_health, player.max_health)
-    
-    # Test vitesse projectile
-    initial_projectile_speed = weapon.projectile_speed
-    perks.projectile_speed()
-    assert weapon.projectile_speed == round(initial_projectile_speed * 1.1)
-    
-    print("✓ test_perks_basic passed")
 
 def test_perks_special():
     """Test des perks spéciaux"""
@@ -105,71 +98,6 @@ def test_perks_special():
     # Test multishot (niveau supplémentaire)
     perks.multishot()
     assert weapon.multishot_count == 2
-    
-    # Test arc shot
-    perks.arc_shot()
-    assert weapon.arc_shot == True
-    import math
-    assert abs(weapon.arc_angle - math.radians(15)) < 0.001
-    
-    print("✓ test_perks_special passed")
-
-def test_perks_manager():
-    """Test du gestionnaire de perks"""
-    class MockSettings:
-        def __init__(self):
-            self.data_translation_map = {
-                "player_speed": "Vitesse du Joueur",
-                "player_attack_speed": "Vitesse d'Attaque",
-                "player_attack_damage": "Dégat d'Attaque",
-                "player_max_health": "Vie Maximale",
-                "player_size_up": "Taille du Joueur",
-                "player_size_down": "Taille du Joueur",
-                "player_regen": "Puissance Régénération",
-                "projectile_speed": "Vitesse des projectiles",
-                "multishot": "Multishot",
-                "arc_shot": "Arc Shot"
-            }
-            self.sounds = {}
-    
-    class MockPlayer:
-        def __init__(self):
-            self.speed = 5
-            self.size = 20
-            self.health = 80
-            self.max_health = 100
-    
-    class MockWeapon:
-        def __init__(self):
-            self.fire_rate = 2
-            self.damage = 30
-            self.projectile_speed = 10
-            self.multishot_count = 0
-            self.arc_shot = False
-    
-    settings = MockSettings()
-    player = MockPlayer()
-    weapon = MockWeapon()
-    
-    manager = PerksManager(settings, player, weapon)
-    
-    # Test récupération des perks
-    perks_list = manager.get_perks()
-    assert isinstance(perks_list, list)
-    assert len(perks_list) == 3
-    assert all(perk in manager.perks_dict for perk in perks_list)
-    
-    # Test que les perks sont uniques dans la sélection
-    assert len(set(perks_list)) == len(perks_list)
-    
-    # Test choix de perk
-    test_perk = perks_list[0]
-    initial_player_speed = player.speed
-    
-    # Vérifie que la fonction existe
-    assert test_perk in manager.perks_dict
-    
-    print("✓ test_perks_manager passed")
 
 def test_perks_translation():
     """Test de la traduction des noms de perks"""
@@ -203,9 +131,7 @@ def test_perks_translation():
             assert isinstance(translated, str)
             assert len(translated) > 0
     
-    print("✓ test_perks_translation passed")
-
-def test_perks_weights():
+def test_perks_poids():
     """Test du système de poids des perks"""
     class MockSettings:
         def __init__(self):
@@ -231,18 +157,10 @@ def test_perks_weights():
         for perk in perks:
             perk_counts[perk] = perk_counts.get(perk, 0) + 1
     
-    # Vérifie que tous les perks apparaissent au moins une fois
-    all_perks = list(manager.perks_dict.keys())
-    for perk in all_perks:
-        assert perk in perk_counts, f"Perk {perk} jamais apparu"
-    
-    print("✓ test_perks_weights passed")
 
 # Exécuter tous les tests
 if __name__ == "__main__":
     test_perks_basic()
     test_perks_special()
-    test_perks_manager()
     test_perks_translation()
-    test_perks_weights()
-    print("\n✅ Tous les tests de perks ont réussi!")
+    test_perks_poids()

@@ -126,7 +126,7 @@ tests/
 - **Documentation technique** : Rédaction du rapport
 - **Équilibrage** : Courbe de difficulté et statistiques
 - **Boss adaptatif** : Implémentation de la fonction récursive
-- **Tests unitaires** : Développement et exécution
+- **Tests unitaires** : Réalisation de la moitiée des fichiers
 - **Système de collisions** : Détection et résolution
 - **Système de scènes** : Implémentation du pattern Scene
 
@@ -139,6 +139,7 @@ tests/
 - **Menu statistiques** : Affichage des données de jeu
 - **Tests unitaires** : Développement et exécution
 - **Menu Tutoriel** : Explication du fonctionnement du jeu
+- **Tests unitaires** : Réalisation de la moitiée des fichiers
 
 #### Zia - Assets
 - **Tests unitaires** : Développement et exécution
