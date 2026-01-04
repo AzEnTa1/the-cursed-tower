@@ -1,20 +1,26 @@
 {
     "name": "unamed",
-    "master_volume": 0.8,
-    "max_health": 100,
-    "regen_power": 1,
-    "size": 20,
-    "speed": 5,
+    "master_volume": 0.63,
+    "max_health": 29325079,
+    "regen_power": 1.33,
+    "size": 18,
+    "speed": 25.31,
     "dash_cooldown": 1,
-    "dash_distance": 1,
+    "dash_distance": 1.61,
     "base_damages": 30,
-    "fire_rate": 2,
+    "fire_rate": 2.2,
     "projectile_speed": 10,
     "projectile_size": 1,
     "damage_variance": 5,
     "stationary_threshold": 25,
     "best_score": 0,
+<<<<<<< Updated upstream
     "game_played": 2,
     "coins": 1185,
     "all_time_coins": 1185
+=======
+    "game_played": 5,
+    "coins": 5,
+    "all_time_coins": 1595
+>>>>>>> Stashed changes
 }

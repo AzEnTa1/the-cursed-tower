@@ -32,11 +32,8 @@ class Game:
 
         # Initialiser les sons
         self.settings.init_sounds()
-<<<<<<< Updated upstream
 
         # Met le volume principal
-=======
->>>>>>> Stashed changes
         self.settings.update_master_volume()
 
         # Surface de la fenetre utilisé
