@@ -91,7 +91,7 @@ class Settings:
 
             "max_health":"Vie Maximale",
             "current_health":"Points de vie actuel",
-            "regen_power":"Puissance de Régénération",
+            "regen_power":"Puissance Régénération",
             "player_size":"Taille du Joueur",
             "player_speed":"Vitesse du Joueur",
             "dash_cooldown":"Chargement du dash",
