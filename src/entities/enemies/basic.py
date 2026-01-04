@@ -1,6 +1,6 @@
+# src/entities/enemies/basic.py
 import math
 from .enemy import Enemy
-from config.settings import Settings
 
 class Basic(Enemy):
     """

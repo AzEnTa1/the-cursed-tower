@@ -156,7 +156,6 @@ class RecursivePatternGenerator:
         
         return projectiles
 
-
 class BossDivisionSystem:
     """Gère la division du boss en deux"""
     
@@ -198,7 +197,7 @@ class BossDivisionSystem:
             y = original_boss.y + math.sin(angle) * distance
             
             # Créer un boss plus petit
-            from .boss import Boss  # Import circulaire, mais OK pour une classe interne
+            from .boss import Boss  # Importation locale pour éviter la circularité
             boss = Boss(
                 x, y, 
                 self.settings,
@@ -214,9 +213,14 @@ class BossDivisionSystem:
             boss.speed = original_boss.speed * 1.1
             boss.radius = original_boss.radius * 0.7
             
-            # Limiter les capacités
-            boss.max_phases = min(2, original_boss.max_phases - 1)
+            # Limiter les capacités - S'ASSURER QU'IL Y A AU MOINS 1 PHASE
+            boss.max_phases = max(1, min(2, original_boss.max_phases - 1))
             boss.phases = boss._create_phases()
+            
+            # Réinitialiser current_phase à 1
+            boss.current_phase = 1
+            if boss.phases:
+                boss.phases[0].active = True
             
             # Pas de division récursive pour les clones
             boss.division_system.can_divide = False

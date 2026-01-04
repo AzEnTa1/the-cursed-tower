@@ -214,6 +214,7 @@ class GameScene(BaseScene):
     def _update_enemies(self, dt):
         """Met à jour tous les ennemis"""
         new_bosses_from_division = []
+        bosses_to_remove = []
         
         for enemy in self.enemies[:]:
             # Passe les zones de feu et pending_zones au pyromane
@@ -223,9 +224,13 @@ class GameScene(BaseScene):
             elif enemy.type in ["shooter", "destructeur"]:
                 enemy.update(self.player, self.enemy_projectiles)
             elif enemy.type == "boss":
-                # Le boss retourne maintenant (ennemis_créés, bosses_de_division)
+                 # Le boss retourne maintenant (ennemis_créés, bosses_de_division)
                 enemies_created, division_bosses = enemy.update(self.player, self.enemy_projectiles)
                 if division_bosses:
+                    # Stocker le boss à retirer après la boucle
+                    bosses_to_remove.append(enemy)
+                    # Informer le wave manager de la division
+                    self.wave_manager.on_enemy_divided(enemy, division_bosses)
                     new_bosses_from_division.extend(division_bosses)
             else:   
                 enemy.update(self.player, None)

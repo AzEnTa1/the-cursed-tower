@@ -1,18 +1,18 @@
 {
     "master_volume": 1,
-    "max_health": 100,
+    "max_health": 240,
     "regen_power": 0.1,
     "player_size": 20,
     "player_speed": 5,
-    "dash_cooldown": 180,
+    "dash_cooldown": 1,
     "dash_distance": 4,
     "attack_damages": 20,
-    "attack_speed": 2,
+    "attack_speed": 200,
     "projectile_speed": 10,
     "projectile_size": 5,
-    "stationary_threshold": 30,
+    "stationary_threshold": 1,
     "best_score": 500,
-    "game_played": 8,
-    "coins": 1860,
-    "all_time_coins": 1860
+    "game_played": 15,
+    "coins": 790,
+    "all_time_coins": 2590
 }

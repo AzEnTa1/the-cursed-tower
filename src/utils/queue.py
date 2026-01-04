@@ -38,12 +38,12 @@ class Queue:
 
 
 class WaveQueue:
-    """Génère des vagues d'ennemis de plus en plus difficiles"""
+    """Génère uniquement les vagues normales (3 par étage)"""
     
     ENEMY_TYPES = ['basic', 'charger', 'shooter', 'destructeur', 'suicide', 'pyromane']
     
     WAVE_CONFIGS = [
-        [35, 15, 15, 5, 10, 20],     # Vague 1
+        [35, 15, 15, 5, 10, 20],     # Vague 1 (la plus facile)
         [25, 20, 15, 10, 10, 20],    # Vague 2
         [15, 20, 20, 15, 10, 20],    # Vague 3
     ]
@@ -52,18 +52,19 @@ class WaveQueue:
         self.waves = Queue()
         self.settings = settings
     
-    def generate_wave(self, floor_number, wave_number):
-        """Génère une vague d'ennemis basée sur l'étage et le numéro de vague"""
+    def generate_normal_wave(self, floor_number, wave_number):
+        """Génère une vague d'ennemis normaux basée sur l'étage et le numéro de vague"""
         # S'assurer qu'on ne dépasse pas le nombre de configurations
         wave_config_index = min(wave_number - 1, len(self.WAVE_CONFIGS) - 1)
         weights = self.WAVE_CONFIGS[wave_config_index]
         
-        # Augmente le nombre d'ennemis avec les étages
+        # Augmente le nombre d'ennemis avec les étages et les vagues
         base_enemies = 5
         floor_bonus = (floor_number - 1) * 2
-        wave_bonus = (wave_number - 1) * 1
+        wave_bonus = (wave_number - 1) * 2
         
         enemy_count = base_enemies + floor_bonus + wave_bonus
+        enemy_count = min(enemy_count, 15)  # Limiter à 15 ennemis max
         
         enemies = []
         for _ in range(enemy_count):
@@ -76,26 +77,17 @@ class WaveQueue:
         
         return enemies
     
-    def setup_waves_for_floor(self, floor_number, waves_count=3):
-        """Configure les vagues pour un étage donné"""
+    def setup_waves_for_floor(self, floor_number):
+        """Configure uniquement les 3 vagues normales"""
         self.waves = Queue()
         
-        for wave_num in range(1, waves_count + 1):  # wave_num de 1 à 3
-            wave_enemies = self.generate_wave(floor_number, wave_num)
+        # Vagues normales : toujours 3
+        for wave_num in range(1, 4):  # wave_num de 1 à 3
+            wave_enemies = self.generate_normal_wave(floor_number, wave_num)
             self.waves.enqueue(wave_enemies)
-            
-    def setup_boss_floor(self, floor_number):
-        """Configure les vagues pour un étage de boss"""
-        self.waves = Queue()
-        
-        # Seed unique pour le boss basée sur l'étage
-        boss_seed = hash((floor_number, pygame.time.get_ticks())) % (2**32)
-        
-        # Une seule vague avec un seul boss
-        self.waves.enqueue([("boss", boss_seed)])
     
     def get_next_wave(self):
-        """Récupère la prochaine vague d'ennemis"""
+        """Récupère la prochaine vague d'ennemis normaux"""
         if self.waves.is_empty():
             return None
         
@@ -103,9 +95,9 @@ class WaveQueue:
         return wave
     
     def has_more_waves(self):
-        """Vérifie s'il reste des vagues"""
+        """Vérifie s'il reste des vagues normales"""
         return not self.waves.is_empty()
     
     def get_remaining_waves_count(self):
-        """Retourne le nombre de vagues restantes"""
+        """Retourne le nombre de vagues normales restantes"""
         return self.waves.size()
