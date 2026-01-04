@@ -40,7 +40,7 @@ class StatSubScene(BaseSubScene):
             # Met un son uniquement la premiere fois que le curseur passe dessus
             if not hasattr(self, 'exit_hovered1') or not self.exit_hovered1:
                 self.exit_hovered1 = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered1 = False

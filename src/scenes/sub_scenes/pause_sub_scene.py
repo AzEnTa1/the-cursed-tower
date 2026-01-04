@@ -55,7 +55,7 @@ class PauseSubScene(BaseSubScene):
             # Met un son uniquement la premiere fois que le curseur passe dessus
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.exit_text = self.settings.font["h3"].render("Continuer", True, (255, 0, 0))
             self.exit_hovered = False
@@ -65,7 +65,7 @@ class PauseSubScene(BaseSubScene):
             # Pareille ici
             if not hasattr(self, 'exit_hovered1') or not self.exit_hovered1:
                 self.exit_hovered1 = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.back_to_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered1 = False
@@ -75,7 +75,7 @@ class PauseSubScene(BaseSubScene):
             # Et ici aussi
             if not hasattr(self, 'stat_hovered') or not self.stat_hovered:
                 self.stat_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.stat_text = self.settings.font["h3"].render("Statistiques", True, (255, 0, 0))
             self.stat_hovered = False
