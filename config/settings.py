@@ -86,6 +86,7 @@ class Settings:
 
         # Associe chaque key de player_data a une "description" en français
         self.data_translation_map = { 
+            # Player Data
             "master_volume":"Volume Général",
 
             "max_health":"Vie Maximale",
@@ -108,7 +109,17 @@ class Settings:
             "best_score":"Meilleur Score",
             "game_played":"parties Joués",
             "coins":"Pièces",
-            "all_time_coins":"Total des Pièces"
+            "all_time_coins":"Total des Pièces",
+
+            # Perks
+            "player_attack_speed":"Vitesse d'Attaque +",
+            "player_attack_damage":"Dégats de l'Attaque +",
+            "player_max_health":"Vie Maximal +",
+            "player_size_up":"taille du joueur +",
+            "player_size_down":"taille du joueur -",
+            "player_regen":"soign le joueur",
+            "multishot":"tire multiple +1",
+            "arc_shot":"tire en diagonale"
         }
     
     def _init_fonts(self):

@@ -77,7 +77,6 @@ class TalentsScene(BaseScene):
             self.talent_dict[key]["txt_rect"] = []
 
             words = self.settings.data_translation_map.get(key, key).split(" ")
-            print(words)
             current_line = ""
             for word in words:
                 test_line = current_line + word + " "
@@ -88,7 +87,6 @@ class TalentsScene(BaseScene):
                         self.talent_dict[key]["txt"].append(current_line)
                     current_line = word + " "
             self.talent_dict[key]["txt"].append(current_line)
-            print(self.talent_dict[key]["txt"])
             self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"]
             self.talent_dict[key]["total_rect"].inflate_ip(5, 55)
             self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
@@ -194,7 +192,6 @@ class TalentsScene(BaseScene):
             self.talent_dict[key]["txt_rect"] = []
 
             words = self.settings.data_translation_map.get(key, key).split(" ")
-            print(words)
             current_line = ""
             for word in words:
                 test_line = current_line + word + " "
@@ -205,7 +202,6 @@ class TalentsScene(BaseScene):
                         self.talent_dict[key]["txt"].append(current_line)
                     current_line = word + " "
             self.talent_dict[key]["txt"].append(current_line)
-            print(self.talent_dict[key]["txt"])
             self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"]
             self.talent_dict[key]["total_rect"].inflate_ip(5, 55)
             # Redimensionne le cadre

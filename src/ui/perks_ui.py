@@ -47,14 +47,13 @@ class PerksUI:
         screen.blit(instructions, instructions_rect)
         # Affichage des perks
         for rect, perk in zip(perks_rect, perks_list):
-            txt = self.settings.font["h3"].render(perk, True, (0, 0, 0))
             fd_perks = pygame.image.load(r"assets/images/cadre.png")
             fd_perks = pygame.transform.scale(fd_perks, (rect[0][2], rect[0][3]))
             screen.blit(fd_perks, rect[0])
             fd_text = pygame.image.load(r"assets/images/cadre.png")
             fd_text = pygame.transform.scale(fd_text, (rect[1][2], rect[1][3]))
             screen.blit(fd_text, rect[1])
-            txt = self.settings.font["h3"].render(perk, True, (255, 255, 255))
+            txt = self.settings.font["h3"].render(self.settings.data_translation_map.get(perk, perk), True, (255, 255, 255))
             screen.blit(txt, txt.get_rect(center=rect[1].center))
             screen.blit(pygame.transform.smoothscale(self.perks_imgs[perk], (rect[0][2], rect[0][3])), rect[0])
             
