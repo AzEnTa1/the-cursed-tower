@@ -35,9 +35,11 @@ class GameScene(BaseScene):
         self.pending_fire_zones = []  # Zones en prévisualisation
         self.global_seed = random.randint(0, 2**32 - 1)  # Seed unique par partie
         random.seed(self.global_seed)
-        
+        self.current_floor = 1
+
     def on_enter(self, player_data):
         """Initialisation du jeu"""
+        self.current_floor = 1  # Réinitialiser l'étage
         self.player = Player(
             self.settings.screen_width//2, 
             self.settings.screen_height//2, 
@@ -46,7 +48,7 @@ class GameScene(BaseScene):
         )
         self.weapon = Weapon(self.settings, player_data) 
         self.wave_manager = WaveManager(self.settings)
-        self.wave_manager.setup_floor(self.current_floor)
+        self.wave_manager.reset_to_floor(self.current_floor)
         self.game_stats = GameStats(self.game, self.settings)
         
         # Sous-scènes
@@ -365,13 +367,15 @@ class GameScene(BaseScene):
             len(self.enemy_projectiles) == 0 and
             len(self.spawn_effects) == 0):
 
-            # Démarre l'effet de transition
             self.transition.start(self.next_floor)
     
     def _handle_player_death(self):
         """Gère la mort du joueur"""
         self.game_stats.update(self.player, self.weapon)
         self.game.game_stats = self.game_stats.stats
+        
+        self.current_floor = 1
+        
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
         pygame.mixer.music.stop()
         self.settings.sounds["game_over"].play()
@@ -416,7 +420,7 @@ class GameScene(BaseScene):
             else:
                 boss_seed = self.global_seed
                 
-            return AdaptiveBoss(
+            return Boss(
                 effect.x, effect.y,
                 self.settings,
                 self.current_floor,
@@ -431,16 +435,17 @@ class GameScene(BaseScene):
         Appelé après la fin de l'effet de transition
         """
         self.current_floor += 1
+        
+        # Nettoyer toutes les listes
         self.enemies.clear()
         self.projectiles.clear()
         self.enemy_projectiles.clear()
         self.spawn_effects.clear()
-        self.fire_zones.clear()  # Vide les zones de feu
-        self.pending_fire_zones.clear()  # Vide les prévisualisations
+        self.fire_zones.clear()
+        self.pending_fire_zones.clear()
         
-        # Réinitialisation complète du wave manager
-        self.wave_manager = WaveManager(self.settings)
-        self.wave_manager.setup_floor(self.current_floor)
+        # Réinitialiser le wave manager pour le nouvel étage
+        self.wave_manager.reset_to_floor(self.current_floor)
         
         # Replace le joueur au centre
         self.player.x = self.settings.screen_width // 2
@@ -448,9 +453,7 @@ class GameScene(BaseScene):
         
         # Petit heal entre les étages (20 PV)
         self.player.health = min(self.player.health + 20, self.player.max_health)
-        
-        # Log: Nouvel étage {self.current_floor}
-    
+            
     def draw(self, screen):
         """
         Dessine le jeu sur l'écran

@@ -1,6 +1,6 @@
 {
     "name":"unamed",
-    "master_volume":1.0,
+    "master_volume":1,
 
     "max_health":100,
     "regen_power":0.1,

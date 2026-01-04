@@ -50,18 +50,20 @@ class WaveQueue:
     
     def __init__(self, settings=None):
         self.waves = Queue()
-        self.wave_count = 0
-        self.enemies_per_wave = 8
         self.settings = settings
     
-    def generate_wave(self, floor_number):
-        """Génère une vague d'ennemis basée sur l'étage actuel"""
+    def generate_wave(self, floor_number, wave_number):
+        """Génère une vague d'ennemis basée sur l'étage et le numéro de vague"""
         # S'assurer qu'on ne dépasse pas le nombre de configurations
-        wave_config_index = min(floor_number - 1, len(self.WAVE_CONFIGS) - 1)
+        wave_config_index = min(wave_number - 1, len(self.WAVE_CONFIGS) - 1)
         weights = self.WAVE_CONFIGS[wave_config_index]
         
         # Augmente le nombre d'ennemis avec les étages
-        enemy_count = self.enemies_per_wave + (floor_number - 1) * 2
+        base_enemies = 5
+        floor_bonus = (floor_number - 1) * 2
+        wave_bonus = (wave_number - 1) * 1
+        
+        enemy_count = base_enemies + floor_bonus + wave_bonus
         
         enemies = []
         for _ in range(enemy_count):
@@ -78,14 +80,10 @@ class WaveQueue:
         """Configure les vagues pour un étage donné"""
         self.waves = Queue()
         
-        for wave_num in range(waves_count):
-            # Chaque vague successive dans le même étage a une difficulté légèrement accrue
-            effective_floor = floor_number + (wave_num * 0.3)
-            wave_enemies = self.generate_wave(int(effective_floor))
+        for wave_num in range(1, waves_count + 1):  # wave_num de 1 à 3
+            wave_enemies = self.generate_wave(floor_number, wave_num)
             self.waves.enqueue(wave_enemies)
-        
-        self.wave_count = waves_count
-    
+            
     def setup_boss_floor(self, floor_number):
         """Configure les vagues pour un étage de boss"""
         self.waves = Queue()
@@ -95,8 +93,6 @@ class WaveQueue:
         
         # Une seule vague avec un seul boss
         self.waves.enqueue([("boss", boss_seed)])
-        self.wave_count = 1
-        self.enemies_per_wave = 1
     
     def get_next_wave(self):
         """Récupère la prochaine vague d'ennemis"""

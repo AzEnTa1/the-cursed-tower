@@ -7,38 +7,44 @@ class WaveManager:
     """Gère le déroulement des vagues d'ennemis avec système de file personnalisé"""
     
     def __init__(self, settings):
+        self.settings = settings
         self.wave_queue = WaveQueue(settings)
-        self.current_wave_enemies = []  # Gardé : ennemis actifs de la vague
+        self.current_wave_enemies = []
         self.wave_number = 0
+        self.total_waves = 3  # 3 vagues par étage (sauf boss)
         self.floor_number = 1
         self.enemies_remaining = 0
         self.state = "between_waves"  # between_waves, in_wave, all_cleared
-        self.settings = settings
         self.is_boss_floor = False
         
         # Timing des vagues
         self.wave_start_time = 0
         self.time_between_waves = 2000  # 2 secondes entre les vagues
+        
+        # Initialisation
+        self.reset_to_floor(1)
     
-    def setup_floor(self, floor_number):
-        """Configure les vagues pour un nouvel étage"""
+    def reset_to_floor(self, floor_number):
+        """Réinitialise le manager pour un nouvel étage"""
         self.floor_number = floor_number
         self.wave_number = 0
+        self.enemies_remaining = 0
+        self.state = "between_waves"
         
         # Boss tous les 3 étages (étages 3, 6, 9, etc.)
-        self.is_boss_floor = (floor_number > 1 and floor_number % 3 == 0)
-        # self.is_boss_floor = True  # Forcer étage de boss pour les tests
+        self.is_boss_floor = (floor_number % 3 == 0) and floor_number > 0
+        
         if self.is_boss_floor:
             # Pour un étage de boss
             self.wave_queue.setup_boss_floor(floor_number)
+            self.total_waves = 1
         else:
             # Étage normal
             self.wave_queue.setup_waves_for_floor(floor_number)
+            self.total_waves = 3
         
-        self.state = "between_waves"
         self.wave_start_time = pygame.time.get_ticks()
         self.current_wave_enemies.clear()
-        self.enemies_remaining = 0
     
     def update(self, current_time):
         """Met à jour l'état du gestionnaire de vagues"""
@@ -58,7 +64,6 @@ class WaveManager:
         
         self.wave_number += 1
         self.state = "in_wave"
-        
         spawn_positions = []
         
         # Traiter chaque élément de la vague
@@ -123,6 +128,7 @@ class WaveManager:
         if enemy in self.current_wave_enemies:
             self.current_wave_enemies.remove(enemy)
             self.enemies_remaining -= 1
+            
             if self.enemies_remaining <= 0:
                 self.on_wave_cleared()
     
@@ -133,7 +139,6 @@ class WaveManager:
         
         if not self.wave_queue.has_more_waves():
             self.state = "all_cleared"
-            self.floor_number += 1
     
     def is_between_waves(self):
         return self.state == "between_waves"
@@ -142,13 +147,17 @@ class WaveManager:
         return self.state == "all_cleared"
     
     def get_wave_info(self):
-        print(f"coucou {self.floor_number}, {self.wave_number}, {self.enemies_remaining}, {self.state}")
         """Retourne les informations sur la vague actuelle"""
+        # Pour l'affichage, ajuster le numéro de vague (1-indexed)
+        display_wave = self.wave_number
+        
         return {
             'floor': self.floor_number,
-            'current_wave': self.wave_number,
+            'current_wave': display_wave,
+            'total_waves': self.total_waves,
             'enemies_remaining': self.enemies_remaining,
-            'state': self.state
+            'state': self.state,
+            'is_boss': self.is_boss_floor
         }
     
     def get_remaining_waves_count(self):
@@ -156,11 +165,19 @@ class WaveManager:
         if self.is_boss_floor:
             return 1 if self.state == "in_wave" else 0
         else:
-            waves_remaining = max(0, 3 - self.wave_number)
-            if self.state == "in_wave":
-                waves_remaining = max(0, 3 - self.wave_number + 1)
-            return waves_remaining
+            # Pour les étages normaux
+            if self.state == "all_cleared":
+                return 0
+            elif self.state == "in_wave":
+                return max(0, self.total_waves - self.wave_number + 1)
+            else:
+                return max(0, self.total_waves - self.wave_number)
     
     def is_boss_wave(self):
         """Retourne True si c'est un étage de boss"""
         return self.is_boss_floor
+    
+    def reset(self):
+        """Réinitialise complètement le wave manager"""
+        self.wave_queue = WaveQueue(self.settings)
+        self.reset_to_floor(1)
