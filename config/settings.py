@@ -23,8 +23,8 @@ class Settings:
         self.PLAYER_DATA_PATH = "data/player_data.json"
 
         # Joueur
-        self.player_speed = player_data.get("speed", 5)
-        self.player_size = player_data.get("size", 20)
+        self.player_speed = player_data.get("player_speed", 5)
+        self.player_size = player_data.get("player_size", 20)
         self.player_health = player_data.get("max_health", 100)
         self.player_regen_power = player_data.get("regen_power", 0.1)
         self.player_data = player_data
@@ -36,10 +36,10 @@ class Settings:
         self.SCENE_TALENTS = "talents"
 
         # Armes
-        self.WEAPON_DAMAGE = player_data.get("base_damages", 30)
-        self.WEAPON_FIRE_RATE = player_data.get("fire_rate", 2)
+        self.WEAPON_DAMAGE = player_data.get("attack_damages", 30)
+        self.WEAPON_FIRE_RATE = player_data.get("attack_speed", 2)
         self.WEAPON_PROJECTILE_SPEED = player_data.get("projectile_speed", 10)
-        self.WEAPON_DAMAGE_VARIANCE = player_data.get("damage_variance", 5)
+        self.WEAPON_DAMAGE_VARIANCE = 5
         
         # Multishot
         self.WEAPON_SHOT_INTERVAL = 100
@@ -122,16 +122,15 @@ class Settings:
 
     def update_player_data(self, player_data):
         # Joueur
-        self.player_speed = player_data.get("speed", 5)
-        self.player_size = player_data.get("size", 20)
+        self.player_speed = player_data.get("player_speed", 5)
+        self.player_size = player_data.get("player_size", 20)
         self.player_health = player_data.get("max_health", 100)
         self.player_data = player_data
         
         # Armes
-        self.WEAPON_DAMAGE = player_data.get("base_damages", 30)
-        self.WEAPON_FIRE_RATE = player_data.get("fire_rate", 2)
+        self.WEAPON_DAMAGE = player_data.get("attack_damages", 30)
+        self.WEAPON_FIRE_RATE = player_data.get("attack_speed", 2)
         self.WEAPON_PROJECTILE_SPEED = player_data.get("projectile_speed", 10)
-        self.WEAPON_DAMAGE_VARIANCE = player_data.get("damage_variance", 5)
         self.WEAPON_STATIONARY_THRESHOLD = player_data.get("stationary_threshold", 25)
 
         # Volume

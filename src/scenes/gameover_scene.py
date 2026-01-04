@@ -14,6 +14,9 @@ class GameOverScene(BaseScene):
         # Transforme le score en coins
         player_data["coins"] += game_stats["score"]
         player_data["all_time_coins"] += game_stats["score"]
+        # Redéfini le best_score si besoins
+        if player_data["best_score"] < game_stats["score"]:
+            player_data["best_score"] = game_stats["score"]
         self.game.save()
         
         self.ui = GameOverUI(self.settings, game_stats)
