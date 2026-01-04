@@ -38,10 +38,8 @@ class Weapon:
         """Charge les sons de tir depuis le dossier assets/sounds"""
         sounds = []
         # Liste des fichiers de son de tir disponibles
-        shoot_files = "assets/sounds/Tire_1.mp3" 
-        sound = pygame.mixer.Sound(shoot_files)
-        # Réduire le volume pour ne pas être trop fort
-        sound.set_volume(0.3)
+        shoot_name = "Tire_1" 
+        sound = self.settings.sounds[shoot_name]
         sounds.append(sound)
         
         return sounds

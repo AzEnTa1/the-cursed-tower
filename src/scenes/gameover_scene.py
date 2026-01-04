@@ -40,7 +40,7 @@ class GameOverScene(BaseScene):
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 255, 255))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.quit_text = self.settings.font["h3"].render("retourner au menu", True, (255, 0, 0))
             self.exit_hovered = False

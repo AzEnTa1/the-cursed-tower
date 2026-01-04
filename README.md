@@ -105,8 +105,11 @@ tests/
 ### Répartition des tâches
 
 #### Gabriel - Développeur gameplay & UI
-- **Sons et musique** : Sélection et intégration des assets
-- **Intégration audio** : Gestion des sons et musique
+- **Menu GameOver** : Écran de fin avec statistiques
+- **Design UI** : Boutons, menus, feedback visuel
+- **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
+- **Audio** : Gestion des sons des bouttons
+- **Audio** : Gestion de son de tir
 - **Tests unitaires** : Développement et exécution
 - **Système de Vague** : Implémentation de Wave_manager
 - **Structure de données personnalisée** : Implémentation d'une file pour l'apparition des ennemies
@@ -127,7 +130,7 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Système de collisions** : Détection et résolution
 - **Système de scènes** : Implémentation du pattern Scene
-- **Audio** : Gestion de son de tir
+
 
 
 #### Julien - Développeur systèmes & Développeur principal
@@ -140,12 +143,11 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Menu Tutoriel** : Explication du fonctionnement du jeu
 
-#### Zia - Développeur UI & Assets
-- **Menu GameOver** : Écran de fin avec statistiques
-- **Design UI** : Boutons, menus, feedback visuel
-- **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
+#### Zia - Assets
 - **Tests unitaires** : Développement et exécution
 - **Menu Menu** : Gère comment 
+- **Sons et musique** : Sélection et intégration des assets
+- **Intégration audio** : Gestion des sons et musique
 
 ### Méthodologie de travail
 

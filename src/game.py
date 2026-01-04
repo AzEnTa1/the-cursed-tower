@@ -162,6 +162,7 @@ class Game:
             with open(self.settings.PLAYER_DATA_PATH, 'w', encoding='utf-8') as f:
                 json.dump(default_player_data, f, indent=4, ensure_ascii=False)
         self.player_data = default_player_data
+        self.settings.update_player_data(self.player_data)
 
     def run(self):
         """Boucle principale du jeu"""

@@ -21,12 +21,12 @@ class Settings:
 
         self.ICON_PATH = "assets/images/icon.png"
         self.PLAYER_DATA_PATH = "data/player_data.json"
-        self.SOUND_START_PATH = "assets/sounds/game_start.mp3"
 
         # Joueur
         self.player_speed = player_data.get("speed", 5)
         self.player_size = player_data.get("size", 20)
         self.player_health = player_data.get("max_health", 100)
+        self.player_data = player_data
         
         # Scènes
         self.SCENE_MENU = "menu"
@@ -75,7 +75,12 @@ class Settings:
         # Si certains sons on un volume différent des autres en permanance 
         # val entre 0.0 et 1.0 au dixième
         self.sounds_volume_map = {
-
+            "boom":0.3,
+            "spawn":0.5,
+            "Tire_1":0.3,
+            "Tire_2":0.3,
+            "Tire_3":0.3,
+            "Tire_4":0.3
         }
     
     def init_fonts(self):
@@ -96,7 +101,7 @@ class Settings:
             "degat_1":pygame.mixer.Sound("assets/sounds/degat_1.mp3"),
             "game_over":pygame.mixer.Sound("assets/sounds/game_over.mp3"),
             "game_start":pygame.mixer.Sound("assets/sounds/game_start.mp3"),
-            "souris_on_button":pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3"),
+            "souris_on_button":pygame.mixer.Sound("assets/sounds/souris_on_button.mp3"),
             "spawn":pygame.mixer.Sound("assets/sounds/spawn.mp3"),
             "Tire_1":pygame.mixer.Sound("assets/sounds/Tire_1.mp3"),
             "Tire_2":pygame.mixer.Sound("assets/sounds/Tire_2.mp3"),
@@ -104,6 +109,28 @@ class Settings:
             "Tire_4":pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
         }
 
-    def update_master_volume(self):
+    def update_master_volume(self, val=0):
+        self.master_volume += val
+        self.master_volume = round(max(0, min(1, self.master_volume)), 2)
+        self.player_data["master_volume"] = self.master_volume
+
+        pygame.mixer.music.set_volume(self.master_volume)
         for key in self.sounds.keys():
             self.sounds[key].set_volume(self.master_volume * self.sounds_volume_map.get(key, 1))
+
+    def update_player_data(self, player_data):
+        # Joueur
+        self.player_speed = player_data.get("speed", 5)
+        self.player_size = player_data.get("size", 20)
+        self.player_health = player_data.get("max_health", 100)
+        self.player_data = player_data
+        
+        # Armes
+        self.WEAPON_DAMAGE = player_data.get("base_damages", 30)
+        self.WEAPON_FIRE_RATE = player_data.get("fire_rate", 2)
+        self.WEAPON_PROJECTILE_SPEED = player_data.get("projectile_speed", 10)
+        self.WEAPON_DAMAGE_VARIANCE = player_data.get("damage_variance", 5)
+        self.WEAPON_STATIONARY_THRESHOLD = player_data.get("stationary_threshold", 25)
+
+        # Volume
+        self.master_volume = player_data["master_volume"]

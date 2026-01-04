@@ -61,7 +61,7 @@ class TalentsScene(BaseScene):
             self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
-        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
+        self.stats_rect = pygame.Rect(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+100)
         
         # Charger l'image de fond
         bg_img = pygame.image.load("assets/images/background/perks_scene.png")
@@ -78,9 +78,9 @@ class TalentsScene(BaseScene):
                         if self.player_data["coins"] >= 10:
                             getattr(self.talents, key)()
                             self.player_data["coins"] -= 10
-                            pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
+                            self.settings.sounds["coins"].play()
                         else:
-                            pygame.mixer.Sound("assets/sounds/degat_1.mp3").play()
+                            self.settings.sounds["degat_1"].play()
                         break         
     
     def update(self):
@@ -89,7 +89,7 @@ class TalentsScene(BaseScene):
             self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 255, 255))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
                 self.exit_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 0, 0))
             self.exit_hovered = False
@@ -156,5 +156,5 @@ class TalentsScene(BaseScene):
                 self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
-        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+85)
+        self.stats_rect.update(self.settings.screen_width*2//3, self.settings.screen_height//4, self.settings.screen_width//3, self.settings.screen_height//2+100)
         

@@ -9,7 +9,7 @@ class Talents:
     def max_health(self):
         self.player_data["max_health"] = round(self.player_data["max_health"] * 1.1)
 
-    def regen_power(self):
+    def regen_power(self): # NYI
         self.player_data["regen_power"] = round(self.player_data["regen_power"] * 1.1, 2)
 
     def player_speed(self):
@@ -18,10 +18,10 @@ class Talents:
     def player_size(self):
         self.player_data["size"] = round(self.player_data["size"] / 1.1)
 
-    def dash_cooldown(self):
+    def dash_cooldown(self): # NYI
         self.player_data["dash_cooldown"] = round(self.player_data["dash_cooldown"] * 1.1)
 
-    def dash_distance(self):
+    def dash_distance(self): # NYI
         self.player_data["dash_distance"] = round(self.player_data["dash_distance"] * 1.1, 2)
 
     def attack_damages(self):
@@ -33,7 +33,7 @@ class Talents:
     def stationnary_threshold(self):
         self.player_data["stationary_threshold"] = round(self.player_data["stationary_threshold"] / 1.1)
 
-    def projectile_size(self):
+    def projectile_size(self): # NYI
         self.player_data["projectile_size"] = round(self.player_data["projectile_size"] * 1.1)
 
     def projectile_speed(self):

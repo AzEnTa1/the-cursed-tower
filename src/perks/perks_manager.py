@@ -15,7 +15,7 @@ class PerksManager:
             "player_size_up": self.perks.player_size_up,
             "player_size_down": self.perks.player_size_down,
             "player_regen": self.perks.player_regen,
-            "projectil_speed": self.perks.projectile_speed,
+            "projectile_speed": self.perks.projectile_speed,
             "multishot": self.perks.multishot,
             "infinite life": self.perks.infinite_life,
             "arc_shot": self.perks.arc_shot
@@ -38,7 +38,7 @@ class PerksManager:
             "player_size_up": 10,
             "player_size_down": 9,
             "player_regen": 8,
-            "projectil_speed": 8,
+            "projectile_speed": 8,
             "multishot": variable_debug,  # (Plus rare)
             "infinite life": variable_debug,  # (Très rare)
             "arc_shot": variable_debug  # (Très rare)
@@ -46,7 +46,7 @@ class PerksManager:
             # wall_rebounce
             # zone de dégat autour peri-
             # life steal
-            # poison projectil
+            # poison projectile
             # chain lightnig
             # explosive arrow
             # piercing shot
@@ -55,7 +55,7 @@ class PerksManager:
             # laser beam
             # area heal
             # shield
-            # reflect projectil
+            # reflect projectile
             # time slow
             # invincibility
             # double damage 
