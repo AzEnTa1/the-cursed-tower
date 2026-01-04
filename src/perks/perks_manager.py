@@ -17,7 +17,6 @@ class PerksManager:
             "player_regen": self.perks.player_regen,
             "projectile_speed": self.perks.projectile_speed,
             "multishot": self.perks.multishot,
-            "infinite life": self.perks.infinite_life,
             "arc_shot": self.perks.arc_shot
         }
 
