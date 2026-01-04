@@ -108,7 +108,7 @@ tests/
 - **Menu GameOver** : Écran de fin avec statistiques
 - **Design UI** : Boutons, menus, feedback visuel
 - **Menu Pause** : Interface et fonctionnalités (Quitter/Continuer/Statistiques)
-- **Intégration audio** : Gestion des sons et musique
+- **Audio** : Gestion des sons des bouttons
 - **Audio** : Gestion de son de tir
 - **Tests unitaires** : Développement et exécution
 - **Système de Vague** : Implémentation de Wave_manager
@@ -147,6 +147,7 @@ tests/
 - **Tests unitaires** : Développement et exécution
 - **Menu Menu** : Gère comment 
 - **Sons et musique** : Sélection et intégration des assets
+- **Intégration audio** : Gestion des sons et musique
 
 ### Méthodologie de travail
 
