@@ -34,10 +34,10 @@ class MenuScene(BaseScene):
         self.bg_image = pygame.image.load("assets/images/background/menu_scene.png")
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
 
-        self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+        self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 200, 0))
         self.button_rect = self.text.get_rect(center=self.play_button.center)
 
-        self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 200, 0))
+        self.text_talents = self.settings.font["h1"].render("Talents", True, (0, 0, 255))
         self.talents_button = self.text_talents.get_rect(center=self.talents_button.center)
 
         self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
@@ -105,21 +105,21 @@ class MenuScene(BaseScene):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
+            self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered: 
                 self.exit_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
+            self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 255, 255))
             self.exit_hovered = False
 
         if self.talents_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 200, 0))
+            self.text_talents = self.settings.font["h1"].render("Talents", True, (0, 0, 255))
             if not hasattr(self, 'talents_hovered') or not self.talents_hovered:
                 self.talents_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text_talents = self.settings.font["h1"].render("Talents", True, (255, 255, 255))
+            self.text_talents = self.settings.font["h1"].render("Talents", True, (0, 0, 100))
             self.talents_hovered = False
 
         if self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
