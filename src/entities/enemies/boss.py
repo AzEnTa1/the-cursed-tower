@@ -269,7 +269,7 @@ class AdaptiveBoss(Enemy):
             'attack_cooldown': max(30, 90 - (boss_level * 5))
         }
     
-    def _generate_boss_name(self):
+    def _generate_boss_name(self, floor_number):
         """Retourne toujours 'Boss'"""
         return "Boss"
     
