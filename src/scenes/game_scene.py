@@ -95,7 +95,22 @@ class GameScene(BaseScene):
                     self.game_paused = True
                     self.current_sub_scene = self.tuto_sub_scene
                     self.current_sub_scene.on_enter()
-                
+            elif event.key == pygame.K_p:
+                # Affiche les perks (temporaire)
+                self.game_paused = not self.game_paused
+                if self.game_paused:
+                    self.current_sub_scene = self.perks_sub_scene
+                    self.current_sub_scene.on_enter()
+                else:
+                    self.current_sub_scene = None
+
+        if self.game_paused:
+            self.current_sub_scene.handle_event(event)
+        else:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pass  # Touche P déjà gérée
+            self.player.handle_event(event)
 
     
     def update(self):
