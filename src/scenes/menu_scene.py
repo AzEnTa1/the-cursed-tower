@@ -15,7 +15,7 @@ class MenuScene(BaseScene):
 
         # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2-100, self.settings.screen_height//2-20, 200, 50)
-        self.talents_button = pygame.Rect(600, self.settings.screen_height - 50, 200, 50)
+        self.talents_button = pygame.Rect(self.settings.screen_width-200, self.settings.screen_height - 50, 200, 50)
         self.reset_button = pygame.Rect(0, self.settings.screen_height - 50, 200, 50)
 
         self.volume_plus = pygame.Rect(self.settings.screen_width - 50, 0, 50, 50)
@@ -40,7 +40,7 @@ class MenuScene(BaseScene):
         self.text_talents = self.settings.font["h1"].render("Talents", True, (0, 0, 255))
         self.talents_button = self.text_talents.get_rect(center=self.talents_button.center)
 
-        self.text_reset = self.settings.font["h2"].render("Reset player", True, (111, 6, 6))
+        self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
         
@@ -123,12 +123,12 @@ class MenuScene(BaseScene):
             self.talents_hovered = False
 
         if self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            self.text_reset = self.settings.font["h2"].render("Reset Player", True, (198, 12, 12))
+            self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (198, 12, 12))
             if not hasattr(self, 'reset_hovered') or not self.reset_hovered:
                 self.reset_hovered = True
                 self.settings.sounds["souris_on_button"].play()
         else:
-            self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
+            self.text_reset = self.settings.font["h2"].render("Réinitialisé", True, (111, 6, 6))
             self.reset_hovered = False
 
         if self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):

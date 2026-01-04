@@ -14,7 +14,7 @@ class TutoSubScene(BaseSubScene):
         super().on_enter()
         
         self.bg_img = pygame.image.load(r"assets/images/tuto.png")
-        self.bg_img = pygame.transform.scale(self.rect, (self.settings.screen_width, self.settings.screen_height))
+        self.bg_img = pygame.transform.scale(self.bg_img, (self.settings.screen_width, self.settings.screen_height))
 
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
@@ -38,4 +38,4 @@ class TutoSubScene(BaseSubScene):
         Appelé lorsque la fenêtre change de taille
         Recalcule les positions des éléments
         """
-        self.bg_img = pygame.transform.scale(self.rect, (self.settings.screen_width, self.settings.screen_height))
+        self.bg_img = pygame.transform.scale(self.bg_img, (self.settings.screen_width, self.settings.screen_height))
