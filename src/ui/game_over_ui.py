@@ -15,7 +15,7 @@ class GameOverUI:
         self.stats_text_rect = self.stats_text.get_rect(center=(self.stats_rect.center[0], self.settings.screen_height*0.15))
 
     def draw(self, screen, quit_button, quit_rect, quit_text):
-        """dessine l'interface complète"""
+        """Dessine l'interface complète"""
         #met une image de fond
         bg_image = pygame.image.load(r"assets/images/background/gameover_scene.png")        
         bg_image = pygame.transform.scale(bg_image, (self.settings.screen_width, self.settings.screen_height))
@@ -26,8 +26,11 @@ class GameOverUI:
         bg_image2 = pygame.transform.scale(bg_image2, (quit_button.width, quit_button.height))
         screen.blit(bg_image2, quit_button)
         screen.blit(quit_text, quit_rect)
-        
 
     def resize(self):
+        """
+        Appelé lorsque la fenêtre change de taille
+        Recalcule les positions et la taille des éléments
+        """
         self.stats_rect.update(self.settings.screen_width*0.1, self.settings.screen_height*0.1, self.settings.screen_width*0.8, self.settings.screen_height*0.8)
         self.stats_text_rect = self.stats_text.get_rect(center=(self.stats_rect.center[0], self.settings.screen_height*0.15))

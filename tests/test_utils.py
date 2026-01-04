@@ -110,9 +110,10 @@ def test_wave_queue_remaining():
     assert wave_queue.get_remaining_waves_count() == 2
 
 # Exécuter tous les tests
-def test():
+def fonction_test_utils():
     test_queue_op()
     test_queue()
     test_queue_mixed_types()
     test_queue_limite()
     test_wave_queue_remaining()
+    print("Tout les jeux de test des utilitaires fonctionnent !")

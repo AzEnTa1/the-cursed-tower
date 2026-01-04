@@ -2,8 +2,6 @@
 import math
 import random
 from .projectiles import Projectile
-import os 
-import pygame
 
 class Weapon:
     """

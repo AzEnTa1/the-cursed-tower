@@ -1,6 +1,6 @@
 # src/scenes/gameover_scene.py 
 import pygame
-from .base_scene import BaseScene # Importation de la classe de base des scènes (jsp si on a le droit car on a théoriquement pas vu en cour)
+from .base_scene import BaseScene
 from src.ui.game_over_ui import GameOverUI
 
 class GameOverScene(BaseScene):

@@ -5,8 +5,6 @@ class PauseUI:
     def __init__(self, game_stats:dict, settings):
         self.settings = settings
         self.game_stats = game_stats
-        
-        # Rect des stats et surface qui accepte de modifier l'alpha
         self.stats_rect = pygame.Rect(50, 20, self.settings.screen_width//2 - 50, self.settings.screen_height - 40)
 
 

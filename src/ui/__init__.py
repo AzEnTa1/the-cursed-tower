@@ -4,10 +4,13 @@ from .hud import HUD
 from .pause_ui import PauseUI
 from .perks_ui import PerksUI
 from .transition_effect import TransitionEffect
+from .stat_ui import StatUI
 
 __all__ = [
+    "GameOverUI",
     "HUD",
     "PauseUI",
     "PerksUI",
-    "TransitionEffect"
+    "TransitionEffect",
+    "StatUI"
 ]

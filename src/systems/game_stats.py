@@ -7,6 +7,9 @@ class GameStats:
         self.stats = None
 
     def update(self, player, weapon)->dict:
-        """met a jours les stats du joueur et les retourne"""
+        """
+        Mise à jour des Statistiques et les retournents
+        Utilisée pour le menu Pause
+        """
         self.stats = {**player.get_stats(), **weapon.get_stats()}
         return self.stats

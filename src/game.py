@@ -151,12 +151,12 @@ class Game:
         return player_data
 
     def save(self):
-        """MAJ du JSON associé au joueur"""
+        """Mise à jour du JSON associée au joueur"""
         self.player_data["master_volume"] = self.settings.master_volume
         with open(self.settings.PLAYER_DATA_PATH, 'w', encoding='utf-8') as f:
             json.dump(self.player_data, f, indent=4, ensure_ascii=False)
 
-    def reset_player_data(self):
+    def reset_player_data(self)->dict: 
         with open(r"data/default_player_data.json", 'r', encoding='utf-8') as f_default:
             default_player_data = json.load(f_default)
             with open(self.settings.PLAYER_DATA_PATH, 'w', encoding='utf-8') as f:

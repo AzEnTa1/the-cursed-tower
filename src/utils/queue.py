@@ -1,7 +1,5 @@
 # src/utils/queue.py
 from random import choices
-import pygame
-import random
 
 class Queue:
     """
@@ -35,7 +33,6 @@ class Queue:
         if self.is_empty():
             return None
         return self.items[0]
-
 
 class WaveQueue:
     """Génère uniquement les vagues normales (3 par étage)"""

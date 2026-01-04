@@ -86,6 +86,8 @@ def test_enemy_base():
     assert enemy.take_damage(20) == True   # Mort
     
 # Exécuter tous les tests
-def test():
+def fonction_test_ui():
     test_transition_effect()
     test_enemy_base()
+    print("Tout les jeux de test des ui fonctionnent !")
+

@@ -3,7 +3,6 @@ import pygame
 from .base_scene import BaseScene
 from src.perks.talents import Talents
 
-
 class TalentsScene(BaseScene):
     def __init__(self, game, settings):
         super().__init__(game, settings)
@@ -80,7 +79,7 @@ class TalentsScene(BaseScene):
             current_line = ""
             for word in words:
                 test_line = current_line + word + " "
-                if len(test_line) <= 12: # 12 chr / lignes
+                if len(test_line) <= 12:
                     current_line = test_line
                 else:
                     if current_line != " ":
@@ -106,7 +105,6 @@ class TalentsScene(BaseScene):
             else:
                 for key in list(self.talent_dict.keys()):
                     if self.talent_dict[key]["rect"].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                        # Vérifie qu'on a l'argent
                         if self.player_data["coins"] >= 100:
                             getattr(self.talents, key)()
                             # Vérifie que les valeurs ne sont pas trop élevé / basse
@@ -124,7 +122,7 @@ class TalentsScene(BaseScene):
                         break         
     
     def update(self):
-        """met a jours les éléments et la logique de la scene"""
+        """Met à jour la logique de la scène"""
         if self.exit_menu_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.exit_menu_text = self.settings.font["h3"].render("Quitter", True, (255, 255, 255))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered:
@@ -149,13 +147,12 @@ class TalentsScene(BaseScene):
             screen.blit(self.talent_cadre, self.talent_dict[key]["total_rect"].topleft)
 
             screen.blit(self.talent_dict[key]["img"], self.talent_dict[key]["rect"].topleft)
-            # Affiche le text
+            # Affiche le texte
             for i, line in enumerate(self.talent_dict[key]["txt"]):
                 text_surface = self.settings.font["h3"].render(line, True, (255, 255, 255))
                 txt_rect = text_surface.get_rect(midtop=(self.talent_dict[key]["rect"].center[0], self.talent_dict[key]["rect"].center[1] + i * 25 + 25))
                 
                 screen.blit(text_surface, txt_rect)
-
 
         # Affiche les stats
         stats_img = pygame.transform.scale(self.cadre, (self.stats_rect.width, self.stats_rect.height))
@@ -176,7 +173,7 @@ class TalentsScene(BaseScene):
         self.quit_button_img = pygame.transform.scale(self.cadre, (self.exit_menu_rect.width, self.exit_menu_rect.height))
         self.exit_menu_text_rect.center = self.exit_menu_rect.center
 
-        # On recalcule tout les talents
+        # On recalcule la position de tout les talents
         i = 0
         for key in list(self.talent_dict.keys()):
             self.talent_dict[key]["rect"].update(
@@ -187,7 +184,7 @@ class TalentsScene(BaseScene):
                 )
             # Redimensionne l'image
             self.talent_dict[key]["img"] = pygame.transform.scale(self.talent_dict[key]["img"], self.talent_dict[key]["rect"].size)
-            # définit le text
+            # définit le texte
             self.talent_dict[key]["txt"] = []
             self.talent_dict[key]["txt_rect"] = []
 
@@ -195,7 +192,7 @@ class TalentsScene(BaseScene):
             current_line = ""
             for word in words:
                 test_line = current_line + word + " "
-                if len(test_line) <= 12: # 12 chr / lignes
+                if len(test_line) <= 12:
                     current_line = test_line
                 else:
                     if current_line != " ":

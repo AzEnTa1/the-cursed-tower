@@ -2,7 +2,6 @@
 import pygame
 from .base_scene import BaseScene
 
-
 class MenuScene(BaseScene):
     def __init__(self, game, settings):
         super().__init__(game, settings)
@@ -30,7 +29,6 @@ class MenuScene(BaseScene):
         self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
 
         # Charger l'image de fond
-
         self.bg_image = pygame.image.load("assets/images/background/menu_scene.png")
         self.bg_image = pygame.transform.scale(self.bg_image, (self.settings.screen_width, self.settings.screen_height))
 
@@ -43,10 +41,6 @@ class MenuScene(BaseScene):
         self.text_reset = self.settings.font["h2"].render("Réinitialisation", True, (111, 6, 6))
         self.reset_button = self.text_reset.get_rect(center=self.reset_button.center)
 
-        
-        
-
-    
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -69,12 +63,11 @@ class MenuScene(BaseScene):
                 self.update_volume(-1)
 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:  # Touche ENTER
+            if event.key == pygame.K_RETURN:  # Touche Entrée
                 self.start_game()
-            # Véeifie si shift et pressé pour faire + 10 au son au lieu de +1
+            # Vérification de si Shift est pressée
             elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                 self.shift_pressed = True
-
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                 self.shift_pressed = False
@@ -83,7 +76,6 @@ class MenuScene(BaseScene):
         """Démarre le jeu"""
         self.settings.sounds["game_start"].play()
         self.game.change_scene(self.settings.SCENE_GAME)
-        # simule l'entré dans une sub scene depuis game_scene
         if self.player_data["game_played"] == 0:
             self.game.scenes[self.settings.SCENE_GAME].game_paused = True
             self.game.scenes[self.settings.SCENE_GAME].current_sub_scene = self.game.scenes[self.settings.SCENE_GAME].tuto_sub_scene
@@ -91,18 +83,19 @@ class MenuScene(BaseScene):
         self.player_data["game_played"] += 1
 
     def update_volume(self, val):
-        # volume compris entre 0 et 1
+        # Volume entre 0 et 1
         if self.shift_pressed:
             self.settings.update_master_volume(val*0.1)
         else:
             self.settings.update_master_volume(val*0.01)
 
-        # Update le text affiché
         self.txt_val_volume = self.settings.font["h2"].render(str(int(self.settings.master_volume*100)), True, (0, 0, 0))
         self.txt_vel_volume_rect = self.txt_val_volume.get_rect(center=self.val_volume.center)
 
     def update(self):
-        """Pas de logique particulière pour le menu simple (pr l'instant)"""
+        """
+        Mise à jour de la scène Menu
+        """
         
         if self.button_rect.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
             self.text = self.settings.font["main_menu"].render("JOUER", True, (255, 200, 0))
@@ -144,7 +137,6 @@ class MenuScene(BaseScene):
             self.plus_bouton = pygame.transform.scale(self.plus_bouton, (50, 50))
         
         if self.volume_moins.move(self.settings.x0, self.settings.y0).collidepoint(pygame.mouse.get_pos()):
-            #change la couleur du rectangle
             self.moins_bouton = pygame.image.load("assets/images/son_moins_hover.png").convert_alpha()
             self.moins_bouton = pygame.transform.scale(self.moins_bouton, (50, 50))
             if not hasattr(self, 'volume_moins_hovered') or not self.volume_moins_hovered:
@@ -172,7 +164,6 @@ class MenuScene(BaseScene):
         screen.blit(self.text_reset, self.reset_button)
 
         # Boutons pour changer le volume
-        
         pygame.draw.rect(screen, (255, 255, 255), self.volume_plus)
         screen.blit(self.plus_bouton, self.volume_plus)
         pygame.draw.rect(screen, (255, 255, 255), self.volume_moins)

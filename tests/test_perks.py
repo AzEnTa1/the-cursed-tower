@@ -160,8 +160,9 @@ def test_perks_poids():
     
 
 # Exécuter tous les tests
-def test():
+def fonction_test_perks():
     test_perks_basic()
     test_perks_special()
     test_perks_translation()
     test_perks_poids()
+    print("Tout les jeux de test des perks fonctionnent !")

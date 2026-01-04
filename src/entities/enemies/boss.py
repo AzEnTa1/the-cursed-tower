@@ -1,3 +1,4 @@
+# src/entities/enemies/boss.py 
 import pygame
 import math
 import random
@@ -354,6 +355,7 @@ class Boss(Enemy):
         
     def _hsv_to_rgb(self, h, s, v):
         """Convertit HSV en RGB"""
+        # --- voir tests/tests_entities, ligne 151 ---
         c = v * s
         x = c * (1 - abs((h * 6) % 2 - 1))
         m = v - c

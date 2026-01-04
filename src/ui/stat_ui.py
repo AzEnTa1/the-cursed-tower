@@ -27,8 +27,6 @@ class StatUI:
         self.stats_rect.x = self.settings.screen_width//2 - self.stats_rect.width//2
         screen.blit(self.bg_image1, self.stats_rect)
         
-        
-
         i = 0
         for key in self.game_stats.keys():
             i += 1
@@ -37,7 +35,6 @@ class StatUI:
             rect.center = (self.settings.screen_width//2, self.settings.screen_height//1.5 - 20*i)
             screen.blit(txt, rect)
 
-        # Met le bouton quitter
         bg_image = pygame.image.load(r"assets/images/cadre.png")
         bg_image = pygame.transform.scale(bg_image, (exit_rect.width, exit_rect.height))
         screen.blit(bg_image, exit_rect)

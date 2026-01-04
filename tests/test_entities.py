@@ -148,6 +148,7 @@ def test_enemy_basic():
     assert basic.radius == 20
     
     # Test déplacement vers le joueur
+    # print("Easter Egg") #Gl pour trouver
     initial_distance = ((basic.x - player.x)**2 + (basic.y - player.y)**2)**0.5
     basic.update(player)
     new_distance = ((basic.x - player.x)**2 + (basic.y - player.y)**2)**0.5
@@ -227,9 +228,10 @@ def test_spawn_effect():
     assert position == (400, 300) 
         
 # Exécuter tous les tests
-def test():
+def fonction_test_entities():
     test_player_movement()
     test_projectile_basic()
     test_enemy_basic()
     test_enemy_suicide()
     test_spawn_effect()
+    print("Tout les jeux de test des entitées fonctionnent !")
