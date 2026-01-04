@@ -189,14 +189,25 @@ class TalentsScene(BaseScene):
                 )
             # Redimensionne l'image
             self.talent_dict[key]["img"] = pygame.transform.scale(self.talent_dict[key]["img"], self.talent_dict[key]["rect"].size)
-            ligne = 0
-            for rect in self.talent_dict[key]["txt_rect"]:
-                rect.midtop = self.talent_dict[key]["rect"].move(0, self.settings.screen_width//8 + ligne).midtop
-                ligne += 25 # font size + 1
+            # définit le text
+            self.talent_dict[key]["txt"] = []
+            self.talent_dict[key]["txt_rect"] = []
 
-            self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"].copy()
-            self.talent_dict[key]["total_rect"].union_ip(self.talent_dict[key]["txt_rect"][0].move(0, 25))
-            self.talent_dict[key]["total_rect"].inflate_ip(5, 5)
+            words = self.settings.data_translation_map.get(key, key).split(" ")
+            print(words)
+            current_line = ""
+            for word in words:
+                test_line = current_line + word + " "
+                if len(test_line) <= 12: # 12 chr / lignes
+                    current_line = test_line
+                else:
+                    if current_line != " ":
+                        self.talent_dict[key]["txt"].append(current_line)
+                    current_line = word + " "
+            self.talent_dict[key]["txt"].append(current_line)
+            print(self.talent_dict[key]["txt"])
+            self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"]
+            self.talent_dict[key]["total_rect"].inflate_ip(5, 55)
             # Redimensionne le cadre
             if i == 0:
                 self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
