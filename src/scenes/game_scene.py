@@ -269,9 +269,9 @@ class GameScene(BaseScene):
                     self.wave_manager.on_enemy_died(enemy)
                     
                     # Score et pièces selon le type d'ennemi
-                    if enemy.type == "boss":
-                        score_amount = 200
-                        coins_amount = 50
+                    if enemy.type == "boss": # Y'a plusieurs Boss (avec la division donc ca augmente beaucoup)
+                        score_amount = 60
+                        coins_amount = 15
                     elif enemy.type == "destructeur":
                         score_amount = 50
                         coins_amount = 15

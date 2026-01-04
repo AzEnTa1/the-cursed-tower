@@ -7,7 +7,6 @@ from ..projectiles import Projectile
 class SpecialProjectile:
     """Classe de base pour les projectiles spéciaux du boss"""
     
-    @staticmethod
     def create_bouncing(x, y, dx, dy, damage, settings, bounces=3):
         """Crée un projectile rebondissant sur les murs"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(100, 255, 100), radius=8)
@@ -16,7 +15,6 @@ class SpecialProjectile:
         projectile.special_type = "bouncing"
         return projectile
     
-    @staticmethod
     def create_accelerating(x, y, dx, dy, damage, settings, max_speed=10):
         """Crée un projectile qui accélère progressivement"""
         projectile = Projectile(x, y, dx * 0.5, dy * 0.5, damage, settings, color=(255, 150, 50), radius=6)
@@ -26,7 +24,6 @@ class SpecialProjectile:
         projectile.special_type = "accelerating"
         return projectile
     
-    @staticmethod
     def create_splitting(x, y, dx, dy, damage, settings, splits=2):
         """Crée un projectile qui se divise en plusieurs"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(150, 100, 255), radius=7)
@@ -36,7 +33,6 @@ class SpecialProjectile:
         projectile.special_type = "splitting"
         return projectile
     
-    @staticmethod
     def create_homing(x, y, dx, dy, damage, settings, player, turn_rate=0.05):
         """Crée un projectile qui poursuit le joueur"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(255, 100, 150), radius=6)
@@ -49,17 +45,9 @@ class SpecialProjectile:
 class RecursivePatternGenerator:
     """Générateur de patterns récursifs pour le boss"""
     
-    @staticmethod
     def generate_circle_recursive(x, y, depth, max_depth, angle_offset=0, projectile_types=None):
         """
         Génère un motif circulaire récursif
-        
-        Args:
-            x, y: Position centrale
-            depth: Profondeur actuelle
-            max_depth: Profondeur maximale
-            angle_offset: Rotation
-            projectile_types: Types de projectiles spéciaux à utiliser
         """
         if depth <= 0:
             return []
@@ -104,7 +92,6 @@ class RecursivePatternGenerator:
         
         return result
     
-    @staticmethod
     def generate_spiral_arms(x, y, arms=3, projectiles_per_arm=6, projectile_types=None):
         """Génère un motif en spirale avec bras"""
         projectiles = []
@@ -212,8 +199,6 @@ class BossDivisionSystem:
             boss.damage = original_boss.damage * 0.6  # Réduit les dégâts
             boss.speed = original_boss.speed * 1.1
             boss.radius = original_boss.radius * 0.7
-            
-            # Limiter les capacités - S'ASSURER QU'IL Y A AU MOINS 1 PHASE
             boss.max_phases = max(1, min(2, original_boss.max_phases - 1))
             boss.phases = boss._create_phases()
             
@@ -336,8 +321,6 @@ class Boss(Enemy):
         
         # Pour les projectiles qui poursuivent
         self.projectiles_to_update = []
-        
-        print(f"[BOSS] Créé - Phase: {self.current_phase}, PV: {self.health}, Division: {is_divided}")
     
     def _init_stats(self, floor_number, is_divided):
         """Initialise les statistiques"""
@@ -447,7 +430,6 @@ class Boss(Enemy):
         if health_ratio <= self.rage_health_threshold:
             self.rage_mode = True
             self.rage_activated = True
-            print("[BOSS] Rage activée!")
             
             # Boost en rage
             self.speed *= self.rage_speed_multiplier
@@ -472,7 +454,6 @@ class Boss(Enemy):
     
     def _activate_phase(self, phase_number):
         """Active une nouvelle phase"""
-        print(f"[BOSS] Phase {phase_number} activée")
         
         # Désactiver toutes les phases
         for phase in self.phases:
@@ -738,9 +719,6 @@ class Boss(Enemy):
     def take_damage(self, amount):
         """
         Inflige des dégâts au boss
-        
-        Returns:
-            bool: True si mort
         """
         # Réduction selon la phase
         phase = self.current_phase
