@@ -46,6 +46,9 @@ class Settings:
         self.WEAPON_STATIONARY_THRESHOLD = player_data.get("stationary_threshold", 25)
         self.WEAPON_TARGETING_RANGE = 500
         self.WEAPON_ARC_ANGLE = 15
+
+        # les perks déjà eu qu'on ne peut avoir a nouveau
+        self.perks_only_once = []
         
         # Couleurs pour les multishots
         self.WEAPON_MULTISHOT_COLORS = [

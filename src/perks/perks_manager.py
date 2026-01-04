@@ -6,7 +6,6 @@ class PerksManager:
     def __init__(self, settings, player, weapon):
         self.settings = settings
         self.perks = Perks(settings, player, weapon)
-        
         self.perks_dict = {
             "player_speed": self.perks.player_speed,
             "player_attack_speed": self.perks.player_attack_speed,
@@ -27,10 +26,8 @@ class PerksManager:
         # 6 => Epique
         # 4 => mythic
         # 2 => Legendaire
-        # Ajouter des poids pour
-        variable_debug = 1000  # si vous voulez tester l'apparition de certaines perks 
         weights = {
-            "player_speed": 10,  # Commun
+            "player_speed": 10,
             "player_attack_speed": 10,
             "player_attack_damage": 10,
             "player_max_health": 10,
@@ -39,27 +36,12 @@ class PerksManager:
             "player_regen": 8,
             "projectile_speed": 8,
             "multishot": 6,  
-            "arc_shot": 4   
-            # shot_rebounce
-            # wall_rebounce
-            # zone de dégat autour peri-
-            # life steal
-            # poison projectile
-            # chain lightnig
-            # explosive arrow
-            # piercing shot
-            # homing shot
-            # shotgun
-            # laser beam
-            # area heal
-            # shield
-            # reflect projectile
-            # time slow
-            # invincibility
-            # double damage 
+            "arc_shot": 4
         }
         
         perks_list = list(self.perks_dict.keys())
+        perks_list = list(set(perks_list) - set(self.settings.perks_only_once))
+
         weighted_list = []
         for perk in perks_list:
             weighted_list.extend([perk] * weights.get(perk, 5))

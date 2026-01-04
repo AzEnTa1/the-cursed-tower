@@ -47,3 +47,4 @@ class Perks:
         """Active le tir en arc (3 projectiles en éventail)"""
         self.weapon.arc_shot = True
         self.weapon.arc_angle = math.radians(15)  # Angle de 15 degrés entre les projectiles
+        self.settings.perks_only_once.append("arc_shot")
