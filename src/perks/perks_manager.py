@@ -39,9 +39,8 @@ class PerksManager:
             "player_size_down": 9,
             "player_regen": 8,
             "projectile_speed": 8,
-            "multishot": variable_debug,  # (Plus rare)
-            "infinite life": variable_debug,  # (Très rare)
-            "arc_shot": variable_debug  # (Très rare)
+            "multishot": 6,  
+            "arc_shot": 4   
             # shot_rebounce
             # wall_rebounce
             # zone de dégat autour peri-

@@ -43,9 +43,6 @@ class Perks:
             self.weapon.multishot_timer = 0
             self.weapon.multishot_queue = []
 
-    def infinite_life(self):
-        self.player.infinite_life = True
-
     def arc_shot(self):
         """Active le tir en arc (3 projectiles en éventail)"""
         self.weapon.arc_shot = True

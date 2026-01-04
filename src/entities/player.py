@@ -105,9 +105,6 @@ class Player:
 
     def update(self):
         """Met à jour la position du joueur avec priorité à la dernière touche"""
-        if self.infinite_life:
-            self.health = self.max_health
-
         # Gestion du dash
         if self.is_dashing:
             self.update_dash()

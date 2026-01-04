@@ -15,7 +15,6 @@ class PerksUI:
             "player_regen": pygame.image.load(r"assets/images/perks_icons/Regen_icon.png").convert_alpha(),
             "projectile_speed": pygame.image.load(r"assets/images/perks_icons/Projectile_speed_icon.png").convert_alpha(),
             "multishot": pygame.image.load(r"assets/images/perks_icons/Multishot_icon.png").convert_alpha(),
-            "infinite life": pygame.image.load(r"assets/images/perks_icons/Shield_icon.png").convert_alpha(),
             "arc_shot": pygame.image.load(r"assets/images/perks_icons/Arc_shoot_icon.png").convert_alpha(),
         }
 
@@ -90,7 +89,6 @@ class PerksUI:
             "player_regen": "Soigne 20% de vos PV",
             "projectile_speed": "+10% vitesse des projectiles",
             "multishot": "Tire +1 projectile supplémentaire",
-            "infinite life": "INVINCIBILITÉ (debug)",
             "arc_shot": "Tire 3 projectiles en éventail",
         }
 
