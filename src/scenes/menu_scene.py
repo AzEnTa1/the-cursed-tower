@@ -57,7 +57,7 @@ class MenuScene(BaseScene):
                 self.game.change_scene(self.settings.SCENE_TALENTS)
 
             elif self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.game.reset_player_data()
+                self.player_data = self.game.reset_player_data()
                 self.settings.sounds["game_over"].play()
                 # Actualise le son car il est aussi reset
                 self.txt_val_volume = self.settings.font["h2"].render(str(int(self.settings.master_volume*100)), True, (0, 0, 0))

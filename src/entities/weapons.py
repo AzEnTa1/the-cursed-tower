@@ -11,8 +11,8 @@ class Weapon:
     Inclut le tir automatique, multishot et tir en arc.
     """
     def __init__(self, settings, player_data):
-        self.fire_rate = player_data["fire_rate"]  # tirs par seconde
-        self.damage = player_data["base_damages"] + random.randint(-5, 5)
+        self.fire_rate = player_data["attack_speed"]  # tirs par seconde
+        self.damage = player_data["attack_damages"] + random.randint(-5, 5)
         self.projectile_speed = player_data["projectile_speed"]
         self.last_shot_time = 0
         self.last_direction = (1, 0)  # direction par défaut (droite)

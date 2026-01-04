@@ -22,47 +22,46 @@ class TalentsScene(BaseScene):
         self.talent_dict = {
             "max_health":{
                 "img":pygame.image.load(r"assets\images\perks_icons\Heal_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":100
                 },
             "regen_power":{"img":pygame.image.load(r"assets\images\perks_icons\Regen_icon.png"),
-                "val_min":0,
-                "val_max":1
+                "val_min":0.1,
+                "val_max":1.0
                 },
             "player_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Speed_Icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":5,
+                "val_max":20
                 },
             "player_size":{"img":pygame.image.load(r"assets\images\perks_icons\Player_size_up_icon.png"),
                 "val_min":5,
                 "val_max":20
                 },
             "dash_cooldown":{"img":pygame.image.load(r"assets\images\perks_icons\dash_cooldown_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":30,
+                "val_max":180
                 },
             "dash_distance":{"img":pygame.image.load(r"assets\images\perks_icons\dash_distance_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":4,
+                "val_max":10
                 },
             "attack_damages":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_icon.png"),
-                "val_min":1
+                "val_min":20
                 },
             "attack_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Attack_speed_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":2,
+                "val_max":10
                 },
-            "stationnary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\stationnary_threshold_icon.png"),
-                "val_min":1,
-                "val_max":1
+            "stationary_threshold":{"img":pygame.image.load(r"assets\images\perks_icons\stationnary_threshold_icon.png"),
+                "val_min":15,
+                "val_max":30
                 },
             "projectile_size":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_size_up_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":5,
+                "val_max":20
                 },
             "projectile_speed":{"img":pygame.image.load(r"assets\images\perks_icons\Projectile_speed_icon.png"),
-                "val_min":1,
-                "val_max":1
+                "val_min":10,
+                "val_max":20
                 }
         }
         
@@ -108,10 +107,19 @@ class TalentsScene(BaseScene):
             else:
                 for key in list(self.talent_dict.keys()):
                     if self.talent_dict[key]["rect"].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+                        # Vérifie qu'on a l'argent
                         if self.player_data["coins"] >= 100:
                             getattr(self.talents, key)()
-                            self.player_data["coins"] -= 100
-                            self.settings.sounds["coins"].play()
+                            # Vérifie que les valeurs ne sont pas trop élevé / basse
+                            if self.talent_dict[key].get("val_min", 0) > self.player_data[key]:
+                                self.player_data[key] = self.talent_dict[key]["val_min"]
+                                self.settings.sounds["degat_1"].play()
+                            elif self.talent_dict[key].get("val_max", 2147483647) < self.player_data[key]:
+                                self.player_data[key] = self.talent_dict[key]["val_max"]
+                                self.settings.sounds["degat_1"].play()
+                            else:
+                                self.player_data["coins"] -= 100
+                                self.settings.sounds["coins"].play()
                         else:
                             self.settings.sounds["degat_1"].play()
                         break         

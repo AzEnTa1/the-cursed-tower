@@ -12,8 +12,8 @@ class Player:
         self.settings = settings
         self.x = x
         self.y = y
-        self.speed = player_data["speed"]
-        self.size = player_data["size"]
+        self.speed = player_data["player_speed"]
+        self.size = player_data["player_size"]
         self.color = self.settings.GREEN
         self.infinite_life = False
 
