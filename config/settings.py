@@ -83,6 +83,34 @@ class Settings:
             "Tire_3":0.3,
             "Tire_4":0.3
         }
+
+        # Associe chaque key de player_data a une "description" en français
+        self.data_translation_map = { 
+            "name":"Nom",
+            "master_volume":"Volume Général",
+
+            "max_health":"Vie Maximale",
+            "current_health":"Points de vie actuel",
+            "regen_power":"Puissance de Régénération",
+            "player_size":"Taille du Joueur",
+            "player_speed":"Vitesse du Joueur",
+            "dash_cooldown":"Chargement du dash",
+            "dash_distance":"Distance du Dash", 
+
+            "attack_damages":"Dégat d'Attaque",
+            "attack_speed":"Vitesse d'Attaque",
+            "projectile_speed":"Vitesse des projectiles",
+            "projectile_size":"Taille des Projectiles",
+            "stationary_threshold":"Temps de Visée",
+
+            "xp":"Experience",
+            "score":"Score",
+
+            "best_score":"Meilleur Score",
+            "game_played":"parties Joués",
+            "coins":"Pièces",
+            "all_time_coins":"Total des Pièces"
+        }
     
     def _init_fonts(self):
         """Initialise les fonts"""

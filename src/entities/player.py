@@ -418,8 +418,8 @@ class Player:
     def get_stats(self)->dict:
         """sert a obtenir les stats du joueur"""
         return {
-            "speed":self.speed,
-            "size":self.size,
+            "player_speed":self.speed,
+            "player_size":self.size,
             "current_health":self.health,
             "max_health":self.max_health,
             "score":self.score,
