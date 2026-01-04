@@ -29,11 +29,13 @@ class Game:
 
         # Initialiser les fonts
         self.settings.init_fonts()
-        self.settings.update_master_volume()
 
         # Initialiser les sons
         self.settings.init_sounds()
-        
+
+        # Met le volume principal
+        self.settings.update_master_volume()
+
         # Surface de la fenetre utilisé
         self.used_screen = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
 
