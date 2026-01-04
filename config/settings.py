@@ -107,7 +107,8 @@ class Settings:
             "Tire_1":pygame.mixer.Sound("assets/sounds/Tire_1.mp3"),
             "Tire_2":pygame.mixer.Sound("assets/sounds/Tire_2.mp3"),
             "Tire_3":pygame.mixer.Sound("assets/sounds/Tire_3.mp3"),
-            "Tire_4":pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
+            "Tire_4":pygame.mixer.Sound("assets/sounds/Tire_4.mp3"),
+            "mort_enemy":pygame.mixer.Sound("assets/sounds/mort_enemy.mp3")
         }
 
     def update_master_volume(self, val=0):

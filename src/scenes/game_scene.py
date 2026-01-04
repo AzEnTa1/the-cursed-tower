@@ -256,7 +256,7 @@ class GameScene(BaseScene):
                     
                     self.player.add_score(score_amount)
                     self.player.add_coins(coins_amount) 
-                    self.settings.sounds["coins"].play()  
+                    self.settings.sounds["mort_enemy"].play()  
                     
                     self._check_for_level_up()
 
