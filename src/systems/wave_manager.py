@@ -27,7 +27,7 @@ class WaveManager:
         
         # Boss tous les 3 étages (étages 3, 6, 9, etc.)
         self.is_boss_floor = (floor_number > 1 and floor_number % 3 == 0)
-        self.is_boss_floor = True  # Forcer étage de boss pour les tests
+        # self.is_boss_floor = True  # Forcer étage de boss pour les tests
         if self.is_boss_floor:
             # Pour un étage de boss
             self.wave_queue.setup_boss_floor(floor_number)
