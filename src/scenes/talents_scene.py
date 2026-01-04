@@ -75,9 +75,9 @@ class TalentsScene(BaseScene):
             else:
                 for key in list(self.talent_dict.keys()):
                     if self.talent_dict[key]["rect"].move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                        if self.player_data["coins"] >= 10:
+                        if self.player_data["coins"] >= 100:
                             getattr(self.talents, key)()
-                            self.player_data["coins"] -= 10
+                            self.player_data["coins"] -= 100
                             self.settings.sounds["coins"].play()
                         else:
                             self.settings.sounds["degat_1"].play()

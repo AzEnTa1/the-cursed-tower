@@ -28,10 +28,10 @@ class Game:
         self.full_screen = False
 
         # Initialiser les fonts
-        self.settings.init_fonts()
+        self.settings._init_fonts()
 
         # Initialiser les sons
-        self.settings.init_sounds()
+        self.settings._init_sounds()
 
         # Met le volume principal
         self.settings.update_master_volume()

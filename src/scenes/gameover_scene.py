@@ -23,8 +23,6 @@ class GameOverScene(BaseScene):
         self.quit_button = self.quit_button.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
         self.quit_rect = self.quit_text.get_rect(center=self.quit_button.center)
 
-        print("Game Over Scene")
-
     def handle_event(self, event):
         """Gère les clics de souris et touches"""
         if event.type == pygame.KEYDOWN:
