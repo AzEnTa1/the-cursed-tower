@@ -22,7 +22,7 @@ class SpawnEffect:
         self.warning_color = (255, 100, 0)  # Orange pour avertissement
         
         # Son d'apparition
-        self.settings.sounds["spawn"]
+        self.settings.sounds["spawn"].play()
 
     def update(self, dt):
         """Met à jour l'animation"""
