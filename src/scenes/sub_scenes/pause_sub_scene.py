@@ -16,7 +16,7 @@ class PauseSubScene(BaseSubScene):
         self.exit_text = self.settings.font["h3"].render("Continuer", True, (255, 0, 0))
         self.exit_rect = pygame.image.load(r"assets/images/cadre.png")
         self.exit_rect = pygame.transform.scale(self.exit_rect, (200, 50))
-        self.exit_rect = self.exit_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 - 75))
+        self.exit_rect = self.exit_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 - 37.5))
         self.exit_text_rect = self.exit_text.get_rect(center=self.exit_rect.center)
         
         # Bouton Quitter au menu principal
@@ -30,7 +30,7 @@ class PauseSubScene(BaseSubScene):
         self.stat_text = self.settings.font["h3"].render("Statistiques", True, (255, 0, 0))
         self.stat_rect = pygame.image.load(r"assets/images/cadre.png")
         self.stat_rect = pygame.transform.scale(self.stat_rect, (200, 50))
-        self.stat_rect = self.stat_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 75*2))
+        self.stat_rect = self.stat_rect.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2 + 37.5*3))
         self.stat_text_rect = self.stat_text.get_rect(center=self.stat_rect.center)
 
     def on_exit(self):
@@ -90,10 +90,10 @@ class PauseSubScene(BaseSubScene):
         Recalcule les positions des éléments
         """
         # Met à jour les positions des éléments UI en fonction de la nouvelle taille de l'écran
-        self.exit_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 - 75, 200, 50)
+        self.exit_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 - 37.5, 200, 50)
         self.exit_text_rect = self.exit_text.get_rect(center=self.exit_rect.center)
         self.back_to_menu_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 37.5, 200, 50)
         self.back_to_menu_text_rect = self.back_to_menu_text.get_rect(center=self.back_to_menu_rect.center)
-        self.stat_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 75*2, 200, 50)
+        self.stat_rect.update(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 37.5*3, 200, 50)
         self.stat_text_rect = self.stat_text.get_rect(center=self.stat_rect.center)
         self.ui.resize()
