@@ -1,4 +1,4 @@
-#config/settings.py
+# config/settings.py
 import pygame
 
 class Settings:
