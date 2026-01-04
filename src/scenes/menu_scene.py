@@ -11,6 +11,8 @@ class MenuScene(BaseScene):
         """Initialisation du menu"""
         self.player_data = player_data
 
+        self.shift_pressed = False
+
         # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2-50, 200, 50)
         self.talents_button = pygame.Rect(self.settings.screen_width//2 - 100, self.settings.screen_height//2 + 20, 200, 50)
@@ -46,11 +48,21 @@ class MenuScene(BaseScene):
                 self.game.change_scene(self.settings.SCENE_TALENTS)
             elif self.reset_button.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game.reset_player_data()
-                pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
+                self.settings.sounds["game_over"].play()
             elif self.volume_plus.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.update_sound(1)
+                self.update_volume(1)
             elif self.volume_moins.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
-                self.update_sound(-1)
+                self.update_volume(-1)
+
+        # Véeifie si shift et pressé pour faire + 10 au son au lieu de +1
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                self.shift_pressed = True
+
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                self.shift_pressed = False
+        
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:  # Touche ENTER
@@ -58,7 +70,7 @@ class MenuScene(BaseScene):
     
     def start_game(self):
         """Démarre le jeu"""
-        pygame.mixer.Sound("assets/sounds/game_start.mp3").play()
+        self.settings.sounds["game_start"].play()
         self.game.change_scene(self.settings.SCENE_GAME)
         # simule l'entré dans une sub scene depuis game_scene
         if self.player_data["game_played"] == 0:
@@ -67,9 +79,14 @@ class MenuScene(BaseScene):
             self.game.scenes[self.settings.SCENE_GAME].current_sub_scene.on_enter(self.game.scenes[self.settings.SCENE_GAME].game_stats)
         self.player_data["game_played"] += 1
 
-    def update_sound(self, val):
-        self.settings.master_volume = max(0, self.settings.master_volume + val*0.1)
-        pygame.mixer.music.set_volume(self.player_data["master_volume"])
+    def update_volume(self, val):
+        # volume compris entre 0 et 1
+        if self.shift_pressed:
+            self.settings.update_master_volume(val*0.1)
+        else:
+            self.settings.update_master_volume(val*0.01)
+        
+        
     
     def update(self):
         """Pas de logique particulière pour le menu simple (pr l'instant)"""
@@ -78,7 +95,7 @@ class MenuScene(BaseScene):
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 200, 0))
             if not hasattr(self, 'exit_hovered') or not self.exit_hovered: 
                 self.exit_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.text = self.settings.font["main_menu"].render("JOUER(entrée)", True, (255, 255, 255))
             self.exit_hovered = False
@@ -87,7 +104,7 @@ class MenuScene(BaseScene):
             self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 200, 0))
             if not hasattr(self, 'talents_hovered') or not self.talents_hovered:
                 self.talents_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.text_talents = self.settings.font["main_menu"].render("Talents", True, (255, 255, 255))
             self.talents_hovered = False
@@ -96,7 +113,7 @@ class MenuScene(BaseScene):
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (198, 12, 12))
             if not hasattr(self, 'reset_hovered') or not self.reset_hovered:
                 self.reset_hovered = True
-                pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3").play()
+                self.settings.sounds["souris_on_button"].play()
         else:
             self.text_reset = self.settings.font["h2"].render("Reset Player", True, (111, 6, 6))
             self.reset_hovered = False

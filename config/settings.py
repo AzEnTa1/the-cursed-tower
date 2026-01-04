@@ -27,6 +27,7 @@ class Settings:
         self.player_speed = player_data.get("speed", 5)
         self.player_size = player_data.get("size", 20)
         self.player_health = player_data.get("max_health", 100)
+        self.player_data = player_data
         
         # Scènes
         self.SCENE_MENU = "menu"
@@ -75,7 +76,12 @@ class Settings:
         # Si certains sons on un volume différent des autres en permanance 
         # val entre 0.0 et 1.0 au dixième
         self.sounds_volume_map = {
-
+            "boom":0.3,
+            "spawn":0.5,
+            "Tire_1":0.3,
+            "Tire_2":0.3,
+            "Tire_3":0.3,
+            "Tire_4":0.3
         }
     
     def init_fonts(self):
@@ -104,6 +110,11 @@ class Settings:
             "Tire_4":pygame.mixer.Sound("assets/sounds/Tire_4.mp3")
         }
 
-    def update_master_volume(self):
+    def update_master_volume(self, val=0):
+        self.master_volume += val
+        self.master_volume = round(max(0, min(1, self.master_volume)), 2)
+        self.player_data["master_volume"] = self.master_volume
+
+        pygame.mixer.music.set_volume(self.master_volume)
         for key in self.sounds.keys():
             self.sounds[key].set_volume(self.master_volume * self.sounds_volume_map.get(key, 1))

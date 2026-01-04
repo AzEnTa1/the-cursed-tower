@@ -18,8 +18,6 @@ class Suicide(Enemy):
         self.explosion_radius = 60
         self.is_exploding = False
         self.explosion_timer = 0
-        self.shoot_sound = pygame.mixer.Sound("assets/sounds/boom.mp3")
-        self.shoot_sound.set_volume(0.3)
     
     def update(self, player, projectiles=None, pending_zones=None):
         """Met à jour l'ennemi selon son type"""
@@ -53,7 +51,7 @@ class Suicide(Enemy):
         
         # met un son une seul fois quand il explose
         if self.is_exploding and self.explosion_timer == 15:
-            self.shoot_sound.play()
+            self.settings.sounds["boom"].play()
 
         # Indicateur de type (cercle intérieur ou motif)
         

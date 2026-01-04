@@ -364,7 +364,7 @@ class GameScene(BaseScene):
         self.game.game_stats = self.game_stats.stats
         self.game.change_scene(self.settings.SCENE_GAME_OVER)
         pygame.mixer.music.stop()
-        pygame.mixer.Sound("assets/sounds/game_over.mp3").play()
+        self.settings.sounds["game_over"].play()
 
     def _handle_perks_menu_selection(self, perk_index):
         """Gère la sélection d'un perk dans le menu"""
