@@ -16,7 +16,6 @@ class TutoSubScene(BaseSubScene):
                                 self.settings.screen_width//2, self.settings.screen_height//2
                                 )
 
-
     def on_exit(self):
         """Appelée quand la scène n'est plus active"""
         pass

@@ -134,3 +134,15 @@ class Settings:
 
         # Volume
         self.master_volume = player_data["master_volume"]
+
+    def cleanup(self):
+        """
+        Clean toutes les ressources liées aux sons
+        Appellée à la fermeture du jeu
+        """
+        if hasattr(self, 'sounds'):
+            for sound in self.sounds.values():
+                if isinstance(sound, pygame.mixer.Sound):
+                    sound.stop()
+        pygame.mixer.music.stop()
+        pygame.mixer.quit()

@@ -183,5 +183,6 @@ class Game:
         self.save()
 
         # Nettoyage
-        pygame.quit()
+        self.cleanup()
+        pygame.quit()   
         sys.exit()
