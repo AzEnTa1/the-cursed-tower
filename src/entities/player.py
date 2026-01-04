@@ -428,10 +428,11 @@ class Player:
 
     def add_coins(self, amount):
         """Ajoute des pièces au joueur"""
-        if not hasattr(self, 'coins'):
+        if not self.coins:
             self.coins = 0
         self.coins += amount
 
     def get_coins(self):
         """Retourne le nombre de pièces"""
+        # Ca retourne le nombre de pièces du joueur, ou 0 si l'attribut n'existe pas (pareille que au dessus (pour le 0))
         return getattr(self, 'coins', 0)
