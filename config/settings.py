@@ -120,7 +120,7 @@ class Settings:
             "player_max_health":"Vie Maximal +",
             "player_size_up":"taille du joueur +",
             "player_size_down":"taille du joueur -",
-            "player_regen":"soign le joueur",
+            "player_regen":"soigne le joueur",
             "multishot":"tire multiple +1",
             "arc_shot":"tire en diagonale"
         }
