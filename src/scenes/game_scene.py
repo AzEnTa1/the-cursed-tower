@@ -262,8 +262,8 @@ class GameScene(BaseScene):
                     
                     # Score et pièces selon le type d'ennemi
                     if enemy.type == "boss": # Y'a plusieurs Boss (avec la division donc ca augmente beaucoup)
-                        score_amount = 60
-                        coins_amount = 15
+                        score_amount = 30
+                        coins_amount = 7.5
                     elif enemy.type == "destructeur":
                         score_amount = 50
                         coins_amount = 15
