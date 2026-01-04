@@ -86,6 +86,6 @@ def test_enemy_base():
     assert enemy.take_damage(20) == True   # Mort
     
 # Exécuter tous les tests
-if __name__ == "__main__":
+def test():
     test_transition_effect()
     test_enemy_base()

@@ -123,7 +123,7 @@ def test_wave_state_transitions():
     assert manager.is_boss_wave_current() == False
     
 # Exécuter tous les tests
-if __name__ == "__main__":
+def test():
     test_game_stats()
     test_talents_basic()
     test_wave_state_transitions()

@@ -110,7 +110,7 @@ def test_wave_queue_remaining():
     assert wave_queue.get_remaining_waves_count() == 2
 
 # Exécuter tous les tests
-if __name__ == "__main__":
+def test():
     test_queue_op()
     test_queue()
     test_queue_mixed_types()

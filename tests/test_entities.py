@@ -218,7 +218,7 @@ def test_spawn_effect():
     assert position == (400, 300) 
         
 # Exécuter tous les tests
-if __name__ == "__main__":
+def test():
     test_player_movement()
     test_projectile_basic()
     test_enemy_basic()

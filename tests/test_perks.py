@@ -159,7 +159,7 @@ def test_perks_poids():
     
 
 # Exécuter tous les tests
-if __name__ == "__main__":
+def test():
     test_perks_basic()
     test_perks_special()
     test_perks_translation()
