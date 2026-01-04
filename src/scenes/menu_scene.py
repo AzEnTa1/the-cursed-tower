@@ -15,7 +15,7 @@ class MenuScene(BaseScene):
 
         # Rectangle pour les boutons (x, y, width, height)
         self.play_button = pygame.Rect(self.settings.screen_width//2-100, self.settings.screen_height//2-20, 200, 50)
-        self.talents_button = pygame.Rect(600, self.settings.screen_height - 50, 200, 50)
+        self.talents_button = pygame.Rect(self.settings.screen_width-200, self.settings.screen_height - 50, 200, 50)
         self.reset_button = pygame.Rect(0, self.settings.screen_height - 50, 200, 50)
 
         self.volume_plus = pygame.Rect(self.settings.screen_width - 50, 0, 50, 50)

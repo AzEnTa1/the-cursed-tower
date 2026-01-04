@@ -1,6 +1,6 @@
 {
     "name": "unamed",
-    "master_volume": 1.0,
+    "master_volume": 0,
     "max_health": 100,
     "regen_power": 0.1,
     "player_size": 20,
@@ -8,12 +8,12 @@
     "dash_cooldown": 180,
     "dash_distance": 4,
     "attack_damages": 20,
-    "attack_speed": 2,
+    "attack_speed": 7.7,
     "projectile_speed": 10,
     "projectile_size": 5,
     "stationary_threshold": 30,
-    "best_score": 0,
-    "game_played": 0,
-    "coins": 0,
-    "all_time_coins": 0
+    "best_score": 2720,
+    "game_played": 11,
+    "coins": 130,
+    "all_time_coins": 5830
 }
