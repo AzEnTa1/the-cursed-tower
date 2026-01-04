@@ -102,7 +102,7 @@ class Settings:
             "degat_1":pygame.mixer.Sound("assets/sounds/degat_1.mp3"),
             "game_over":pygame.mixer.Sound("assets/sounds/game_over.mp3"),
             "game_start":pygame.mixer.Sound("assets/sounds/game_start.mp3"),
-            "souris_on_button":pygame.mixer.Sound("assets/sounds/souris_on_bouton.mp3"),
+            "souris_on_button":pygame.mixer.Sound("assets/sounds/souris_on_button.mp3"),
             "spawn":pygame.mixer.Sound("assets/sounds/spawn.mp3"),
             "Tire_1":pygame.mixer.Sound("assets/sounds/Tire_1.mp3"),
             "Tire_2":pygame.mixer.Sound("assets/sounds/Tire_2.mp3"),
