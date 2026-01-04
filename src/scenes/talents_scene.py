@@ -72,24 +72,25 @@ class TalentsScene(BaseScene):
             self.talent_dict[key]["rect"] = base_talent_rect.move(self.settings.screen_width*5//32 * (i%4), self.settings.screen_width*3//16 * (i//4))
             self.talent_dict[key]["img"] = pygame.transform.scale(self.talent_dict[key]["img"], base_talent_rect.size)
             
-            
-            if len(key) < 12:
-                self.talent_dict[key]["txt"] = [self.settings.font["h3"].render(key.replace("_", " "), True, (255, 255, 255))]
-                self.talent_dict[key]["txt_rect"] = [self.talent_dict[key]["txt"][0].get_rect(midtop=self.talent_dict[key]["rect"].move(0, self.settings.screen_width//8).midtop)]
-            else:
-                self.talent_dict[key]["txt"] = []
-                self.talent_dict[key]["txt_rect"] = []
-                mots = key.split("_")
-                ligne = 0
-                for mot in mots:
-                    txt = self.settings.font["h3"].render(mot, True, (255, 255, 255))
-                    txt_rect = txt.get_rect(midtop=self.talent_dict[key]["rect"].move(0, self.settings.screen_width//8 + ligne).midtop)
-                    self.talent_dict[key]["txt"].append(txt)
-                    self.talent_dict[key]["txt_rect"].append(txt_rect)
-                    ligne += 25 # font size + 1
+            # définit le text
+            self.talent_dict[key]["txt"] = []
+            self.talent_dict[key]["txt_rect"] = []
+
+            words = self.settings.data_translation_map.get(key, key).split(" ")
+            print(words)
+            current_line = ""
+            for word in words:
+                test_line = current_line + word + " "
+                if len(test_line) <= 12: # 12 chr / lignes
+                    current_line = test_line
+                else:
+                    if current_line != " ":
+                        self.talent_dict[key]["txt"].append(current_line)
+                    current_line = word + " "
+            self.talent_dict[key]["txt"].append(current_line)
+            print(self.talent_dict[key]["txt"])
             self.talent_dict[key]["total_rect"] = self.talent_dict[key]["rect"]
-            self.talent_dict[key]["total_rect"].union_ip(self.talent_dict[key]["txt_rect"][0].move(0, 25))
-            self.talent_dict[key]["total_rect"].inflate_ip(5, 5)
+            self.talent_dict[key]["total_rect"].inflate_ip(5, 55)
             self.talent_cadre = pygame.transform.scale(self.cadre, self.talent_dict[key]["total_rect"].size)
             i += 1
 
@@ -146,23 +147,25 @@ class TalentsScene(BaseScene):
         screen.blit(self.exit_menu_text, self.exit_menu_text_rect)
 
         # Affiche les talents
-        i = 0
-        for key in list(self.talent_dict.keys()):
+        for i, key in enumerate(self.talent_dict.keys()):
             screen.blit(self.talent_cadre, self.talent_dict[key]["total_rect"].topleft)
 
             screen.blit(self.talent_dict[key]["img"], self.talent_dict[key]["rect"].topleft)
-            for txt, txt_rect in zip(self.talent_dict[key]["txt"], self.talent_dict[key]["txt_rect"]):
-                screen.blit(txt, txt_rect)
-            i += 1
+            # Affiche le text
+            for i, line in enumerate(self.talent_dict[key]["txt"]):
+                text_surface = self.settings.font["h3"].render(line, True, (255, 255, 255))
+                txt_rect = text_surface.get_rect(midtop=(self.talent_dict[key]["rect"].center[0], self.talent_dict[key]["rect"].center[1] + i * 25 + 25))
+                
+                screen.blit(text_surface, txt_rect)
+
 
         # Affiche les stats
         stats_img = pygame.transform.scale(self.cadre, (self.stats_rect.width, self.stats_rect.height))
         screen.blit(stats_img, self.stats_rect)
-        i = 0
-        for key in self.player_data.keys():
-            i += 1
+
+        for i, key in enumerate(self.player_data.keys()):
             txt = self.settings.font["h4"].render(f"{self.settings.data_translation_map.get(key, key)}: {self.player_data[key]}", True, (255, 255, 255))
-            rect = txt.get_rect(midtop = (self.stats_rect.midtop)).move(0, 20*i)
+            rect = txt.get_rect(midtop = (self.stats_rect.midtop)).move(0, 25 + 20*i)
             screen.blit(txt, rect)
     
     def resize(self):
