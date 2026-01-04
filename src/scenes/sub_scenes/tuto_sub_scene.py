@@ -23,8 +23,7 @@ class TutoSubScene(BaseSubScene):
     def handle_event(self, event):
         """Gère les événements pygame"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            return
-            if self.exit_rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
+            if self.rect.move(self.settings.x0, self.settings.y0).collidepoint(event.pos):
                 self.game_scene.game_paused = False
 
 

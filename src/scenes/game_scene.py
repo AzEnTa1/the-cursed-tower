@@ -2,8 +2,7 @@
 import pygame
 import math
 import random
-from src.entities.player import Player
-from src.entities.weapons import Weapon
+from src.entities import *
 from src.entities.enemies import *
 from src.entities.spawn_effect import SpawnEffect
 from src.systems.wave_manager import WaveManager
@@ -12,7 +11,6 @@ from src.ui.hud import HUD
 from src.ui.transition_effect import TransitionEffect
 from .base_scene import BaseScene
 from .sub_scenes import *
-from src.entities.projectiles import FireZone
 
 
 class GameScene(BaseScene):
