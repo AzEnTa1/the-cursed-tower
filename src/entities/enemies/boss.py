@@ -8,6 +8,7 @@ from ..projectiles import Projectile
 class SpecialProjectile:
     """Classe de base pour les projectiles spéciaux du boss"""
     
+    @staticmethod
     def create_bouncing(x, y, dx, dy, damage, settings, bounces=3):
         """Crée un projectile rebondissant sur les murs"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(100, 255, 100), radius=8)
@@ -16,6 +17,7 @@ class SpecialProjectile:
         projectile.special_type = "bouncing"
         return projectile
     
+    @staticmethod
     def create_accelerating(x, y, dx, dy, damage, settings, max_speed=10):
         """Crée un projectile qui accélère progressivement"""
         projectile = Projectile(x, y, dx * 0.5, dy * 0.5, damage, settings, color=(255, 150, 50), radius=6)
@@ -25,6 +27,7 @@ class SpecialProjectile:
         projectile.special_type = "accelerating"
         return projectile
     
+    @staticmethod
     def create_splitting(x, y, dx, dy, damage, settings, splits=2):
         """Crée un projectile qui se divise en plusieurs"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(150, 100, 255), radius=7)
@@ -34,6 +37,7 @@ class SpecialProjectile:
         projectile.special_type = "splitting"
         return projectile
     
+    @staticmethod
     def create_homing(x, y, dx, dy, damage, settings, player, turn_rate=0.05):
         """Crée un projectile qui poursuit le joueur"""
         projectile = Projectile(x, y, dx, dy, damage, settings, color=(255, 100, 150), radius=6)
@@ -46,6 +50,7 @@ class SpecialProjectile:
 class RecursivePatternGenerator:
     """Générateur de patterns récursifs pour le boss"""
     
+    @staticmethod
     def generate_circle_recursive(x, y, depth, max_depth, angle_offset=0, projectile_types=None):
         """
         Génère un motif circulaire récursif
@@ -93,6 +98,7 @@ class RecursivePatternGenerator:
         
         return result
     
+    @staticmethod
     def generate_spiral_arms(x, y, arms=3, projectiles_per_arm=6, projectile_types=None):
         """Génère un motif en spirale avec bras"""
         projectiles = []
@@ -290,7 +296,6 @@ class Boss(Enemy):
         self._init_appearance(floor_number)
         
         # Systèmes
-        self.pattern_generator = RecursivePatternGenerator()
         self.special_projectile = SpecialProjectile()
         self.division_system = BossDivisionSystem(settings)
         
@@ -355,7 +360,6 @@ class Boss(Enemy):
         
     def _hsv_to_rgb(self, h, s, v):
         """Convertit HSV en RGB"""
-        # --- voir tests/tests_entities, ligne 151 ---
         c = v * s
         x = c * (1 - abs((h * 6) % 2 - 1))
         m = v - c
@@ -534,7 +538,7 @@ class Boss(Enemy):
         # Types de projectiles spéciaux
         special_types = phase.special_projectiles if phase.special_projectiles else []
         
-        pattern = self.pattern_generator.generate_circle_recursive(
+        pattern = RecursivePatternGenerator.generate_circle_recursive(
             self.x, self.y,
             depth=depth,
             max_depth=depth,
@@ -577,7 +581,7 @@ class Boss(Enemy):
         # Types de projectiles spéciaux
         special_types = phase.special_projectiles if phase.special_projectiles else []
         
-        pattern = self.pattern_generator.generate_spiral_arms(
+        pattern = RecursivePatternGenerator.generate_spiral_arms(
             self.x, self.y,
             arms=arms,
             projectiles_per_arm=5,  # Réduit
@@ -644,7 +648,7 @@ class Boss(Enemy):
     
     def _execute_wave_pattern(self, enemy_projectiles, phase):
         """Pattern en vague"""
-        pattern = self.pattern_generator.generate_wave_pattern(
+        pattern = RecursivePatternGenerator.generate_wave_pattern(
             self.x, self.y,
             waves=2 + self.current_phase,
             projectiles_per_wave=6
@@ -678,7 +682,6 @@ class Boss(Enemy):
         current = self.current_pattern
         
         # Exécuter premier pattern
-        self.current_pattern = pattern1
         if pattern1 == 'circle':
             self._execute_circle_pattern(enemy_projectiles, phase)
         elif pattern1 == 'spiral':
@@ -689,7 +692,6 @@ class Boss(Enemy):
             self._execute_wave_pattern(enemy_projectiles, phase)
         
         # Exécuter deuxième pattern
-        self.current_pattern = pattern2
         if pattern2 == 'circle':
             self._execute_circle_pattern(enemy_projectiles, phase)
         elif pattern2 == 'spiral':
